@@ -8,19 +8,29 @@ def index(request):
 	# return HttpResponse("Hello World, I'm a Django sample app named Polls, you're now at the Polls index.")
 
 def home(request):
-	return render(request, 'motric_home.html')
+	device_list = LabDevice.objects.filter(status__in=['AVA', 'ASS'])
+	return render(request, 'motric_home.html', {'device_list':device_list})
+
+def public_device(request):
+	device_list = LabDevice.objects.filter(status='AVA')
+	return render(request, 'motric_public.html', {'device_list':device_list})
+
+def dedicated_device(request):
+	device_list = LabDevice.objects.filter(status='ASS')
+	return render(request, 'motric_dedicated.html', {'device_list':device_list})
 
 def device_request(request):
 	return render(request, 'motric_request.html')
 
-def device_disposal(request):
-	return render(request, 'motric_disposal.html')
+def request_disposal(request):
+	device_list = RequestedDevice.objects.filter(status='REQ') # return a list
+	return render(request, 'motric_disposal.html', {'device_list':device_list})
 
-def faq(request):
-	return render(request, 'motric_faq.html')
+# def faq(request):
+# 	return render(request, 'motric_faq.html')
 
-def about(request):
-	return render(request, 'motric_about.html')
+# def about(request):
+# 	return render(request, 'motric_about.html')
 
 # This is an incorrect configuration.
 # def receiver(request):

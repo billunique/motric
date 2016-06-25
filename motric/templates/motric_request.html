@@ -18,7 +18,7 @@
     <div ng-app="requestPage" ng-controller="requestCtrl">
       <div class="jumbotron" ng-bind-html="instruction | parsehtml"></div>
       <input type="checkbox" ng-model="approval"><span style="color:red">  Make sure you've gotten your manager's approval before you send the request. </span><p></p>
-      <form id="moha-device-request" role="form" enctype="application/json" method="post" action="/request/">
+      <form id="moha-device-request" role="form" method="post" action="/request/">
       {% csrf_token %}
 <!--         <div ng-include="'{% static 'generalInfo-section.html' %}'"></div>
         <div ng-include="'{% static 'deviceList.html' %}'"></div>      -->   

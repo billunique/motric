@@ -16,17 +16,19 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 from motric import views
-from motric import form_receiver
+from motric import utils
 
 urlpatterns = [
     url(r'^$', views.index, name='index'),
 	# url(r'^$', include('motric.urls')),
     url(r'^home/', views.home, name='home'),
+    url(r'^public_device/', views.public_device, name='public'),
+    url(r'^dedicated_device/', views.dedicated_device, name='dedicated'),
     url(r'^device_request/', views.device_request, name='request'),
-    url(r'^device_disposal/', views.device_disposal, name='disposal'),
-    url(r'^faq/', views.faq, name='faq'),
-    url(r'^about/', views.about, name='about'),
-	url(r'^request/', form_receiver.jsonReceiver, name='receiver'), # this is a pratical technic.
+    url(r'^request_disposal/', views.request_disposal, name='disposal'),
+    # url(r'^faq/', views.faq, name='faq'),
+    # url(r'^about/', views.about, name='about'),
+	url(r'^request/', utils.form_receiver, name='receiver'), # this is a pratical technic.
 	url(r'^polls/', include('polls.urls')),
     url(r'^admin/', admin.site.urls),
 ]

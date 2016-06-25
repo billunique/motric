@@ -5,7 +5,7 @@ from models import RequestedDevice, Requester
 import time, json
 
 
-def jsonReceiver(request):
+def form_receiver(request):
 
     form_dict = request.POST.copy() # Interesting! This is naturally a dictionary (QueryDict), can be used for parse directly.
     # return HttpResponse(form_querydict.items())  # return last value if the key has more than one value. (same key)
@@ -43,7 +43,7 @@ def jsonReceiver(request):
         dict['message'] = info
         dict['create_at'] = str(time.ctime())
 
-    message = ldap + ' raised device request for:\n\n' + combo + '\n\nGo to http://motric.bej.corp.google.com/device_disposal for details.'
+    message = ldap + ' raised device request for:\n\n' + combo + '\n\nGo to http://motric.bej.corp.google.com/request_disposal for details.'
     send_mail(
         '[Motric]Somebody raised device request!',
         message,

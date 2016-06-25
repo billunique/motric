@@ -1,13 +1,36 @@
-{% extends 'motric_base.html' %}
-{% load staticfiles %}
+{% extends 'motric_moresrc.html' %}
 
 {% block title %}Disposal for requested devices{% endblock %}
 
 {% block body %}
-	<img src="{% static 'logo.png' alt='motric-logo' %}">
-	<p>Powerd by <span style="color:red">Mobile Harness Team</span> ©2016. </p>
-	<ul>
-	{% for }
-
-
+	<table class="table table-bordered table-hover text-center">
+	  <thead>
+	  	<tr class="btn-primary">
+	  	  <th>Requester</th>
+	  	  <th>Cost Center</th>
+	  	  <th>Project</th>
+	  	  <th class="btn-success">Device Owner</th>
+	  	  <th class="btn-success">Device Label</th>
+	  	  <th class="btn-success">Model</th>
+	  	  <th class="btn-success">Expected OS</th>
+	  	  <th class="btn-success">Quantity</th>
+	  	  <th class="btn-danger">Status</th>
+	  	</tr>
+	  </thead>
+	  <tbody>
+		{% for device in device_list %}
+		<tr>
+		  <td>{{ device.requester.ldap }}</td>
+		  <td>{{ device.requester.cost_center }}</td>
+		  <td>{{ device.requester.project }}</td>
+		  <td>{{ device.requester.device_owner }}</td>
+		  <td>{{ device.requester.device_label }}</td>
+		  <td>{{ device.model_type }}</td>
+		  <td>{{ device.os_version }}</td>
+		  <td>{{ device.quantity }}</td>
+		  <td>{{ device.get_status_display }}</td>  {# don't use it as display() #}
+		</tr>
+		{% endfor %}
+	  </tbody>
+	</table>
 {% endblock %}

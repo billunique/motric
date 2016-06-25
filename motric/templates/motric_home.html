@@ -1,13 +1,42 @@
-<html>
-<head>
-{% load staticfiles %}
-  <title>Motric - Mobile Harness Device Tracking System</title>
-  <script src="{%static 'xmotric.js' %}"></script>
-  <link rel="stylesheet" href="{%static 'xmotric.css' %}">
-</head>
-<body class="motric-font">
-<div>
-<h2 style="text-align:center">Hello, this is Motric Homepage.</h2>
-</div>
-</body>
-</html>
+{% extends 'motric_moresrc.html' %}
+
+{% block title %}All devices running on Mobile Harness{% endblock %}
+
+{% block body %}
+	<table class="table table-bordered table-hover text-center">
+	  <thead>
+	  	<tr class="btn-primary">
+	  	  <th>Model</th>
+	  	  <th>Device ID</th>
+	  	  <th>OS</th>
+	  	  <th>Device Owner</th>
+	  	  <th>Device Label</th>
+	  	  <th>Project</th>
+	  	  <th class="btn-success">Requester</th>
+	  	  <th class="btn-success">Cost Center</th>
+	  	  <th class="btn-success">PO#</th>
+	  	  <th class="btn-success">Price(USD)</th>
+	  	  <th class="btn-success">Price(CNY)</th>
+	  	  <th class="btn-danger">Status</th>
+	  	</tr>
+	  </thead>
+	  <tbody>
+		{% for device in device_list %}
+		<tr>
+		  <td>{{ device.model.model_type }}</td>
+		  <td>{{ device.device_sn }}</td>
+		  <td>{{ device.model.os_version}}</td>
+		  <td>{{ device.model.requester.device_owner }}</td>
+		  <td>{{ device.model.requester.device_label }}</td>
+		  <td>{{ device.model.requester.project }}</td>
+		  <td>{{ device.model.requester.ldap }}</td>
+		  <td>{{ device.model.requester.cost_center }}</td>
+		  <td>{{ device.model.po_number }}</td>
+		  <td>{{ device.model.price_usd }}</td>
+		  <td>{{ device.model.price_cny }}</td>
+		  <td>{{ device.get_status_display }}</td>  {# don't use it as display() #}
+		</tr>
+		{% endfor %}
+	  </tbody>
+	</table>
+{% endblock %}

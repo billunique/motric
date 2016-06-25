@@ -20,6 +20,7 @@ class RequesterAdmin(admin.ModelAdmin):
 class RequestedDeviceAdmin(admin.ModelAdmin):
     list_display = ['model_type', 'quantity', 'os_version', 'requester', 'request_date', 'status']
     ordering = ['-request_date']
+    actions = [make_public, make_dedicated]
 
 class LabDeviceAdmin(admin.ModelAdmin):
     list_display = ['model', 'device_sn', 'status']
