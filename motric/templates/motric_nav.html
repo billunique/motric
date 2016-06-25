@@ -1,0 +1,21 @@
+<html>
+<head>
+{% load staticfiles %}
+  <script src="{% static 'xmotric.js' %}"></script>
+  <link rel="stylesheet" href="{% static 'xmotric.css' %}" />
+</head>
+<body class="motric-font">
+	<ul>
+	  <li><a class="active" href="/home" target="main">Home</a></li>
+	  <li><a href="/device_request" target="main">Device Request</a></li>
+	  <li><a href="/device_disposal" target="main">Device Disposal</a></li>
+	  <li><a href="#" target="main">Dedicated Devices</a></li>
+	  <li><a href="#" target="main">Public Devices</a></li>
+	  <li><a href="/faq" target="main">Ask & Answer</a></li>
+	  <li><a href="/about" target="main">About</a></li>
+	  <li style="margin-top:330px;"><img src="{% static 'logo.jpg' alt='motric-logo' %}"></li>
+	  <li style="margin:0 0 10px 10px;">Powerd by <span style="color:red">Mobile Harness Team</span> ©2016. </li>
+	</ul>
+	<iframe class="xframe" src="/home" name="main" ></iframe>
+</body>
+</html>
