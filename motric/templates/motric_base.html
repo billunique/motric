@@ -3,9 +3,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}{% endblock title %}</title>
   {% load staticfiles %}
+  {% block extrafile %}{% endblock extrafile %}
   <script src="{% static 'xmotric.js' %}"></script>
   <link rel="stylesheet" href="{% static 'xmotric.css' %}" />
-  {% block extrafile %}{% endblock extrafile %}
 </head>
 
 <body class="motric-font">

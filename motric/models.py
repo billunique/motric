@@ -45,6 +45,7 @@ class RequestedDevice(DeviceStatus):
 	po_date = models.DateTimeField(blank=True, null=True)
 	price_usd = models.CharField(max_length=15, blank=True)
 	price_cny = models.CharField(max_length=15, blank=True)
+	# resolved = models.BooleanField(default=False)
 
 	def __unicode__(self):
 		return u'%s, with os %s, requested by %s, for %s project' % (self.model_type, self.os_version, self.requester.ldap, self.requester.project)

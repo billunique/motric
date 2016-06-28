@@ -14,7 +14,8 @@
 	  	  <th class="btn-success">Model</th>
 	  	  <th class="btn-success">Expected OS</th>
 	  	  <th class="btn-success">Quantity</th>
-	  	  <th class="btn-danger">Status</th>
+	  	  <!-- <th class="btn-danger">Status</th> -->
+	  	  <th class="btn-danger">Action</th>
 	  	</tr>
 	  </thead>
 	  <tbody>
@@ -28,7 +29,16 @@
 		  <td>{{ device.model_type }}</td>
 		  <td>{{ device.os_version }}</td>
 		  <td>{{ device.quantity }}</td>
-		  <td>{{ device.get_status_display }}</td>  {# don't use it as display() #}
+		  <!-- <td>{{ device.get_status_display }}</td>  {# don't use it as display() #} -->
+		  <td>
+		    <select id="req_action" onchange="action_handler(this.value);">
+		      <option></option>
+	  	  	  <option value="REF">Decline</option>
+	  	  	  <option value="APP">Approve</option>
+	  	  	  <option value="AVA">Make public</option>
+	  	  	  <option value="ASS">Assign device</option>
+	  	  	</select>
+	  	  </td>
 		</tr>
 		{% endfor %}
 	  </tbody>

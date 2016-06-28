@@ -1,4 +1,5 @@
 from django.http import HttpResponse, HttpRequest, QueryDict
+from django.shortcuts import render
 from django.core.mail import send_mail
 from django.utils import timezone
 from models import RequestedDevice, Requester
@@ -43,16 +44,18 @@ def form_receiver(request):
         dict['message'] = info
         dict['create_at'] = str(time.ctime())
 
-    message = ldap + ' raised device request for:\n\n' + combo + '\n\nGo to http://motric.bej.corp.google.com/request_disposal for details.'
+    message = ldap + ' raised device request for:\n\n' + combo + '\n\nPlease go to http://motric.bej.corp.google.com/request_disposal for details.'
     send_mail(
         '[Motric]Somebody raised device request!',
         message,
         'mobileharness.motric@gmail.com',
+        # ['mobileharness-ops@google.com'],
         ['xiawang@google.com', 'yanyanl@google.com'],
         fail_silently=False
     )
 
-    return HttpResponse("Thanks for using Mobile Harness! We've received your request, if it's approved, we'll start purchasing shortly. Please stay tuned.")
+    # return HttpResponse("Thanks for using Mobile Harness! We've received your request, if it's approved, we'll start purchasing shortly. Please stay tuned.")
+    return render(request, 'motric_thanks.html')
 
 
     # response = HttpResponse()

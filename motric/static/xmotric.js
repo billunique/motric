@@ -32,6 +32,17 @@ function addDevice() {
 	// window.alert(imodel.getAttribute("id") +"\n" + ios.getAttribute("id") +"\n" + inum.getAttribute("id"));
 }
 
+function action_handler(value) {
+	try {
+		if (value=='REF') {
+			confirm("You're refusing the request from our adorable user, you sure?");
+		}
+	}
+	catch(err) {
+		alert(err.message);
+	}
+}
+
 function getFormData() {
 	try {
 		var frm = document.forms["moha-device-request"];

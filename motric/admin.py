@@ -9,9 +9,13 @@ def make_public(modeladmin, request, queryset):
 
 def make_dedicated(modeladmin, request, queryset):
     queryset.update(status='ASS')
+
+def make_requested(modeladmin, request, queryset):
+    queryset.update(status='REQ')
     
 make_public.short_description = "Make selected devices as PUBLIC"
 make_dedicated.short_description = "Make selected devices as ASSIGNED"
+make_requested.short_description = "Make selected devices as REQUESTED"
 
 class RequesterAdmin(admin.ModelAdmin):
     list_display = ['ldap', 'cost_center', 'project', 'device_label']
@@ -20,12 +24,12 @@ class RequesterAdmin(admin.ModelAdmin):
 class RequestedDeviceAdmin(admin.ModelAdmin):
     list_display = ['model_type', 'quantity', 'os_version', 'requester', 'request_date', 'status']
     ordering = ['-request_date']
-    actions = [make_public, make_dedicated]
+    actions = [make_public, make_dedicated, make_requested]
 
 class LabDeviceAdmin(admin.ModelAdmin):
-    list_display = ['model', 'device_sn', 'status']
+    #list_display = ['model', 'device_sn', 'status']
     ordering = ['model']
-    actions = [make_public, make_dedicated]
+    actions = [make_public, make_dedicated, make_requested]
     fields = ('model', 'device_sn', 'status')
 
 admin.site.register(Requester, RequesterAdmin)
