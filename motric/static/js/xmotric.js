@@ -34,13 +34,27 @@ function addDevice() {
 
 function action_handler(value) {
 	try {
-		if (value=='REF') {
-			confirm("You're refusing the request from our adorable user, you sure?");
+		switch (value) {
+			case 'REF': confirm("You're refusing the request from our adorable user, you sure?"); break;
+			case 'APP': popup_po(); break;
+			case 'AVA': popup_add_sn(); break;
+			case 'ASS': popup_add_sn(); break;
+			default: 
 		}
 	}
 	catch(err) {
 		alert(err.message);
 	}
+}
+
+function popup_po() {
+	document.getElementById("translayer").style.display="block";
+	document.getElementById("popupwindow").style.display="block";
+}
+
+function popdown() {
+	document.getElementById("popupwindow").style.display="none";
+    document.getElementById("translayer").style.display="none";
 }
 
 function getFormData() {

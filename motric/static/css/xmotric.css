@@ -90,10 +90,48 @@ thead th {
     text-align: center;
 }
 
-/*thead th {
-    text-align: center;
-} doesn't work */
+tbody tr:hover {
+    background-color: #555;
+}
 
-tr:hover {
-    background-color: #4CAF50;
+#translayer{
+    position:absolute;
+    top:0;
+    left:0;
+    background-color:#000;
+    opacity: 0.5;
+    height:100%;
+    width:100%;
+    z-index:1;
+    display:none;
+}
+
+#popupwindow{
+    width:500px;
+    height:300px;
+    text-align:left;
+    background-color:#EEE;
+    position: absolute;
+    top:50%;
+    margin-top:-150px;
+    left:50%;
+    margin-left:-250px;
+    z-index:2;
+    display:none;
+    overflow:hidden;
+}
+
+.title{
+    background-color:#CCC;
+    height:35px;
+    overflow:hidden;
+    position:relative;
+}
+.close{
+    margin-left:400px;
+    cursor:pointer;
+}
+.content{
+    padding:40px;
+    text-align:center;
 }

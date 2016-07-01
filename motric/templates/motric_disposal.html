@@ -3,9 +3,15 @@
 {% block title %}Disposal for requested devices{% endblock %}
 
 {% block body %}
+    <div id="translayer">&nbsp;</div>
+    <div id="popupwindow">
+        <div class="title"><span>Confirm</span><span class="close" onclick="popdown()">x</span></div>
+        <div class="content">You sure?</div>
+    </div>
 	<table class="table table-bordered table-hover text-center">
 	  <thead>
 	  	<tr class="btn-primary">
+	  	  <th>#</th>
 	  	  <th>Requester</th>
 	  	  <th>Cost Center</th>
 	  	  <th>Project</th>
@@ -15,12 +21,16 @@
 	  	  <th class="btn-success">Expected OS</th>
 	  	  <th class="btn-success">Quantity</th>
 	  	  <!-- <th class="btn-danger">Status</th> -->
+	  	  <th class="btn-info">PO#</th>
+	  	  <th class="btn-info">Price(CNY)</th>
+	  	  <th class="btn-info">Price(USD)</th>
 	  	  <th class="btn-danger">Action</th>
 	  	</tr>
 	  </thead>
 	  <tbody>
 		{% for device in device_list %}
 		<tr>
+		  <td>{{ forloop.counter}}</td>
 		  <td>{{ device.requester.ldap }}</td>
 		  <td>{{ device.requester.cost_center }}</td>
 		  <td>{{ device.requester.project }}</td>
@@ -30,13 +40,16 @@
 		  <td>{{ device.os_version }}</td>
 		  <td>{{ device.quantity }}</td>
 		  <!-- <td>{{ device.get_status_display }}</td>  {# don't use it as display() #} -->
+		  <td><input type="text" name="po_number" size="10"></td>
+		  <td><input type="text" name="price_cny" maxlength="5" size="5"></td>
+		  <td><input type="text" name="price_usd" maxlength="5" size="5"></td>
 		  <td>
 		    <select id="req_action" onchange="action_handler(this.value);">
 		      <option></option>
 	  	  	  <option value="REF">Decline</option>
 	  	  	  <option value="APP">Approve</option>
 	  	  	  <option value="AVA">Make public</option>
-	  	  	  <option value="ASS">Assign device</option>
+	  	  	  <option value="ASS">Allocate</option>
 	  	  	</select>
 	  	  </td>
 		</tr>
