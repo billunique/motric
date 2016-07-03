@@ -57,6 +57,7 @@ function popdown() {
     document.getElementById("translayer").style.display="none";
 }
 
+
 function getFormData() {
 	try {
 		var frm = document.forms["moha-device-request"];
@@ -74,3 +75,27 @@ function getFormData() {
 		alert(err.message);
 	}
 }
+
+
+// jQury functions start here.
+$(document).ready(function(){
+	// $.fn.editable.defaults.mode = 'inline';
+	var token = $('input[name="csrfmiddlewaretoken"]').prop('value');
+	$('#ex_rate').editable();
+	$('#disposal a').editable({
+		type: 'text',
+		placement: 'left',
+		// pk: function(){}
+		url: '/edit_request/',
+        ajaxOptions: {
+           dataType: 'json', //assuming json response
+           headers: { "X-CSRFToken": token }
+        }, 
+        data: { 'csrfmiddlewaretoken': token }, 
+        success: function(response, newValue) {
+    		if(!response.success) return response.msg;
+		}
+	});
+
+	// $('#rate').tooltip({title:"Click me to edit the exchage rate in one place!!!", placement:"bottom"});  //Weired behavior: cause the table column auto-grow.
+});

@@ -8,7 +8,7 @@ import time, json
 
 def form_receiver(request):
 
-    form_dict = request.POST.copy() # Interesting! This is naturally a dictionary (QueryDict), can be used for parse directly.
+    form_dict = request.POST.copy() # Interesting! This is naturally a dictionary (QueryDict), can be used for parse directly.  copy() is to make the dict mutable for pop().
     # return HttpResponse(form_querydict.items())  # return last value if the key has more than one value. (same key)
     # return HttpResponse(form_querydict.lists())  # return all values, as a list, for each member of the dict.
     #form_dict = form_querydict.lists() # don't use like this, will get a 'list indices must be integers not str' error.
@@ -43,6 +43,7 @@ def form_receiver(request):
         info = "%s || %s" % (sys.exc_info()[0], sys.exc_info()[1])
         dict['message'] = info
         dict['create_at'] = str(time.ctime())
+        return HttpResponse(dict)
 
     message = ldap + ' raised device request for:\n\n' + combo + '\n\nPlease go to http://motric.bej.corp.google.com/request_disposal for details.'
     send_mail(
@@ -57,21 +58,42 @@ def form_receiver(request):
     # return HttpResponse("Thanks for using Mobile Harness! We've received your request, if it's approved, we'll start purchasing shortly. Please stay tuned.")
     return render(request, 'motric_thanks.html')
 
+def request_editor(request):
+    message = ''
+    if request.method == 'POST':
+        message += 'request method is post\n'
+        if request.is_ajax():
+            message += 'this is indeed ajax!\n'
 
-    # response = HttpResponse()
-    # response.write("<p><h2>I received json data as following:</h2></p>")
-    # response.write("<p>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</p>")
-    # form_content = json.dumps(request.POST)
-    # response.write(type(form_content).str())
-    # response.write("<p>~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</p>")
-    # response.write("<p><h3>I'll parse them and put them into database later, wahahahaha.<h3/></p>")
-    # return HttpResponse(response.content)
+    dict = request.POST.copy()
+    data = json.dumps(dict)
+    message += data
 
+    # try:
+    pk = dict['pk']
+    rd = RequestedDevice.objects.get(pk=pk)
+    column = dict.values()[1]
+    column_value = dict.values()[2]
 
-    # if request.method == 'POST':
-    #     json_data = json.loads(request.body) # request.raw_post_data w/ Django < 1.4
-    #     try:
-    #       data = json_data['data']
-    #     except KeyError:
-    #       HttpResponseServerError("Malformed data!")
-    #     HttpResponse("Got json data")
+    if column == 'po_number':
+        rd.po_number = column_value
+        response = rd.po_number
+    elif column == 'price_cny':
+        rd.price_cny = column_value
+        response = rd.price_cny
+    elif column == 'price_usd':
+        rd.price_usd = column_value
+        response = rd.price_usd
+    else:
+        response = "not ready"
+    rd.save()
+
+    # except:
+    #     import sys
+    #     dict = {}
+    #     info = "%s || %s" % (sys.exc_info()[0], sys.exc_info()[1])
+    #     dict['message'] = info
+    #     dict['create_at'] = str(time.ctime())
+    #     return HttpResponse(json.dumps(dict))
+
+    return HttpResponse(response)

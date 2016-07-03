@@ -8,7 +8,10 @@
         <div class="title"><span>Confirm</span><span class="close" onclick="popdown()">x</span></div>
         <div class="content">You sure?</div>
     </div>
-	<table class="table table-bordered table-hover text-center">
+    <!-- <div><span><a href="#" id="ex_rate" data-name="exchange_rate" data-type="text" data-placement="right" data-title="Enter exchange rate" data-value="">Click here to input exchage rate</a></span></div> -->
+
+	<table id="disposal" class="table table-bordered table-hover table-condensed text-center">
+	  {% csrf_token %} 
 	  <thead>
 	  	<tr class="btn-primary">
 	  	  <th>#</th>
@@ -23,6 +26,7 @@
 	  	  <!-- <th class="btn-danger">Status</th> -->
 	  	  <th class="btn-info">PO#</th>
 	  	  <th class="btn-info">Price(CNY)</th>
+	  	  <th class="btn-info" id="rate"><a href="#" data-value="" title="Bulk edit the exchange rate">Exrate</a></th>
 	  	  <th class="btn-info">Price(USD)</th>
 	  	  <th class="btn-danger">Action</th>
 	  	</tr>
@@ -30,7 +34,7 @@
 	  <tbody>
 		{% for device in device_list %}
 		<tr>
-		  <td>{{ forloop.counter}}</td>
+		  <td>{{ device.id}}</td>
 		  <td>{{ device.requester.ldap }}</td>
 		  <td>{{ device.requester.cost_center }}</td>
 		  <td>{{ device.requester.project }}</td>
@@ -40,9 +44,14 @@
 		  <td>{{ device.os_version }}</td>
 		  <td>{{ device.quantity }}</td>
 		  <!-- <td>{{ device.get_status_display }}</td>  {# don't use it as display() #} -->
-		  <td><input type="text" name="po_number" size="10"></td>
-		  <td><input type="text" name="price_cny" maxlength="5" size="5"></td>
-		  <td><input type="text" name="price_usd" maxlength="5" size="5"></td>
+		  <!-- <td><input type="text" name="po_number" size="10"></td> -->
+		  <!-- <td><input type="text" name="price_cny" maxlength="5" size="5"></td> -->
+		  <!-- <td><input type="text" name="price_usd" maxlength="5" size="5"></td> -->
+		  <td><a href="#" data-name="po_number" data-title="Enter PO number" data-pk="{{ device.id }}">{{ device.po_number }}</a></td>
+		  <td><a href="#" data-name="price_cny" data-title="Enter Price(CNY)" data-pk="{{ device.id }}">{{ device.price_cny }}</a></td>
+		  <td><a href="#" data-name="exchange_rate" data-title="Enter exchange rate separately" data-pk="{{ device.id }}"></a></td>
+		  <td><a href="#" data-name="price_usd" data-title="Enter Price(USD" data-pk="{{ device.id }}">{{ device.price_usd }}</a></td>
+
 		  <td>
 		    <select id="req_action" onchange="action_handler(this.value);">
 		      <option></option>
