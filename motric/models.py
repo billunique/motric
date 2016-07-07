@@ -26,7 +26,7 @@ class DeviceStatus(models.Model):
 
 class Requester(models.Model):
 	ldap = models.CharField(max_length=30)
-	cost_center = models.CharField(max_length=30)
+	cost_center = models.CharField(max_length=50)
 	project = models.CharField(max_length=50)
 	device_owner = models.CharField(max_length=100)
 	device_label = models.CharField(max_length=30)
@@ -43,9 +43,10 @@ class RequestedDevice(DeviceStatus):
 	approve_date = models.DateTimeField(blank=True, null=True, editable=False)
 	po_number = models.CharField(max_length=15, blank=True)
 	po_date = models.DateTimeField(blank=True, null=True)
-	price_usd = models.CharField(max_length=15, blank=True)
-	price_cny = models.CharField(max_length=15, blank=True)
-	# resolved = models.BooleanField(default=False)
+	price_usd = models.DecimalField(max_digits=6, decimal_places=1, blank=True)
+	price_cny = models.DecimalField(max_digits=6, decimal_places=1, blank=True)
+	ex_rate = models.FloatField(blank=True)
+	resolved = models.BooleanField(default=False)
 
 	def __unicode__(self):
 		return u'%s, with os %s, requested by %s, for %s project' % (self.model_type, self.os_version, self.requester.ldap, self.requester.project)

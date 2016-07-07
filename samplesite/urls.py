@@ -33,3 +33,6 @@ urlpatterns = [
 	url(r'^polls/', include('polls.urls')),
     url(r'^admin/', admin.site.urls),
 ]
+
+# Customize the header title of the admin site.
+admin.site.site_header = 'Motric administration'

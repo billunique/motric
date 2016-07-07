@@ -6,6 +6,15 @@ from models import RequestedDevice, Requester
 import time, json
 
 
+def expection_carrier():
+    import sys
+    dict = {}
+    info = "%s || %s" % (sys.exc_info()[0], sys.exc_info()[1])
+    dict['message'] = info
+    dict['create_at'] = str(time.ctime())
+    return json.dumps(dict)
+
+
 def form_receiver(request):
 
     form_dict = request.POST.copy() # Interesting! This is naturally a dictionary (QueryDict), can be used for parse directly.  copy() is to make the dict mutable for pop().
@@ -38,12 +47,7 @@ def form_receiver(request):
     except ValueError: # invalid literal for int() with base 10: '' if only one line of device request submitted.
         pass
     except:
-        import sys
-        dict = {}
-        info = "%s || %s" % (sys.exc_info()[0], sys.exc_info()[1])
-        dict['message'] = info
-        dict['create_at'] = str(time.ctime())
-        return HttpResponse(dict)
+        return HttpResponse(expection_carrier())
 
     message = ldap + ' raised device request for:\n\n' + combo + '\n\nPlease go to http://motric.bej.corp.google.com/request_disposal for details.'
     send_mail(
@@ -77,6 +81,7 @@ def request_editor(request):
 
     if column == 'po_number':
         rd.po_number = column_value
+        rd.po_date = timezone.now()
         response = rd.po_number
     elif column == 'price_cny':
         rd.price_cny = column_value
@@ -84,16 +89,14 @@ def request_editor(request):
     elif column == 'price_usd':
         rd.price_usd = column_value
         response = rd.price_usd
+    elif column == 'ex_rate':
+        rd.ex_rate = column_value
+        response = rd.ex_rate
     else:
         response = "not ready"
     rd.save()
-
     # except:
-    #     import sys
-    #     dict = {}
-    #     info = "%s || %s" % (sys.exc_info()[0], sys.exc_info()[1])
-    #     dict['message'] = info
-    #     dict['create_at'] = str(time.ctime())
-    #     return HttpResponse(json.dumps(dict))
+    #     return HttpResponse(expection_carrier())
+
 
     return HttpResponse(response)

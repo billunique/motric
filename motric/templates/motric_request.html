@@ -5,13 +5,15 @@
   <div class="container">
     <h3 style="margin-bottom:25px">Request for dedicated devices in <b>Mobile Harness</b> Beijing Centralized Lab</h3>
     {% include 'req_prologue.html' %}
-    <input type="checkbox" ng-model="approval"><span style="color:red">  Make sure you've gotten your manager's approval before you send the request. </span><p></p>
+    <input type="checkbox" id="approval"><span style="color:red">  Make sure you've gotten your manager's approval before you send the request. </span><p></p>
     <form id="moha-device-request" role="form" method="post" action="/request/">
       {% csrf_token %} 
       {% include 'req_generalInfo.html' %}
       {% include 'req_deviceList.html' %}
-      <button type="submit" class="btn btn-success" style="float:left" ng-disabled="approval">Submit</button> 
+      <button id ="req_submit" type="submit" class="btn btn-success" style="float:left">Submit</button> 
     </form>
     <button class="btn btn-primary" style="float:right" onclick="addDevice()">Add row</button>
+    </div>
   </div>
+
 {% endblock %}

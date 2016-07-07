@@ -26,7 +26,8 @@
 	  	  <!-- <th class="btn-danger">Status</th> -->
 	  	  <th class="btn-info">PO#</th>
 	  	  <th class="btn-info">Price(CNY)</th>
-	  	  <th class="btn-info" id="rate"><a href="#" data-value="" title="Bulk edit the exchange rate">Exrate</a></th>
+	  	  <!-- <th class="btn-info" id="rate"><a href="#" data-value="" title="Bulk edit the exchange rate">Exrate</a></th> -->
+	  	  <th class="btn-info" id="rate">Exrate</a></th>
 	  	  <th class="btn-info">Price(USD)</th>
 	  	  <th class="btn-danger">Action</th>
 	  	</tr>
@@ -47,10 +48,10 @@
 		  <!-- <td><input type="text" name="po_number" size="10"></td> -->
 		  <!-- <td><input type="text" name="price_cny" maxlength="5" size="5"></td> -->
 		  <!-- <td><input type="text" name="price_usd" maxlength="5" size="5"></td> -->
-		  <td><a href="#" data-name="po_number" data-title="Enter PO number" data-pk="{{ device.id }}">{{ device.po_number }}</a></td>
-		  <td><a href="#" data-name="price_cny" data-title="Enter Price(CNY)" data-pk="{{ device.id }}">{{ device.price_cny }}</a></td>
-		  <td><a href="#" data-name="exchange_rate" data-title="Enter exchange rate separately" data-pk="{{ device.id }}"></a></td>
-		  <td><a href="#" data-name="price_usd" data-title="Enter Price(USD" data-pk="{{ device.id }}">{{ device.price_usd }}</a></td>
+		  <td><a href="#" data-name="po_number" data-title="Enter PO number" data-pk="{{ device.id }}">{{ device.po_number}}</a></td>
+		  <td><a href="#" data-name="price_cny" data-title="Enter Price(CNY)" data-pk="{{ device.id }}">{{ device.price_cny |default:"" }}</a></td>
+		  <td><a href="#" data-name="ex_rate" data-title="Enter exchange rate" data-pk="{{ device.id }}">{{ device.ex_rate |default:"" }}</a></td>
+		  <td><a href="#" data-name="price_usd" data-title="Enter Price(USD)" data-pk="{{ device.id }}">{{ device.price_usd |default:"" }}</a></td>
 
 		  <td>
 		    <select id="req_action" onchange="action_handler(this.value);">
