@@ -38,20 +38,22 @@ function addDevice() {
 // mo_request.controller('requestCtrl', function($scope) {
 // });
 
-function action_handler(value) {
-	try {
-		switch (value) {
-			case 'REF': confirm("You're refusing the request from our adorable user, you sure?"); break;
-			case 'APP': popup_po(); break;
-			case 'AVA': popup_add_sn(); break;
-			case 'ASS': popup_add_sn(); break;
-			default: 
-		}
-	}
-	catch(err) {
-		alert(err.message);
-	}
-}
+/* My raw javascript handler for the options selected. */
+// function action_handler(value) {
+// 	try {
+// 		switch (value) {
+// 			case 'REF': confirm("You're refusing the request from our adorable user, you sure?"); break;
+// 			// case 'REF': pop_warning(); break;
+// 			case 'APP': popup_po(); break;
+// 			case 'AVA': popup_add_sn(); break;
+// 			case 'ASS': popup_add_sn(); break;
+// 			default: 
+// 		}
+// 	}
+// 	catch(err) {
+// 		alert(err.message);
+// 	}
+// }
 
 function popup_po() {
 	document.getElementById("translayer").style.display="block";
@@ -90,8 +92,8 @@ $(document).ready(function(){
 	// });
 	// $.fn.editable.defaults.mode = 'inline';
 	var token = $('input[name="csrfmiddlewaretoken"]').prop('value');
-	$('#disposal a').editable({
-		type: 'text',
+	$('a[data-type="text"]').editable({
+		// type: 'text',
 		placement: 'left',
 		// pk: function(){}
 		url: '/edit_request/',
@@ -151,24 +153,133 @@ $(document).ready(function(){
 				return response.responseText;
 			}
 		}
+
 	});
 
-	$('a[data-name="price_cny"]').on('change', function(event){
-		alert($(this).html())
-	});
+	// $('a[data-type="select"]').editable({
+	// 	placement: 'left',
+ //        value: '',    
+ //        source: [
+ //        	{value: '', text: 'not selected'},
+ //            {value: 'REF', text: 'Decline'},
+ //            {value: 'APP', text: 'Approve'},
+ //            {value: 'AVA', text: 'Make public'},
+ //            {value: 'ASS', text: 'Allocate'}
+ //        ]
+ //    });
+
+
 	// $('#rate').tooltip({title:"Click me to edit the exchage rate in one place!!!", placement:"bottom"});  //Weired behavior: cause the table column auto-grow.
 });
 
 /* Bind the approvoal checkbox and the submit button on device request page. */
 $(document).ready(function() {
-  $('#req_submit').attr('disabled', 'disabled');
-  $('#approval').on('change', function() {
-    console.log('the status of the checkbox has been changed to: ' + $(this).prop('checked'));
-    if ( $(this).prop('checked') ) {
-      $('#req_submit').removeAttr('disabled')
-    } else {
-      $('#req_submit').attr('disabled', 'disabled');
-    }
-    console.log('the status of the button is: ' + $('#req_submit').prop('disabled'));    
-  });
+    $('#req_submit').attr('disabled', 'disabled');
+    $('#approval').on('change', function() {
+      console.log('the status of the checkbox has been changed to: ' + $(this).prop('checked'));
+      if ( $(this).prop('checked') ) {
+        $('#req_submit').removeAttr('disabled')
+      } else {
+        $('#req_submit').attr('disabled', 'disabled');
+      }
+      console.log('the status of the button is: ' + $('#req_submit').prop('disabled'));    
+    });
+ });
+
+
+$(document).ready(function() {
+    $('select').on('change.sel', 
+    	// { pk: $(this).attr('data-pk') },
+    	function(event) {
+    		console.log(this);
+    		var that = $(this);
+    		console.log(that);
+    		var data =  { pk: $(this).attr('data-pk'), };
+			switch ( $(this).val() ) {
+				case 'REF': 
+					// var answ = confirm("Sure?");
+					// console.log(answ);					
+					// $('#confirm_modal').on('show.bs.modal', data, function(event) {
+					//     var pk = data.pk;
+					//     alert('Before the modal shown, I am popping up first.');
+					//     console.log('The primary key that I will receive is: ', pk);
+					// });
+
+					$('#confirm_modal').modal('show'); 
+					// $('#confirm_modal').on('shown.bs.modal', function() {
+					$('#yes').on('click', data, function(event) {
+						var ele = $(this);
+						console.log(ele);
+				  		// alert('index' + $(this).index());
+				  		console.log('data.pk', event.data.pk);
+				  		console.log('target', event.target);
+				  		console.log('currentTarget', event.currentTarget);
+				  		console.log('relatedTarget', event.relatedTarget);
+				  		console.log('delegateTarget', event.delegateTarget);
+				  		console.log('result', event.result);
+				  		console.log('which', event.which);
+				  		console.log('type', event.type);
+				  		console.log('timestamp', event.timeStamp);
+				  		console.log('pageX + pageY', event.pageX, event.pageY);
+				  		console.log('offsetX + offsetY', event.offsetX, event.offsetY);
+				  		console.log('-------------------------------------------------------------------------------');
+				    });	
+					// });
+
+					console.log('Primary key of this event: ', 
+						// event.data.pk, 
+						data.pk
+						// $(this).attr('data-pk')
+						);
+
+	    
+
+					break;
+				case 'APP': break;
+				case 'AVA': break;
+				case 'ASS': break;
+				default: 
+
+
+			}
+
+			$('#confirm_modal').on('hide.bs.modal', data, function(event) {
+				var mod = $(this);
+				console.log(mod);
+				alert(event.data.pk);
+				// console.log('target', event.target);
+				// console.log('currentTarget', event.currentTarget);
+				// console.log('relatedTarget', event.relatedTarget);
+				// console.log('delegateTarget', event.delegateTarget);
+				console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+			});		
+		}
+	);
+
+	// $('#yes').on('click', function(event) {
+	// 	var ele = $(this);
+	// 	console.log(ele);
+ //  		// alert('index' + $(this).index());
+ //  		// console.log('data.pk', event.data.pk);
+ //  		console.log('target', event.target);
+ //  		console.log('currentTarget', event.currentTarget);
+ //  		console.log('relatedTarget', event.relatedTarget);
+ //  		console.log('delegateTarget', event.delegateTarget);
+ //  		console.log('result', event.result);
+ //  		console.log('which', event.which);
+ //  		console.log('type', event.type);
+ //  		console.log('timestamp', event.timeStamp);
+ //  		console.log('pageX + pageY', event.pageX, event.pageY);
+ //  		console.log('offsetX + offsetY', event.offsetX, event.offsetY);
+ //  		console.log('----------------------------------------------');
+ //    });	
+
+	// $('select').each(function(index) {
+	// 	console.log(index + ': ' + $(this).text());
+	// })
+
+	// $('#confirm_modal').on('hidden.bs.modal', data, function(event) {
+ //    	alert(event.data.pk);
+ //    });
+	
 });

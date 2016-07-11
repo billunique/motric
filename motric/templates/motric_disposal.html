@@ -3,6 +3,9 @@
 {% block title %}Disposal for requested devices{% endblock %}
 
 {% block body %}
+
+{% include 'motric_modal.html' %}
+
     <div id="translayer">&nbsp;</div>
     <div id="popupwindow">
         <div class="title"><span>Confirm</span><span class="close" onclick="popdown()">x</span></div>
@@ -48,15 +51,16 @@
 		  <!-- <td><input type="text" name="po_number" size="10"></td> -->
 		  <!-- <td><input type="text" name="price_cny" maxlength="5" size="5"></td> -->
 		  <!-- <td><input type="text" name="price_usd" maxlength="5" size="5"></td> -->
-		  <td><a href="#" data-name="po_number" data-title="Enter PO number" data-pk="{{ device.id }}">{{ device.po_number}}</a></td>
-		  <td><a href="#" data-name="price_cny" data-title="Enter Price(CNY)" data-pk="{{ device.id }}">{{ device.price_cny |default:"" }}</a></td>
-		  <td><a href="#" data-name="ex_rate" data-title="Enter exchange rate" data-pk="{{ device.id }}">{{ device.ex_rate |default:"" }}</a></td>
-		  <td><a href="#" data-name="price_usd" data-title="Enter Price(USD)" data-pk="{{ device.id }}">{{ device.price_usd |default:"" }}</a></td>
+		  <td><a href="#" data-type="text" data-name="po_number" data-title="Enter PO number" data-pk="{{ device.id }}">{{ device.po_number}}</a></td>
+		  <td><a href="#" data-type="text" data-name="price_cny" data-title="Enter Price(CNY)" data-pk="{{ device.id }}">{{ device.price_cny |default:"" }}</a></td>
+		  <td><a href="#" data-type="text" data-name="ex_rate" data-title="Enter exchange rate" data-pk="{{ device.id }}">{{ device.ex_rate |default:"" }}</a></td>
+		  <td><a href="#" data-type="text" data-name="price_usd" data-title="Enter Price(USD)" data-pk="{{ device.id }}">{{ device.price_usd |default:"" }}</a></td>
 
 		  <td>
-		    <select id="req_action" onchange="action_handler(this.value);">
+		    <!-- <a href="#" data-type="select" data-name="req_action" data-title="Choose action" data-pk="{{ device.id }}">{{ device.status |default:"not selected" }}</a> -->
+		    <select data-name="req_action" data-title="Choose action" data-pk="{{ device.id }}">
 		      <option></option>
-	  	  	  <option value="REF">Decline</option>
+	  	  	  <option value="REF" >Decline</option>
 	  	  	  <option value="APP">Approve</option>
 	  	  	  <option value="AVA">Make public</option>
 	  	  	  <option value="ASS">Allocate</option>
@@ -66,4 +70,5 @@
 		{% endfor %}
 	  </tbody>
 	</table>
+
 {% endblock %}
