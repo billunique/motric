@@ -43,9 +43,9 @@ class RequestedDevice(DeviceStatus):
 	approve_date = models.DateTimeField(blank=True, null=True, editable=False)
 	po_number = models.CharField(max_length=15, blank=True)
 	po_date = models.DateTimeField(blank=True, null=True)
-	price_usd = models.DecimalField(max_digits=6, decimal_places=1, blank=True)
-	price_cny = models.DecimalField(max_digits=6, decimal_places=1, blank=True)
-	ex_rate = models.FloatField(blank=True)
+	price_usd = models.DecimalField(max_digits=6, decimal_places=1, blank=True, null=True)
+	price_cny = models.DecimalField(max_digits=6, decimal_places=1, blank=True, null=True)
+	ex_rate = models.FloatField(blank=True, null=True)
 	resolved = models.BooleanField(default=False)
 
 	def __unicode__(self):
