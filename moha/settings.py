@@ -82,9 +82,9 @@ DATABASES = {
         # 'ENGINE': 'django.db.backends.sqlite3',
         # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),        
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'tmotric',
+        'NAME': 'motric',
         "USER": 'root',
-        "PASSWORD": '',
+        "PASSWORD": 'mohabejx',
     }
 }
 
@@ -113,8 +113,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-# TIME_ZONE = 'UTC'
-TIME_ZONE = 'CST'
+TIME_ZONE = 'UTC'
+# TIME_ZONE = 'CST'
 
 USE_I18N = True
 
