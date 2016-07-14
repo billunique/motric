@@ -184,17 +184,19 @@ $(document).ready(function() {
       }
       console.log('the status of the button is: ' + $('#req_submit').prop('disabled'));    
     });
+    $('#approval').prop('checked', false); //In case when user browse back, the checkbox is checked but the submit button is disabled.
  });
 
 
 $(document).ready(function() {
+	var primary_key = 'hello world';
     $('select').on('change.sel', 
     	// { pk: $(this).attr('data-pk') },
     	function(event) {
     		console.log(this);
-    		var that = $(this);
-    		console.log(that);
+    		console.log($(this));
     		var data =  { pk: $(this).attr('data-pk'), };
+    		primary_key = data.pk;
 			switch ( $(this).val() ) {
 				case 'REF': 
 					// var answ = confirm("Sure?");
@@ -204,27 +206,27 @@ $(document).ready(function() {
 					//     alert('Before the modal shown, I am popping up first.');
 					//     console.log('The primary key that I will receive is: ', pk);
 					// });
-
 					$('#confirm_modal').modal('show'); 
-					// $('#confirm_modal').on('shown.bs.modal', function() {
-					$('#yes').on('click', data, function(event) {
-						var ele = $(this);
-						console.log(ele);
-				  		// alert('index' + $(this).index());
-				  		console.log('data.pk', event.data.pk);
-				  		console.log('target', event.target);
-				  		console.log('currentTarget', event.currentTarget);
-				  		console.log('relatedTarget', event.relatedTarget);
-				  		console.log('delegateTarget', event.delegateTarget);
-				  		console.log('result', event.result);
-				  		console.log('which', event.which);
-				  		console.log('type', event.type);
-				  		console.log('timestamp', event.timeStamp);
-				  		console.log('pageX + pageY', event.pageX, event.pageY);
-				  		console.log('offsetX + offsetY', event.offsetX, event.offsetY);
-				  		console.log('-------------------------------------------------------------------------------');
-				    });	
-					// });
+
+					// $('#yes').one('click', data, function(event) {
+					// 	// console.log('I am inside the on listener...............................................................My index is: ', index);
+					// 	var ele = $(this);
+					// 	console.log(ele);
+				 //  		// alert('index' + $(this).index());
+				 //  		console.log('data.pk', event.data.pk);
+				 //  		console.log('target', event.target);
+				 //  		console.log('currentTarget', event.currentTarget);
+				 //  		console.log('relatedTarget', event.relatedTarget);
+				 //  		console.log('delegateTarget', event.delegateTarget);
+				 //  		console.log('result', event.result);
+				 //  		console.log('which', event.which);
+				 //  		console.log('type', event.type);
+				 //  		console.log('timestamp', event.timeStamp);
+				 //  		console.log('pageX + pageY', event.pageX, event.pageY);
+				 //  		console.log('offsetX + offsetY', event.offsetX, event.offsetY);
+				 //  		console.log('-------------------------------------------------------------------------------');
+				 //    });	
+
 
 					console.log('Primary key of this event: ', 
 						// event.data.pk, 
@@ -243,36 +245,38 @@ $(document).ready(function() {
 
 			}
 
-			$('#confirm_modal').on('hide.bs.modal', data, function(event) {
-				var mod = $(this);
-				console.log(mod);
-				alert(event.data.pk);
-				// console.log('target', event.target);
-				// console.log('currentTarget', event.currentTarget);
-				// console.log('relatedTarget', event.relatedTarget);
-				// console.log('delegateTarget', event.delegateTarget);
-				console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-			});		
+			// $('#confirm_modal').on('hide.bs.modal', data, function(event) {
+			// 	var mod = $(this);
+			// 	console.log(mod);
+			// 	alert('primary key of this element: ' + event.data.pk);
+			// 	// console.log('target', event.target);
+			// 	// console.log('currentTarget', event.currentTarget);
+			// 	// console.log('relatedTarget', event.relatedTarget);
+			// 	// console.log('delegateTarget', event.delegateTarget);
+			// 	console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+			// });		
 		}
 	);
 
-	// $('#yes').on('click', function(event) {
-	// 	var ele = $(this);
-	// 	console.log(ele);
- //  		// alert('index' + $(this).index());
- //  		// console.log('data.pk', event.data.pk);
- //  		console.log('target', event.target);
- //  		console.log('currentTarget', event.currentTarget);
- //  		console.log('relatedTarget', event.relatedTarget);
- //  		console.log('delegateTarget', event.delegateTarget);
- //  		console.log('result', event.result);
- //  		console.log('which', event.which);
- //  		console.log('type', event.type);
- //  		console.log('timestamp', event.timeStamp);
- //  		console.log('pageX + pageY', event.pageX, event.pageY);
- //  		console.log('offsetX + offsetY', event.offsetX, event.offsetY);
- //  		console.log('----------------------------------------------');
- //    });	
+	$('#yes').on('click', {pk: primary_key}, function(event) {
+		console.log('I am outside of the on listener...............................................................');
+		var ele = $(this);
+		console.log(ele);
+  		// alert('index' + $(this).index());
+  		alert('primary key of this element: ' + primary_key);
+  		console.log('data.pk', event.data);
+  		console.log('target', event.target);
+  		console.log('currentTarget', event.currentTarget);
+  		console.log('relatedTarget', event.relatedTarget);
+  		console.log('delegateTarget', event.delegateTarget);
+  		console.log('result', event.result);
+  		console.log('which', event.which);
+  		console.log('type', event.type);
+  		console.log('timestamp', event.timeStamp);
+  		console.log('pageX + pageY', event.pageX, event.pageY);
+  		console.log('offsetX + offsetY', event.offsetX, event.offsetY);
+  		console.log('----------------------------------------------');
+    });	
 
 	// $('select').each(function(index) {
 	// 	console.log(index + ': ' + $(this).text());
