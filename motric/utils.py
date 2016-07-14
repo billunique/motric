@@ -76,8 +76,8 @@ def request_editor(request):
     # try:
     pk = dict['pk']
     rd = RequestedDevice.objects.get(pk=pk)
-    column = dict.values()[1]
-    column_value = dict.values()[2]
+    column = dict.values()[2]
+    column_value = dict.values()[3]
 
     if column == 'po_number':
         rd.po_number = column_value
@@ -92,8 +92,12 @@ def request_editor(request):
     elif column == 'ex_rate':
         rd.ex_rate = column_value
         response = rd.ex_rate
+    elif column == 'status':
+        rd.status = column_value
+        rd.resolved = True
+        response = rd.status
     else:
-        response = "not ready"
+        response = data
     rd.save()
     # except:
     #     return HttpResponse(expection_carrier())

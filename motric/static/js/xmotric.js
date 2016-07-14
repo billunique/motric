@@ -99,9 +99,9 @@ $(document).ready(function(){
 		url: '/edit_request/',
         ajaxOptions: {
            dataType: 'json', 
-           headers: { "X-CSRFToken": token }
+           // headers: { "X-CSRFToken": token }
         }, 
-        // data: { 'csrfmiddlewaretoken': token },  //This is not necessary if the header is set with token, vice versa.
+        data: { 'csrfmiddlewaretoken': token },  //This is not necessary if the header is set with token, vice versa.
         // emptytext:'Input',
         success: function(response, newValue) {
     		// if (response.status == 200) { // This needs to be defined by server definitely.
@@ -170,10 +170,9 @@ $(document).ready(function(){
 
 
 	// $('#rate').tooltip({title:"Click me to edit the exchage rate in one place!!!", placement:"bottom"});  //Weired behavior: cause the table column auto-grow.
-});
+
 
 /* Bind the approvoal checkbox and the submit button on device request page. */
-$(document).ready(function() {
     $('#req_submit').attr('disabled', 'disabled');
     $('#approval').on('change', function() {
       console.log('the status of the checkbox has been changed to: ' + $(this).prop('checked'));
@@ -185,10 +184,9 @@ $(document).ready(function() {
       console.log('the status of the button is: ' + $('#req_submit').prop('disabled'));    
     });
     $('#approval').prop('checked', false); //In case when user browse back, the checkbox is checked but the submit button is disabled.
- });
 
 
-$(document).ready(function() {
+/* Handle the various select options */
 	var primary_key = 'hello world';
     $('select').on('change.sel', 
     	// { pk: $(this).attr('data-pk') },
@@ -259,23 +257,29 @@ $(document).ready(function() {
 	);
 
 	$('#yes').on('click', {pk: primary_key}, function(event) {
-		console.log('I am outside of the on listener...............................................................');
-		var ele = $(this);
-		console.log(ele);
-  		// alert('index' + $(this).index());
-  		alert('primary key of this element: ' + primary_key);
-  		console.log('data.pk', event.data);
-  		console.log('target', event.target);
-  		console.log('currentTarget', event.currentTarget);
-  		console.log('relatedTarget', event.relatedTarget);
-  		console.log('delegateTarget', event.delegateTarget);
-  		console.log('result', event.result);
-  		console.log('which', event.which);
-  		console.log('type', event.type);
-  		console.log('timestamp', event.timeStamp);
-  		console.log('pageX + pageY', event.pageX, event.pageY);
-  		console.log('offsetX + offsetY', event.offsetX, event.offsetY);
-  		console.log('----------------------------------------------');
+		// console.log('I am outside of the on listener...............................................................');
+		// var ele = $(this);
+		// console.log(ele);
+  // 		// alert('index' + $(this).index());
+  // 		alert('primary key of this element: ' + primary_key);
+  // 		console.log('data.pk', event.data);
+  // 		console.log('target', event.target);
+  // 		console.log('currentTarget', event.currentTarget);
+  // 		console.log('relatedTarget', event.relatedTarget);
+  // 		console.log('delegateTarget', event.delegateTarget);
+  // 		console.log('result', event.result);
+  // 		console.log('which', event.which);
+  // 		console.log('type', event.type);
+  // 		console.log('timestamp', event.timeStamp);
+  // 		console.log('pageX + pageY', event.pageX, event.pageY);
+  // 		console.log('offsetX + offsetY', event.offsetX, event.offsetY);
+  // 		console.log('----------------------------------------------');
+  		$.post('/edit_request/', {pk: primary_key, target: 'status', target_value:'REF', 'csrfmiddlewaretoken': token})
+  			.done( function(response) {
+  				alert('Response is ' + response);
+  				$('a[data-pk=' + primary_key + ']').parent().parent().remove();
+  			});
+
     });	
 
 	// $('select').each(function(index) {
