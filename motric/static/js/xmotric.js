@@ -101,7 +101,12 @@ $(document).ready(function(){
            dataType: 'json', 
            // headers: { "X-CSRFToken": token }
         }, 
-        data: { 'csrfmiddlewaretoken': token },  //This is not necessary if the header is set with token, vice versa.
+        //This is not necessary if the header is set with token, vice versa. But the params option is really useful.
+        params: function(params) {
+		    //originally params contain pk, name and value
+		    params.csrfmiddlewaretoken = token;
+		    return params;
+		},
         // emptytext:'Input',
         success: function(response, newValue) {
     		// if (response.status == 200) { // This needs to be defined by server definitely.
@@ -120,10 +125,10 @@ $(document).ready(function(){
     					price_u = (price_c / rate).toFixed(2);
     					// This is for the database restore.
     					$(nextMatching).editable('submit', {
-    						ajaxOptions: {
-					             dataType: 'json', 
-					             headers: { "X-CSRFToken": token }
-						    }, 
+    						// ajaxOptions: {
+					             // dataType: 'json', 
+					             // headers: { "X-CSRFToken": token }
+						    // }, 
     						data: {
     							'value': price_u,
     							// 'csrfmiddlewaretoken': token
@@ -134,10 +139,10 @@ $(document).ready(function(){
     				} else if ( price_u ) {
     					price_c = (price_u * rate).toFixed(2);
     					$(preMatching).editable('submit', {
-    						ajaxOptions: {
-					             dataType: 'json', 
-					             headers: { "X-CSRFToken": token }
-						    }, 
+    						// ajaxOptions: {
+					             // dataType: 'json', 
+					             // headers: { "X-CSRFToken": token }
+						    // }, 
     						data: {
     							'value': price_c,
     						}
@@ -276,8 +281,8 @@ $(document).ready(function(){
   // 		console.log('----------------------------------------------');
   		$.post('/edit_request/', {pk: primary_key, target: 'status', target_value:'REF', 'csrfmiddlewaretoken': token})
   			.done( function(response) {
-  				alert('Response is ' + response);
-  				$('a[data-pk=' + primary_key + ']').parent().parent().remove();
+  				// alert('Response is ' + response);
+  				$('a[data-pk=' + primary_key + ']').parent().parent().fadeOut(1000);
   			});
 
     });	

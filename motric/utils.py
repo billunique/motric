@@ -49,13 +49,13 @@ def form_receiver(request):
     except:
         return HttpResponse(expection_carrier())
 
-    message = ldap + ' raised device request for:\n\n' + combo + '\n\nPlease go to http://motric.bej.corp.google.com/request_disposal for details.'
+    message = ldap + ' raised device request for:\n\n' + combo + '\n\nPlease go to http://motric.bej.corp.google.com:8083/request_disposal for details.'
     send_mail(
         '[Motric]Somebody raised device request!',
         message,
         'mobileharness.motric@gmail.com',
         # ['mobileharness-ops@google.com'],
-        ['xiawang@google.com', 'yanyanl@google.com'],
+        ['xiawang@google.com', 'yanyanl@google.com', 'ligang@google.com'],
         fail_silently=False
     )
 
