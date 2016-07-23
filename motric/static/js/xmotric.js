@@ -237,10 +237,19 @@ $(document).ready(function(){
 						// $(this).attr('data-pk')
 						);
 
-	    
+					break;
+				case 'APP': 
+					$.post('/edit_request/', {pk: primary_key, target: 'approve_date', target_value:event.timeStamp, 'csrfmiddlewaretoken': token})
+					// $(this).parent().prevAll().find('a[data-name="po_number"]').trigger("click");
+					var poi = $(this).parent().prevAll().find('a[data-name="po_number"]');
+					console.log(poi, poi.val(), poi.text());
+					if ( poi.text() == 'Empty') {
+					    setTimeout(function() {
+					        poi.editable('show');
+					    }, 200);						
+					}
 
 					break;
-				case 'APP': break;
 				case 'AVA': break;
 				case 'ASS': break;
 				default: 

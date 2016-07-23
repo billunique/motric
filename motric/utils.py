@@ -96,6 +96,9 @@ def request_editor(request):
         rd.status = column_value
         rd.resolved = True
         response = rd.status
+    elif column == 'approve_date':
+        rd.approve_date = timezone.now()
+        response = rd.approve_date
     else:
         response = data
     rd.save()
