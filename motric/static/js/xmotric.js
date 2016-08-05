@@ -250,8 +250,13 @@ $(document).ready(function(){
 					}
 
 					break;
-				case 'AVA': break;
-				case 'ASS': break;
+				case 'AVA': 
+
+					break;
+				case 'ASS': 
+
+					$('#allocation_modal').modal('show');
+					break;
 				default: 
 
 
@@ -270,6 +275,7 @@ $(document).ready(function(){
 		}
 	);
 
+/* When user clicks Yes on the confirm modal. */
 	$('#yes').on('click', {pk: primary_key}, function(event) {
 		// console.log('I am outside of the on listener...............................................................');
 		// var ele = $(this);
@@ -296,12 +302,41 @@ $(document).ready(function(){
 
     });	
 
-	// $('select').each(function(index) {
-	// 	console.log(index + ': ' + $(this).text());
-	// })
+/* When user clicks Cancel on the confirm modal or allocation modal. */
+	$('#no, #cancel').on('click', {pk:primary_key}, function(event) {
+		var target = $('select[data-pk=' + primary_key + ']')
+		// console.log(target);
+		// console.log($(target));
+		$(target).val('');
+		// console.log($(target).prop('value'));
+		$('#allocation_table').children().remove();
+	});
 
-	// $('#confirm_modal').on('hidden.bs.modal', data, function(event) {
- //    	alert(event.data.pk);
- //    });
+
+/* Dynamically create the input box based on the devices' quantity user requested. */
+	$('#allocation_modal').on('shown.bs.modal', {pk:primary_key}, function(event) {
+		var td_quantity = $('a[data-pk=' + primary_key + ']').first().parent().prev()
+		console.log($(td_quantity));
+		var quantity = td_quantity.text();
+		// console.log('User requested ' + quantity + ' devices.');
+		var td_model = $(td_quantity).prev().prev();
+		var model = td_model.text();
+		for (i = 0; i < quantity; i++) {
+			$('#allocation_table').append('<tr><td style="padding:10px">' + model + '</td><td><input type="text" class="form-control minput" placeholder="input device id" name="sn" required></td></tr>');
+		}
+		$('#allocation_table').append('<tr><td><input type="hidden" name="pk" value=' + primary_key + '></td></tr>');
+ 	});
+
+
+/* When user clicks Submit on the allocation modal. */
+	// $('#submit').on('click', {pk: primary_key}, function(event) {
+	// 	$.post('')
+	// });
+
+	// $('select').each(function(index) {
+		// console.log(index + ': ' + $(this).text());
+	// });
+
+
 	
 });

@@ -5,7 +5,7 @@
     <!-- Modal content-->
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <!-- <button type="button" class="close" data-dismiss="modal">&times;</button> -->
         <h4 class="modal-title">Confirm</h4>
       </div>
       <div class="modal-body">
@@ -15,6 +15,32 @@
         <button class="btn btn-warning btn-md button_in_modal" id="yes" data-dismiss="modal">Yes</button>
         <button class="btn btn-info btn-md button_in_modal" id="no" data-dismiss="modal">Cancel</button>
       </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="allocation_modal" role="dialog">
+  <div class="modal-dialog">
+  
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Allocate Device</h4>
+      </div>
+    <form id="allocation_form" method="post" action='/device_allocate/'>
+      <div class="modal-body">
+        <p>You can now allocate device to users. The devices can be the public ones in lab or newly purchased devices.</p>
+        {% csrf_token %} 
+        <table id="allocation_table">
+          <!-- <tr><td><input type="text" class="form-control mtinput"></td></tr> -->
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-warning btn-md button_in_modal" id="submit" type="submit">Submit</button>
+        <button class="btn btn-info btn-md button_in_modal" id="cancel" data-dismiss="modal">Cancel</button>
+      </div>
+    </form>
     </div>
   </div>
 </div>

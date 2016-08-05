@@ -2,7 +2,7 @@ from django.http import HttpResponse, HttpRequest, QueryDict
 from django.shortcuts import render
 from django.core.mail import send_mail
 from django.utils import timezone
-from models import RequestedDevice, Requester
+from models import *
 import time, json
 
 
@@ -107,3 +107,19 @@ def request_editor(request):
 
 
     return HttpResponse(response)
+
+
+def device_register(request):
+    dict = request.POST.copy()
+    try:
+        pk = dict['pk'];
+        rd = RequestedDevice.objects.get(pk=pk)
+        serial_no = dict.pop('sn') # got a list of serial number;
+        for i in range(len(serial_no)):
+            ld = LabDevice(device_sn=serial_no[i], status='ASS', register_date=timezone.now(), model=rd) # LabDevice.model must be a RequestedDevice instance.
+            ld.save()
+
+    except:
+        return HttpResponse(expection_carrier())
+
+    return HttpResponse('saved successfully!')

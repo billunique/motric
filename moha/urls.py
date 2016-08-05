@@ -30,6 +30,7 @@ urlpatterns = [
     # url(r'^about/', views.about, name='about'),
 	url(r'^request/', utils.form_receiver, name='receiver'), # this is a pratical technic.
     url(r'^edit_request/', utils.request_editor, name='req_editor'),
+    url(r'^device_allocate/', utils.device_register, name='dev_register'),
     url(r'^admin/', admin.site.urls),
 ]
 
