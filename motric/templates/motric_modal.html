@@ -26,11 +26,11 @@
     <!-- Modal content-->
     <div class="modal-content">
       <div class="modal-header">
-        <h4 class="modal-title">Allocate Device</h4>
+        <h4 id="title" class="modal-title">Allocate Device</h4>
       </div>
     <form id="allocation_form" method="post" action='/device_allocate/'>
       <div class="modal-body">
-        <p>You can now allocate device to users. The devices can be the public ones in lab or newly purchased devices.</p>
+        <p id="inst"></p>
         {% csrf_token %} 
         <table id="allocation_table">
           <!-- <tr><td><input type="text" class="form-control mtinput"></td></tr> -->

@@ -1,4 +1,4 @@
-from django.http import HttpResponse, HttpRequest, QueryDict
+from django.http import HttpResponse, HttpRequest, QueryDict, HttpResponseRedirect, HttpResponseNotModified
 from django.shortcuts import render
 from django.core.mail import send_mail
 from django.utils import timezone
@@ -113,13 +113,18 @@ def device_register(request):
     dict = request.POST.copy()
     try:
         pk = dict['pk'];
+        status = dict['status']
         rd = RequestedDevice.objects.get(pk=pk)
         serial_no = dict.pop('sn') # got a list of serial number;
         for i in range(len(serial_no)):
-            ld = LabDevice(device_sn=serial_no[i], status='ASS', register_date=timezone.now(), model=rd) # LabDevice.model must be a RequestedDevice instance.
+            ld = LabDevice(device_sn=serial_no[i], status=status, register_date=timezone.now(), model=rd) # LabDevice.model must be a RequestedDevice instance.
             ld.save()
+        rd.status = status
+        rd.resolved = True
+        rd.save()
 
     except:
         return HttpResponse(expection_carrier())
 
-    return HttpResponse('saved successfully!')
+    # return HttpResponse('Saved successfully!')
+    return HttpResponseRedirect('/request_disposal/')

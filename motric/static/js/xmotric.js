@@ -193,6 +193,7 @@ $(document).ready(function(){
 
 /* Handle the various select options */
 	var primary_key = 'hello world';
+	var status = '';
     $('select').on('change.sel', 
     	// { pk: $(this).attr('data-pk') },
     	function(event) {
@@ -200,7 +201,8 @@ $(document).ready(function(){
     		console.log($(this));
     		var data =  { pk: $(this).attr('data-pk'), };
     		primary_key = data.pk;
-			switch ( $(this).val() ) {
+    		status = $(this).val();
+			switch ( status) {
 				case 'REF': 
 					// var answ = confirm("Sure?");
 					// console.log(answ);					
@@ -251,6 +253,7 @@ $(document).ready(function(){
 
 					break;
 				case 'AVA': 
+					$('#allocation_modal').modal('show');
 
 					break;
 				case 'ASS': 
@@ -314,17 +317,26 @@ $(document).ready(function(){
 
 
 /* Dynamically create the input box based on the devices' quantity user requested. */
-	$('#allocation_modal').on('shown.bs.modal', {pk:primary_key}, function(event) {
+	$('#allocation_modal').on('shown.bs.modal', {pk:primary_key, st:status}, function(event) {
 		var td_quantity = $('a[data-pk=' + primary_key + ']').first().parent().prev()
 		console.log($(td_quantity));
 		var quantity = td_quantity.text();
 		// console.log('User requested ' + quantity + ' devices.');
 		var td_model = $(td_quantity).prev().prev();
 		var model = td_model.text();
+		if (status == 'ASS') {
+			$('#inst').html('You can now allocate device to users. The devices can be the public ones in lab or newly purchased devices.');
+			$('#title').html('Allocate Device');
+		} else {
+			$('#inst').html('Register the newly purchased devices and put them into PUBLIC pool of our lab.');
+			$('#title').html('Make Device Public');
+		}
 		for (i = 0; i < quantity; i++) {
 			$('#allocation_table').append('<tr><td style="padding:10px">' + model + '</td><td><input type="text" class="form-control minput" placeholder="input device id" name="sn" required></td></tr>');
 		}
 		$('#allocation_table').append('<tr><td><input type="hidden" name="pk" value=' + primary_key + '></td></tr>');
+		$('#allocation_table').append('<tr><td><input type="hidden" name="status" value=' + status + '></td></tr>');
+
  	});
 
 

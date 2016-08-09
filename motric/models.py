@@ -12,8 +12,8 @@ class DeviceStatus(models.Model):
 		('ORD', 'Ordered'), # When PO number is added.
 		('REC', 'Received'), # When device received but before registered.
 		('REG', 'Registered'), # When device id is added.
-		('AVA', 'Available (Public)'), # When device is brought online.
-		('ASS', 'Assigned (Dedicated)'), # When device is allocated to specific user.
+		('AVA', 'Public'), # When device is brought online.
+		('ASS', 'Assigned'), # When device is allocated to specific user.
 		('WIT', 'Withdrawn'), # When device is brought offline intendedly.
 		('BRO', 'Broken'),
 		('REP', 'In repair'),
@@ -53,7 +53,8 @@ class RequestedDevice(DeviceStatus):
 		# return self.model_type
 
 class LabDevice(DeviceStatus):
-	model = models.OneToOneField(RequestedDevice)
+	# model = models.OneToOneField(RequestedDevice)
+	model = models.ForeignKey(RequestedDevice)
 	device_sn = models.CharField(max_length=100)
 	register_date = models.DateTimeField('date device_sn recorded', auto_now_add=True) # The register date is basically fixed. While other status could be mutable. 
 
