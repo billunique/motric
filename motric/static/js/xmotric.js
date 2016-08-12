@@ -377,6 +377,7 @@ $(document).ready(function(){
         .done(function(data) {
             toastr.success('Saved successfully!', {timeOut: 2000});
             $('#allocation_modal').modal('hide');
+            $('#allocation_table').children().remove();
             $('a[data-pk=' + primary_key + ']').parent().parent().fadeOut(1000);
         })
         .fail(function() {
