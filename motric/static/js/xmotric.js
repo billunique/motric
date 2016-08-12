@@ -84,6 +84,12 @@ function getFormData() {
 	}
 }
 
+// toastr.options.progressBar = true;
+toastr.options.closeButton = true;
+// toastr.options.closeMethod = 'fadeOut';
+// toastr.options.closeMethod = 'slideUp';
+toastr.options.positionClass = 'toast-center'; // This is my customized postion, need to name and config this class in 'toastr.css'.
+toastr.options.timeOut = '2000';
 
 /* jQury functions start from here. */
 $(document).ready(function(){
@@ -91,6 +97,7 @@ $(document).ready(function(){
 	// 	console.log(index + ": " + $(this).text());
 	// });
 	// $.fn.editable.defaults.mode = 'inline';
+	// toastr.success('Saved successfully!', 'IAmTitle', {timeOut: 1000}); // Must override the title before the timeOut override takes effect.
 	var token = $('input[name="csrfmiddlewaretoken"]').prop('value');
 	$('a[data-type="text"]').editable({
 		// type: 'text',
@@ -109,7 +116,8 @@ $(document).ready(function(){
 		},
         // emptytext:'Input',
         success: function(response, newValue) {
-    		// if (response.status == 200) { // This needs to be defined by server definitely.
+        	// console.log(response, response.status, response.statusText, newValue);
+    		// if (response.status === 200) { // This needs to be defined by server definitely.
     			// alert('oldValue: ' + $(this).text() +'\nnewValue: ' + newValue);
     		// }
     			if ($(this).attr('data-name') == 'ex_rate') {
@@ -117,7 +125,7 @@ $(document).ready(function(){
     				var preMatching = $(this).parent().prev().find('a');
     				var nextMatching = $(this).parent().next().find('a');
     				// var price_c = $(this).parent().prev().text();
-    				var price_c = preMatching.editable('getValue', true);
+    				var price_c = preMatching.editable('getValue', true);  // Boolean: wheter to return just value of single element.
     				var price_u = nextMatching.editable('getValue', true);
     				console.log(price_c + price_u)
     				// if ( price_c != 'Empty') {  // for the text() method inside editable, will identify the empty value as string 'Empty'.
@@ -135,7 +143,7 @@ $(document).ready(function(){
     						}
     					});
     					// This is for the UI presentation.
-    					$(nextMatching).editable('setValue', price_u, false);    					
+    					$(nextMatching).editable('setValue', price_u, false); // Boolean: whether to convert value from string to internal format.				
     				} else if ( price_u ) {
     					price_c = (price_u * rate).toFixed(2);
     					$(preMatching).editable('submit', {
@@ -150,12 +158,21 @@ $(document).ready(function(){
     					$(preMatching).editable('setValue', price_c, false);       
     				}
     			}
+
+    			if ($(this).attr('data-name') == 'po_number') {
+    				$.post('/edit_request/', {pk:$(this).attr('data-pk'), target: 'status', target_value:'ORD', 'csrfmiddlewaretoken': token})
+    			}
 		},
 		error: function(response, newValue) {
-			if (response.status == 500) {
+			if (response.status === 500) {
 				return 'submit might be illegal, try again.';
 			} else {
-				return response.responseText;
+				console.log(response.responseType);
+				console.log(response.status);
+				console.log(response.statusText);
+				console.log(response.readyState);
+				location.reload(); // This is a work-around to resolve the weired PO_Number issue: if feed it with character, the error will occur even the reponse status code is 200.
+				// return response.responseText;
 			}
 		}
 
@@ -232,14 +249,13 @@ $(document).ready(function(){
 				 //  		console.log('-------------------------------------------------------------------------------');
 				 //    });	
 
-
 					console.log('Primary key of this event: ', 
 						// event.data.pk, 
 						data.pk
 						// $(this).attr('data-pk')
 						);
-
 					break;
+
 				case 'APP': 
 					$.post('/edit_request/', {pk: primary_key, target: 'approve_date', target_value:event.timeStamp, 'csrfmiddlewaretoken': token})
 					// $(this).parent().prevAll().find('a[data-name="po_number"]').trigger("click");
@@ -250,16 +266,16 @@ $(document).ready(function(){
 					        poi.editable('show');
 					    }, 200);						
 					}
-
 					break;
+
 				case 'AVA': 
 					$('#allocation_modal').modal('show');
-
 					break;
-				case 'ASS': 
 
+				case 'ASS': 
 					$('#allocation_modal').modal('show');
 					break;
+
 				default: 
 
 
@@ -340,15 +356,38 @@ $(document).ready(function(){
  	});
 
 
-/* When user clicks Submit on the allocation modal. */
-	// $('#submit').on('click', {pk: primary_key}, function(event) {
-	// 	$.post('')
-	// });
+/* When user clicks Submit on the allocation modal and the submit is successfully done. */
+	$('#allocation_form').on('submit', function(event) {
+		// var val =  $(this).find('input');
+		var val = $(this).serialize();
+		console.log(val);
+		// ## The post shorthand method just doesn't work in this case.
+		// $.post('/device_allocate/', {data: val, 'csrfmiddlewaretoken': token, dataType:'json'})
+  			// .done( function(response) {
+  				// alert('Response is ' + response);
+  				// $('a[data-pk=' + primary_key + ']').parent().parent().fadeOut(1000);
+  			// });
+  		$.ajax({
+            url: '/device_allocate/',
+            type: 'post',
+            // dataType: 'json',
+            data: val,
+        })
+        // ## .done(), .fail(), .always() are alternative constructs to the callback options of success(), error(), complete(), the latter will be deprecated as of jQuery 3.0.
+        .done(function(data) {
+            toastr.success('Saved successfully!', {timeOut: 2000});
+            $('#allocation_modal').modal('hide');
+            $('a[data-pk=' + primary_key + ']').parent().parent().fadeOut(1000);
+        })
+        .fail(function() {
+        	alert("Error! You might input something illegal.")
+        });
+        event.preventDefault();
+	});
 
 	// $('select').each(function(index) {
 		// console.log(index + ': ' + $(this).text());
 	// });
 
 
-	
 });

@@ -94,7 +94,8 @@ def request_editor(request):
         response = rd.ex_rate
     elif column == 'status':
         rd.status = column_value
-        rd.resolved = True
+        if column_value == 'REF':   # status'value could be REF-refuse, ORD-ordered, etc.
+            rd.resolved = True
         response = rd.status
     elif column == 'approve_date':
         rd.approve_date = timezone.now()
@@ -111,20 +112,20 @@ def request_editor(request):
 
 def device_register(request):
     dict = request.POST.copy()
-    try:
-        pk = dict['pk'];
-        status = dict['status']
-        rd = RequestedDevice.objects.get(pk=pk)
-        serial_no = dict.pop('sn') # got a list of serial number;
-        for i in range(len(serial_no)):
-            ld = LabDevice(device_sn=serial_no[i], status=status, register_date=timezone.now(), model=rd) # LabDevice.model must be a RequestedDevice instance.
-            ld.save()
-        rd.status = status
-        rd.resolved = True
-        rd.save()
+    # try:
+    pk = dict['pk'];
+    status = dict['status']
+    rd = RequestedDevice.objects.get(pk=pk)
+    serial_no = dict.pop('sn') # got a list of serial number;
+    for i in range(len(serial_no)):
+        ld = LabDevice(device_sn=serial_no[i], status=status, register_date=timezone.now(), model=rd) # LabDevice.model must be a RequestedDevice instance.
+        ld.save()
+    rd.status = status
+    rd.resolved = True
+    rd.save()
 
-    except:
-        return HttpResponse(expection_carrier())
+    # except:
+        # return HttpResponse(expection_carrier())
 
-    # return HttpResponse('Saved successfully!')
-    return HttpResponseRedirect('/request_disposal/')
+    return HttpResponse('Saved successfully!')
+    # return HttpResponseRedirect('/request_disposal/')

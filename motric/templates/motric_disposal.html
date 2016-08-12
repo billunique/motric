@@ -11,6 +11,11 @@
         <div class="title"><span>Confirm</span><span class="close" onclick="popdown()">x</span></div>
         <div class="content">You sure?</div>
     </div>
+
+	<div id="notification" class="alert alert-success">
+	  <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+	  <strong>Saved successfully!</strong>
+	</div>
     <!-- <div><span><a href="#" id="ex_rate" data-name="exchange_rate" data-type="text" data-placement="right" data-title="Enter exchange rate" data-value="">Click here to input exchage rate</a></span></div> -->
 
 	<table id="disposal" class="table table-bordered table-hover table-condensed text-center">
@@ -60,7 +65,7 @@
 		    <!-- <a href="#" data-type="select" data-name="req_action" data-title="Choose action" data-pk="{{ device.id }}">{{ device.status |default:"not selected" }}</a> -->
 		    <select class="form-control" data-name="req_action" data-title="Choose action" data-pk="{{ device.id }}">
 		      <option></option>
-	  	  	  <option value="REF" >Decline</option>
+	  	  	  <option value="REF">Decline</option>
 	  	  	  <option value="APP">Approve</option>
 	  	  	  <option value="AVA">Make public</option>
 	  	  	  <option value="ASS">Allocate</option>

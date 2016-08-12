@@ -140,3 +140,8 @@ thead th {
 /*    margin-left:20px;
     margin-top:10px;*/
 }
+
+#notification{
+    z-index:1;
+    display:none;
+}

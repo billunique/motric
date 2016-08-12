@@ -23,7 +23,7 @@ def device_request(request):
 	return render(request, 'motric_request.html')
 
 def request_disposal(request):
-	device_list = RequestedDevice.objects.filter(status='REQ').order_by('-id') # return a list with the lastest request shown first.
+	device_list = RequestedDevice.objects.filter(status__in=['REQ', 'ORD']).order_by('-id') # return a list with the lastest request shown first.
 	return render(request, 'motric_disposal.html', {'device_list':device_list})
 
 # def faq(request):
