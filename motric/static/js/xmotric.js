@@ -382,7 +382,7 @@ $(document).ready(function(){
         })
         .fail(function() {
         	alert("Error! You might input something illegal.")
-        });
+        });	
         event.preventDefault();
 	});
 

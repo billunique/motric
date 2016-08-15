@@ -1,6 +1,6 @@
 from django.http import HttpResponse, HttpRequest, QueryDict, HttpResponseRedirect, HttpResponseNotModified
 from django.shortcuts import render
-from django.core.mail import send_mail
+from django.core.mail import send_mail, EmailMessage
 from django.utils import timezone
 from models import *
 import time, json
@@ -55,7 +55,7 @@ def form_receiver(request):
         message,
         'mobileharness.motric@gmail.com',
         # ['mobileharness-ops@google.com'],
-        ['xiawang@google.com', 'yanyanl@google.com', 'ligang@google.com'],
+        ['xiawang@google.com', 'yanyanl@google.com', 'ligang@google.com', 'mobileharness-ops@google.com'],
         fail_silently=False
     )
 
@@ -79,6 +79,12 @@ def request_editor(request):
     column = dict.values()[2]
     column_value = dict.values()[3]
 
+    requester = rd.requester.ldap
+    subject = "[Motric]Updates of your device request for mobile-harness"
+    sender = 'mobileharness.motric@gmail.com'
+    recipient = [requester + '@google.com']
+    cc_rcpt = ['mobileharness-ops@google.com']
+
     if column == 'po_number':
         rd.po_number = column_value
         rd.po_date = timezone.now()
@@ -94,9 +100,19 @@ def request_editor(request):
         response = rd.ex_rate
     elif column == 'status':
         rd.status = column_value
-        if column_value == 'REF':   # status'value could be REF-refuse, ORD-ordered, etc.
+        if column_value == 'REF': # status'value could be REF-refuse, ORD-ordered, etc.
             rd.resolved = True
-        response = rd.status
+
+            body = "Dear " + requester + ",\n\nWe're sorry that your device request for " + rd.model_type + " (quantity: " + str(rd.quantity) + ") is temporarily refused for some reason.\n" + "Please contact mobileharness-ops@goole.com for details."
+
+        if column_value == 'ORD': # this request is autoly submit after the po_number is inputted, so rd.po_number has gotten value.
+            url = "https://pivt.googleplex.com/viewPo?poid=" + rd.po_number
+            body = "Dear " + requester + ",\n\nThis is to inform you that your device request for " + rd.model_type + " (quantity: " + str(rd.quantity) + ") is approved.\n" + "We have started your purchase order: " + url + " Please stay tuned."
+
+        email = EmailMessage(subject, body, sender, recipient, cc_rcpt, headers={'Cc': ','.join(cc_rcpt)})  # headers section must be included into the EmailMessage brackets.
+        email.send(fail_silently=False)
+
+        response = requester + rd.model_type + rd.status
     elif column == 'approve_date':
         rd.approve_date = timezone.now()
         response = rd.approve_date
