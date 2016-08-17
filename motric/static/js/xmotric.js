@@ -268,17 +268,9 @@ $(document).ready(function(){
 					}
 					break;
 
-				case 'AVA': 
+				default:
 					$('#allocation_modal').modal('show');
 					break;
-
-				case 'ASS': 
-					$('#allocation_modal').modal('show');
-					break;
-
-				default: 
-
-
 			}
 
 			// $('#confirm_modal').on('hide.bs.modal', data, function(event) {
@@ -329,6 +321,9 @@ $(document).ready(function(){
 		$(target).val('');
 		// console.log($(target).prop('value'));
 		$('#allocation_table').children().remove();
+		$('#inst').html('');
+		$('#title').html('');
+
 	});
 
 
@@ -340,16 +335,25 @@ $(document).ready(function(){
 		// console.log('User requested ' + quantity + ' devices.');
 		var td_model = $(td_quantity).prev().prev();
 		var model = td_model.text();
-		if (status == 'ASS') {
-			$('#inst').html('You can now allocate device to users. The devices can be the public ones in lab or newly purchased devices.');
-			$('#title').html('Allocate Device');
-		} else {
-			$('#inst').html('Register the newly purchased devices and put them into PUBLIC pool of our lab.');
-			$('#title').html('Make Device Public');
+		if (status == 'ASS' || status == 'AVA') {
+			if (status == 'ASS') {
+				$('#inst').html('You can now allocate device to users. The devices can be the public ones in lab or newly purchased devices.');
+				$('#title').html('Allocate Device');
+			} else {
+				$('#inst').html('Register the newly purchased devices and put them into PUBLIC pool of our lab.');
+				$('#title').html('Make Device Public');
+			}
+			for (i = 0; i < quantity; i++) {
+				$('#allocation_table').append('<tr><td style="padding:10px">' + model + '</td><td><input type="text" class="form-control minput" placeholder="input device id" name="sn" required></td></tr>');
+			}
+		} else { // status == 'LOC'
+			$('#inst').html('Choose location of the central lab for the devices.');
+			$('#title').html('Set location');
+			$('#allocation_table').append('<tr><td style="padding:10px"><input type="radio" name="location" value="BEJ">Bejing</td> \
+				<td style="padding:10px"><input type="radio" name="location" value="MTV">Mountain View</td> \
+				<td style="padding:10px"><input type="radio" name="location" value="TWD">Taiwan DC</td></tr>');
 		}
-		for (i = 0; i < quantity; i++) {
-			$('#allocation_table').append('<tr><td style="padding:10px">' + model + '</td><td><input type="text" class="form-control minput" placeholder="input device id" name="sn" required></td></tr>');
-		}
+
 		$('#allocation_table').append('<tr><td><input type="hidden" name="pk" value=' + primary_key + '></td></tr>');
 		$('#allocation_table').append('<tr><td><input type="hidden" name="status" value=' + status + '></td></tr>');
 
@@ -378,7 +382,9 @@ $(document).ready(function(){
             toastr.success('Saved successfully!', {timeOut: 2000});
             $('#allocation_modal').modal('hide');
             $('#allocation_table').children().remove();
-            $('a[data-pk=' + primary_key + ']').parent().parent().fadeOut(1000);
+            if (!val.includes('LOC')){ // status is 'ASS' or 'AVA'
+            	$('a[data-pk=' + primary_key + ']').parent().parent().fadeOut(1000);
+            }
         })
         .fail(function() {
         	alert("Error! You might input something illegal.")

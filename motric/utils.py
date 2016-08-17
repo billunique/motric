@@ -1,9 +1,9 @@
-from django.http import HttpResponse, HttpRequest, QueryDict, HttpResponseRedirect, HttpResponseNotModified
+from django.http import HttpResponse, HttpRequest, QueryDict, HttpResponseRedirect
 from django.shortcuts import render
 from django.core.mail import send_mail, EmailMessage
 from django.utils import timezone
 from models import *
-import time, json
+import time, json, threading
 
 
 def expection_carrier():
@@ -109,10 +109,11 @@ def request_editor(request):
             url = "https://pivt.googleplex.com/viewPo?poid=" + rd.po_number
             body = "Dear " + requester + ",\n\nThis is to inform you that your device request for " + rd.model_type + " (quantity: " + str(rd.quantity) + ") is approved.\n" + "We have started your purchase order: " + url + " Please stay tuned."
 
-        email = EmailMessage(subject, body, sender, recipient, cc_rcpt, headers={'Cc': ','.join(cc_rcpt)})  # headers section must be included into the EmailMessage brackets.
-        email.send(fail_silently=False)
+        # email = EmailMessage(subject, body, sender, recipient, cc_rcpt, headers={'Cc': ','.join(cc_rcpt)})  # headers section must be included into the EmailMessage brackets.
+        # email.send(fail_silently=False)
+        motric_send_mail(subject, body, sender, recipient, cc_rcpt)
 
-        response = requester + rd.model_type + rd.status
+        response = requester +'\t' + rd.model_type +'\t' + rd.status
     elif column == 'approve_date':
         rd.approve_date = timezone.now()
         response = rd.approve_date
@@ -125,19 +126,39 @@ def request_editor(request):
 
     return HttpResponse(response)
 
+class EmailThread(threading.Thread):
+    def __init__(self, subject, body, sender, recipient, cc_rcpt):
+        self.subject = subject
+        self.body = body
+        self.sender = sender
+        self.recipient = recipient
+        self.cc_rcpt = cc_rcpt
+        threading.Thread.__init__(self)
 
-def device_register(request):
+    def run (self):
+        msg = EmailMessage(self.subject, self.body, self.sender, self.recipient, self.cc_rcpt, headers={'Cc': ','.join(self.cc_rcpt)})
+        # msg.content_subtype = "html"
+        msg.send(fail_silently=False)
+
+def motric_send_mail(subject, body, sender, recipient, cc_rcpt):
+    EmailThread(subject, body, sender, recipient, cc_rcpt).start()
+
+
+def device_allocate(request):
     dict = request.POST.copy()
     # try:
     pk = dict['pk'];
     status = dict['status']
     rd = RequestedDevice.objects.get(pk=pk)
-    serial_no = dict.pop('sn') # got a list of serial number;
-    for i in range(len(serial_no)):
-        ld = LabDevice(device_sn=serial_no[i], status=status, register_date=timezone.now(), model=rd) # LabDevice.model must be a RequestedDevice instance.
-        ld.save()
-    rd.status = status
-    rd.resolved = True
+    if status == 'LOC':
+        rd.lab_location = dict['location']
+    else: # status is 'ASS' or 'AVA'
+        serial_no = dict.pop('sn') # got a list of serial number;
+        for i in range(len(serial_no)):
+            ld = LabDevice(device_sn=serial_no[i], status=status, register_date=timezone.now(), model=rd) # LabDevice.model must be a RequestedDevice instance.
+            ld.save()
+        rd.status = status
+        rd.resolved = True
     rd.save()
 
     # except:
