@@ -261,7 +261,7 @@ $(document).ready(function(){
 				case 'ASS':
 				case 'AVA':
 				case 'LOC':
-					$('#allocation_modal').modal('show');
+					$('#allocation_modal').modal({backdrop: "static"}); // This option is to make the click outside of modal unable to close the dialog window.
 					break;
 
 				default:
