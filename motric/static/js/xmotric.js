@@ -231,23 +231,13 @@ $(document).ready(function(){
 					$('#confirm_modal').modal('show'); 
 
 					// $('#yes').one('click', data, function(event) {
-					// 	// console.log('I am inside the on listener...............................................................My index is: ', index);
+					// 	console.log('I am inside the on listener...............................................................My index is: ', index);
 					// 	var ele = $(this);
 					// 	console.log(ele);
-				 //  		// alert('index' + $(this).index());
-				 //  		console.log('data.pk', event.data.pk);
-				 //  		console.log('target', event.target);
-				 //  		console.log('currentTarget', event.currentTarget);
-				 //  		console.log('relatedTarget', event.relatedTarget);
-				 //  		console.log('delegateTarget', event.delegateTarget);
-				 //  		console.log('result', event.result);
-				 //  		console.log('which', event.which);
-				 //  		console.log('type', event.type);
-				 //  		console.log('timestamp', event.timeStamp);
-				 //  		console.log('pageX + pageY', event.pageX, event.pageY);
-				 //  		console.log('offsetX + offsetY', event.offsetX, event.offsetY);
-				 //  		console.log('-------------------------------------------------------------------------------');
-				 //    });	
+					// 	alert('index' + $(this).index());
+					// 	console.log('data.pk', event.data.pk);
+					// 	console.log('-------------------------------------------------------------------------------');
+					// });	
 
 					console.log('Primary key of this event: ', 
 						// event.data.pk, 
@@ -268,9 +258,14 @@ $(document).ready(function(){
 					}
 					break;
 
-				default:
+				case 'ASS':
+				case 'AVA':
+				case 'LOC':
 					$('#allocation_modal').modal('show');
 					break;
+
+				default:
+
 			}
 
 			// $('#confirm_modal').on('hide.bs.modal', data, function(event) {
@@ -347,11 +342,13 @@ $(document).ready(function(){
 				$('#allocation_table').append('<tr><td style="padding:10px">' + model + '</td><td><input type="text" class="form-control minput" placeholder="input device id" name="sn" required></td></tr>');
 			}
 		} else { // status == 'LOC'
+			console.log($('#lab_location').val());
 			$('#inst').html('Choose location of the central lab for the devices.');
 			$('#title').html('Set location');
-			$('#allocation_table').append('<tr><td style="padding:10px"><input type="radio" name="location" value="BEJ">Bejing</td> \
+			$('#allocation_table').append('<tr><td style="padding:10px"><input type="radio" name="location" value="Bej">Bejing</td> \
 				<td style="padding:10px"><input type="radio" name="location" value="MTV">Mountain View</td> \
-				<td style="padding:10px"><input type="radio" name="location" value="TWD">Taiwan DC</td></tr>');
+				<td style="padding:10px"><input type="radio" name="location" value="TWD">Taiwan DC</td></tr> \
+				<tr><td style="padding:10px">Current: ' + $('#lab_location').val() + '</td></tr>' );
 		}
 
 		$('#allocation_table').append('<tr><td><input type="hidden" name="pk" value=' + primary_key + '></td></tr>');
@@ -365,6 +362,7 @@ $(document).ready(function(){
 		// var val =  $(this).find('input');
 		var val = $(this).serialize();
 		console.log(val);
+		var new_location = val.split('&')[1].substr(-3);
 		// ## The post shorthand method just doesn't work in this case.
 		// $.post('/device_allocate/', {data: val, 'csrfmiddlewaretoken': token, dataType:'json'})
   			// .done( function(response) {
@@ -384,6 +382,8 @@ $(document).ready(function(){
             $('#allocation_table').children().remove();
             if (!val.includes('LOC')){ // status is 'ASS' or 'AVA'
             	$('a[data-pk=' + primary_key + ']').parent().parent().fadeOut(1000);
+            } else {
+            	$('#lab_location').val(new_location);
             }
         })
         .fail(function() {
