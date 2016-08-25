@@ -4,17 +4,19 @@
 
 {% block body %}
 	<table class="table table-bordered table-hover text-center font-compacted">
+	  {% csrf_token %}
 	  <thead>
 	  	<tr class="btn-primary">
 	  	  <th>Model</th>
-	  	  <th>Device ID</th>
+	  	  <th title="For Android, it's serial number; for iOS, it's unique identifier.">Device ID<img src='/static/img/question.png' style="width:21px;"></th>
 	  	  <th>OS</th>
-	  	  <th>Device Owner</th>
-	  	  <th>Device Label</th>
+	  	  <th title='Those who have the property ownership of the device.'>Owner<img src='/static/img/question.png' style="width:21px;"></th>
+	  	  <th title='Those who have the current usage access of the device. If empty, it is same as owner.'>User<img src='/static/img/question.png' style="width:21px;"></th>
+	  	  <!-- <th title='Info displayed on the MobileHarness client homepage.'>Label<img src='/static/img/question.png' style="width:21px;"></th> -->
 	  	  <th>Project</th>
 	  	  <th class="btn-success">Requester</th>
-	  	  <th class="btn-success">Cost Center</th>
-	  	  <th class="btn-success">PO#</th>
+	  	  <th title='Cost Center' class="btn-success">CC</th>
+	  	  <th title='Purchase Order ID' class="btn-success">PO#</th>
 	  	  <th class="btn-success">Price(USD)</th>
 	  	  <th class="btn-success">Price(CNY)</th>
 	  	  <th class="btn-danger">Status</th>
@@ -24,11 +26,12 @@
 		{% for device in device_list %}
 		<tr>
 		  <td>{{ device.model.model_type }}</td>
-		  <td>{{ device.device_sn }}</td>
-		  <td>{{ device.model.os_version}}</td>
-		  <td>{{ device.model.requester.device_owner }}</td>
-		  <td>{{ device.model.requester.device_label }}</td>
-		  <td>{{ device.model.requester.project }}</td>
+		  <td>{{ device.device_id }}</td>
+		  <td><a href="#" data-target="labd_editor" data-name="os" data-title="Edit os version" data-pk="{{ device.id }}">{{ device.os}}</a></td>
+		  <td><a href="#" data-target="labd_editor" data-name="owner" data-title="Edit device owner" data-pk="{{ device.id }}">{{ device.owner }}</a></td>
+		  <td><a href="#" data-target="labd_editor" data-name="user" data-title="Edit device user" data-pk="{{ device.id }}">{{ device.user }}</a></td>
+		  <!-- <td><a href="#" data-type="text" data-name="device_label" data-title="Change device label" data-pk="{{ device.id }}">{{ device.model.requester.device_label }}</td> -->
+		  <td><a href="#" data-target="labd_editor" data-name="project" data-title="Edit project" data-pk="{{ device.id }}">{{ device.project }}</a></td>
 		  <td>{{ device.model.requester.ldap }}</td>
 		  <td>{{ device.model.requester.cost_center }}</td>
 		  <td>{{ device.model.po_number }}</td>

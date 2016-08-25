@@ -15,6 +15,24 @@ def expection_carrier():
     return json.dumps(dict)
 
 
+class EmailThread(threading.Thread):
+    def __init__(self, subject, body, sender, recipient, cc_rcpt):
+        self.subject = subject
+        self.body = body
+        self.sender = sender
+        self.recipient = recipient
+        self.cc_rcpt = cc_rcpt
+        threading.Thread.__init__(self)
+
+    def run (self):
+        msg = EmailMessage(self.subject, self.body, self.sender, self.recipient, self.cc_rcpt, headers={'Cc': ','.join(self.cc_rcpt)})
+        # msg.content_subtype = "html"
+        msg.send(fail_silently=False)
+
+def motric_send_mail(subject, body, sender, recipient, cc_rcpt):
+    EmailThread(subject, body, sender, recipient, cc_rcpt).start()
+
+
 def form_receiver(request):
 
     form_dict = request.POST.copy() # Interesting! This is naturally a dictionary (QueryDict), can be used for parse directly.  copy() is to make the dict mutable for pop().
@@ -50,13 +68,12 @@ def form_receiver(request):
         return HttpResponse(expection_carrier())
 
     message = ldap + ' raised device request for:\n\n' + combo + '\n\nPlease go to http://motric.bej.corp.google.com:8083/request_disposal for details.'
-    send_mail(
+    motric_send_mail(
         '[Motric]Somebody raised device request!',
         message,
         'mobileharness.motric@gmail.com',
-        # ['mobileharness-ops@google.com'],
-        ['xiawang@google.com', 'yanyanl@google.com', 'ligang@google.com', 'mobileharness-ops@google.com'],
-        fail_silently=False
+        ['xiawang@google.com', 'yanyanl@google.com', 'ligang@google.com'],
+        ['mobileharness-ops@google.com']
     )
 
     # return HttpResponse("Thanks for using Mobile Harness! We've received your request, if it's approved, we'll start purchasing shortly. Please stay tuned.")
@@ -117,6 +134,8 @@ def request_editor(request):
     elif column == 'approve_date':
         rd.approve_date = timezone.now()
         response = rd.approve_date
+    elif column == 'device_user':
+        ld.user = column_value
     else:
         response = data
     rd.save()
@@ -126,22 +145,25 @@ def request_editor(request):
 
     return HttpResponse(response)
 
-class EmailThread(threading.Thread):
-    def __init__(self, subject, body, sender, recipient, cc_rcpt):
-        self.subject = subject
-        self.body = body
-        self.sender = sender
-        self.recipient = recipient
-        self.cc_rcpt = cc_rcpt
-        threading.Thread.__init__(self)
 
-    def run (self):
-        msg = EmailMessage(self.subject, self.body, self.sender, self.recipient, self.cc_rcpt, headers={'Cc': ','.join(self.cc_rcpt)})
-        # msg.content_subtype = "html"
-        msg.send(fail_silently=False)
+def labdevice_editor(request):
+    message = ''
+    dict = request.POST.copy()
+    data = json.dumps(dict)
+    message += data
 
-def motric_send_mail(subject, body, sender, recipient, cc_rcpt):
-    EmailThread(subject, body, sender, recipient, cc_rcpt).start()
+    pk = dict['pk']
+    ld = LabDevice.objects.get(pk=pk)
+
+    field = dict.values()[2]
+    field_value = dict.values()[3]
+
+    # target = getattr(ld, field)
+    # target = field_value
+    ld.__dict__[field] = field_value
+    ld.save()
+    message += "\n" + field + " " + field_value + " saved successfully."
+    return HttpResponse(field_value)
 
 
 def device_allocate(request):

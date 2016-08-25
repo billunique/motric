@@ -29,7 +29,7 @@ class Requester(models.Model):
 	cost_center = models.CharField(max_length=50)
 	project = models.CharField(max_length=50)
 	device_owner = models.CharField(max_length=100)
-	device_label = models.CharField(max_length=30)
+	device_label = models.CharField(max_length=50)
 
 	def __unicode__(self):
 		return self.ldap
@@ -56,8 +56,14 @@ class RequestedDevice(DeviceStatus):
 class LabDevice(DeviceStatus):
 	# model = models.OneToOneField(RequestedDevice)
 	model = models.ForeignKey(RequestedDevice)
-	device_sn = models.CharField(max_length=100)
-	register_date = models.DateTimeField('date device_sn recorded', auto_now_add=True) # The register date is basically fixed. While other status could be mutable. 
+	device_id = models.CharField(max_length=100)
+	register_date = models.DateTimeField('date device_id recorded', auto_now_add=True) # The register date is basically fixed. While other status could be mutable. 
+	os = models.CharField(max_length=50, blank=True)
+	owner = models.CharField(max_length=100, blank=True, null=True)
+	user = models.CharField(max_length=100, blank=True)  # Those who have the device usage access.
+	label = models.CharField(max_length=50, blank=True)
+	project = models.CharField(max_length=50, blank=True)
+
 
 	def __unicode__(self):
 		return self.device_sn

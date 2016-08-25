@@ -31,6 +31,7 @@ urlpatterns = [
 	url(r'^request/', utils.form_receiver, name='receiver'), # this is a pratical technic.
     url(r'^edit_request/', utils.request_editor, name='req_editor'),
     url(r'^device_allocate/', utils.device_allocate, name='dev_allocate'),
+    url(r'^edit_labdevice/', utils.labdevice_editor, name='labd_editor'),
     url(r'^admin/', admin.site.urls),
 ]
 

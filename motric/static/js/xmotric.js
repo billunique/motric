@@ -99,7 +99,7 @@ $(document).ready(function(){
 	// $.fn.editable.defaults.mode = 'inline';
 	// toastr.success('Saved successfully!', 'IAmTitle', {timeOut: 1000}); // Must override the title before the timeOut override takes effect.
 	var token = $('input[name="csrfmiddlewaretoken"]').prop('value');
-	$('a[data-type="text"]').editable({
+	$('a[data-target="req_editor"]').editable({
 		// type: 'text',
 		placement: 'left',
 		// pk: function(){}
@@ -167,15 +167,48 @@ $(document).ready(function(){
 			if (response.status === 500) {
 				return 'submit might be illegal, try again.';
 			} else {
-				console.log(response.responseType);
+				console.log(response);
 				console.log(response.status);
-				console.log(response.statusText);
-				console.log(response.readyState);
-				location.reload(); // This is a work-around to resolve the weired PO_Number issue: if feed it with character, the error will occur even the reponse status code is 200.
+				$(this).editable('setValue', newValue, false); 
+				$(this).editable('hide');
+				// location.reload(); // This is a work-around to resolve the weired PO_Number issue: if feed it with character, the error will occur even the reponse status code is 200.
 				// return response.responseText;
 			}
 		}
 
+	});
+
+
+	$('a[data-target="labd_editor"]').editable({
+		// mode: 'inline',
+		// type:'text',
+		placement: 'left',
+		url: '/edit_labdevice/',
+        ajaxOptions: {
+           dataType: 'json', 
+        }, 
+        params: function(params) {
+		    //originally params contain pk, name and value
+		    params.csrfmiddlewaretoken = token;
+		    return params;
+		},
+
+		success: function(response, newValue) {
+			console.log(response);
+			console.log(newValue);
+		},
+
+		error: function(response, newValue) {
+			if (response.status === 500) {
+				return 'submit might be illegal, try again.';
+			} else if (response.status === 200) {
+				console.log(response);
+				console.log(newValue);
+				$(this).editable('setValue', newValue, false); 
+				$(this).editable('hide');
+				// location.reload(); // This is a work-around to resolve the weired PO_Number issue: if feed it with character, the error will occur even the reponse status code is 200.
+			}
+		}
 	});
 
 	// $('a[data-type="select"]').editable({
