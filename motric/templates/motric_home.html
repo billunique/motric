@@ -37,7 +37,7 @@
 		  <td>{{ device.model.po_number }}</td>
 		  <td>{{ device.model.price_usd }}</td>
 		  <td>{{ device.model.price_cny }}</td>
-		  <td>{{ device.get_status_display }}</td>  {# don't use it as display() #}
+		  <td><a href="#" data-target="labd_editor" data-name="status" data-type="select" data-title="Change Status" data-pk="{{ device.id }}">{{ device.get_status_display }}</td>  {# don't use it as display() #}
 		</tr>
 		{% endfor %}
 	  </tbody>

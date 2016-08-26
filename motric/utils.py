@@ -163,7 +163,7 @@ def labdevice_editor(request):
     ld.__dict__[field] = field_value
     ld.save()
     message += "\n" + field + " " + field_value + " saved successfully."
-    return HttpResponse(field_value)
+    return HttpResponse(field_value, status=200, charset='utf8')
 
 
 def device_allocate(request):
@@ -177,7 +177,7 @@ def device_allocate(request):
     else: # status is 'ASS' or 'AVA'
         serial_no = dict.pop('sn') # got a list of serial number;
         for i in range(len(serial_no)):
-            ld = LabDevice(device_sn=serial_no[i], status=status, register_date=timezone.now(), model=rd) # LabDevice.model must be a RequestedDevice instance.
+            ld = LabDevice(device_id=serial_no[i], status=status, register_date=timezone.now(), model=rd, os=rd.os_version, owner=rd.requester.device_owner, label=rd.requester.device_label, project=rd.requester.project) # LabDevice.model must be a RequestedDevice instance.
             ld.save()
         rd.status = status
         rd.resolved = True

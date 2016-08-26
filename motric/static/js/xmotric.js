@@ -187,6 +187,14 @@ $(document).ready(function(){
         ajaxOptions: {
            dataType: 'json', 
         }, 
+
+        source: [
+		 	// {text: ''},
+		 	{value: 'AVA', text: 'Public'},
+		 	{value: 'ASS', text: 'Assigned'},
+			// {value: '123', text:'12343'}
+        ],
+
         params: function(params) {
 		    //originally params contain pk, name and value
 		    params.csrfmiddlewaretoken = token;
@@ -204,11 +212,64 @@ $(document).ready(function(){
 			} else if (response.status === 200) {
 				console.log(response);
 				console.log(newValue);
+				var oldValue = $(this).text();
+				console.log(oldValue);
 				$(this).editable('setValue', newValue, false); 
 				$(this).editable('hide');
-				// location.reload(); // This is a work-around to resolve the weired PO_Number issue: if feed it with character, the error will occur even the reponse status code is 200.
+				if (newValue == 'AVA' || 'ASS') { // newValue is much better than $(this).text(), it reflects the change.
+					var td_owner = $(this).parent().prevAll().find('a[data-name="owner"]');
+					var td_project = $(this).parent().prevAll().find('a[data-name="project"]');
+					if (newValue == 'AVA') {
+						td_owner.editable('submit', {
+							data:{value:'mobileharness'},
+							success: function(data) {
+								td_owner.editable('setValue', 'mobileharness', false);
+							},
+							error: function(errors) {
+								console.log($(this));
+							}
+						});
+
+						setTimeout(function() {
+							td_project.editable('submit', {
+								data:{value:'moha'},
+								success: function(data) {
+									td_project.editable('setValue', 'moha', false);
+								},
+								error: function(errors) {
+									console.log($(this));
+								}
+							});
+						}, 200);
+
+						if ((document.title).startsWith("Dedicated")) {
+							$(this).parent().parent().fadeOut(1000);
+						}
+					} else if ( newValue == 'ASS' ) {
+						if ( td_owner.text() == 'mobileharness' ) {
+							setTimeout(function() {
+								td_owner.editable('show');
+							}, 200)
+							console.log($(this));
+							console.log(oldValue);
+							$(this).editable('setValue', oldValue, true);
+						} else { // owner is other than mobileharness, it's probably modified ahead.
+							if ( (document.title).startsWith("Public") ) {
+								if ( td_project.text() != 'moha' ) { 
+									$(this).parent().parent().fadeOut(1500);
+								} else {
+									setTimeout(function() {
+										td_project.editable('show');
+									}, 200)
+									$(this).editable('setValue', oldValue, false);
+								}
+							}
+						}
+					}
+				}
 			}
 		}
+
 	});
 
 	// $('a[data-type="select"]').editable({
