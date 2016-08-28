@@ -194,6 +194,7 @@ $(document).ready(function(){
 		 	{value: 'ASS', text: 'Assigned'},
 			// {value: '123', text:'12343'}
         ],
+        // prepend: $(this).text(),
 
         params: function(params) {
 		    //originally params contain pk, name and value
@@ -211,9 +212,15 @@ $(document).ready(function(){
 				return 'submit might be illegal, try again.';
 			} else if (response.status === 200) {
 				console.log(response);
-				console.log(newValue);
-				var oldValue = $(this).text();
-				console.log(oldValue);
+				console.log('newValue is: ', newValue);
+				// var oldValue = $(this).editable('getValue', true);  // by this way, oldValue could be empty.
+				// console.log(oldValue);
+				var oldText = ($(this).text());
+				var oldValue;
+				if ( oldText == 'Public') {
+					oldValue = 'AVA';
+				} else { oldValue = 'ASS'; }
+
 				$(this).editable('setValue', newValue, false); 
 				$(this).editable('hide');
 				if (newValue == 'AVA' || 'ASS') { // newValue is much better than $(this).text(), it reflects the change.
@@ -243,34 +250,33 @@ $(document).ready(function(){
 						}, 200);
 
 						if ((document.title).startsWith("Dedicated")) {
-							$(this).parent().parent().fadeOut(1000);
+							$(this).parent().parent().fadeOut(1500);
 						}
-					} else if ( newValue == 'ASS' ) {
+					} else if ( newValue == 'ASS' ) {  // to avoid the case newValue is empty, explicitly state the else if.
 						if ( td_owner.text() == 'mobileharness' ) {
 							setTimeout(function() {
 								td_owner.editable('show');
-							}, 200)
-							console.log($(this));
-							console.log(oldValue);
+							}, 200);
 							$(this).editable('setValue', oldValue, true);
 						} else { // owner is other than mobileharness, it's probably modified ahead.
-							if ( (document.title).startsWith("Public") ) {
-								if ( td_project.text() != 'moha' ) { 
-									$(this).parent().parent().fadeOut(1500);
-								} else {
-									setTimeout(function() {
-										td_project.editable('show');
-									}, 200)
-									$(this).editable('setValue', oldValue, false);
-								}
+							if ( td_project.text() == 'moha' ) {
+								setTimeout(function() {
+									td_project.editable('show');
+								}, 200);
+								$(this).editable('setValue', oldValue, false);
+							} else if ( (document.title).startsWith("Public") ) {
+								$(this).parent().parent().fadeOut(1500);
 							}
 						}
-					}
-				}
+					} // end of condition newValue 'ASS'.
+				} // end of condition newValue 'AVA' or 'ASS'.
 			}
 		}
 
 	});
+
+
+
 
 	// $('a[data-type="select"]').editable({
 	// 	placement: 'left',
