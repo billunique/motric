@@ -8,15 +8,15 @@ def index(request):
 	# return HttpResponse("Hello World, I'm a Django sample app named Polls, you're now at the Polls index.")
 
 def home(request):
-	device_list = LabDevice.objects.filter(status__in=['AVA', 'ASS'])
+	device_list = LabDevice.objects.filter(status__in=['AVA', 'ASS']).order_by('-id')
 	return render(request, 'motric_home.html', {'device_list':device_list})
 
 def public_device(request):
-	device_list = LabDevice.objects.filter(status='AVA')
+	device_list = LabDevice.objects.filter(status='AVA').order_by('-id')
 	return render(request, 'motric_public.html', {'device_list':device_list})
 
 def dedicated_device(request):
-	device_list = LabDevice.objects.filter(status='ASS')
+	device_list = LabDevice.objects.filter(status='ASS').order_by('-id')
 	return render(request, 'motric_dedicated.html', {'device_list':device_list})
 
 def device_request(request):

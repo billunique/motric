@@ -174,10 +174,22 @@ def device_allocate(request):
     rd = RequestedDevice.objects.get(pk=pk)
     if status == 'LOC':
         rd.lab_location = dict['location']
+    elif status == 'CUR':
+        ld_pk = dict.pop('pkid')
+        for i in range(len(ld_pk)):
+            ld = LabDevice.objects.get(pk=ld_pk[i])
+            ld.owner = rd.requester.device_owner
+            ld.label = rd.requester.device_label
+            ld.project = rd.requester.project
+            ld.status = 'ASS'
+            ld.model.add(rd)
+            ld.save()
     else: # status is 'ASS' or 'AVA'
-        serial_no = dict.pop('sn') # got a list of serial number;
+        serial_no = dict.pop('did') # got a list of serial number;
         for i in range(len(serial_no)):
-            ld = LabDevice(device_id=serial_no[i], status=status, register_date=timezone.now(), model=rd, os=rd.os_version, owner=rd.requester.device_owner, label=rd.requester.device_label, project=rd.requester.project) # LabDevice.model must be a RequestedDevice instance.
+            ld = LabDevice(device_id=serial_no[i], status=status, register_date=timezone.now(), os=rd.os_version, owner=rd.requester.device_owner, label=rd.requester.device_label, project=rd.requester.project) # LabDevice.model must be a RequestedDevice instance.
+            ld.save()
+            ld.model.add(rd)
             ld.save()
         rd.status = status
         rd.resolved = True

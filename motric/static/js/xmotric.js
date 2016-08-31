@@ -319,7 +319,7 @@ $(document).ready(function(){
     		var data =  { pk: $(this).attr('data-pk'), };
     		primary_key = data.pk;
     		status = $(this).val();
-			switch ( status) {
+			switch ( status ) {
 				case 'REF': 
 					// var answ = confirm("Sure?");
 					// console.log(answ);					
@@ -360,6 +360,7 @@ $(document).ready(function(){
 
 				case 'ASS':
 				case 'AVA':
+				case 'CUR':
 				case 'LOC':
 					$('#allocation_modal').modal({backdrop: "static"}); // This option is to make the click outside of modal unable to close the dialog window.
 					break;
@@ -430,25 +431,38 @@ $(document).ready(function(){
 		// console.log('User requested ' + quantity + ' devices.');
 		var td_model = $(td_quantity).prev().prev();
 		var model = td_model.text();
-		if (status == 'ASS' || status == 'AVA') {
-			if (status == 'ASS') {
-				$('#inst').html('You can now allocate device to users. The devices can be the public ones in lab or newly purchased devices.');
-				$('#title').html('Allocate Device');
-			} else {
+		switch ( status ) {
+			case 'ASS':
+				$('#inst').html('You can now allocate device to users from newly purchased devices. Input <b><span style="color:red">device id</b>(for Android, it is serial number, for iOS, it is unique identifier) please.');
+				$('#title').html('Allocate Newly Purchased Devices');
+				for (i = 0; i < quantity; i++) {
+					$('#allocation_table').append('<tr><td style="padding:10px">' + model + '</td><td><input type="text" class="form-control" placeholder="input device id" name="did" required></td></tr>');
+				}
+				break;		
+			case 'CUR':
+				$('#inst').html('You can now allocate device to users from public pool. Input <b><span style="color:red">first #</span></b> on the public devices page please.');
+				$('#title').html('Allocate Public Devices');
+				for (i = 0; i < quantity; i++) {
+					$('#allocation_table').append('<tr><td style="padding:10px">' + model + '</td><td><input type="text" class="form-control" placeholder="input first #" name="pkid" required></td></tr>');
+				}
+				break;
+			case 'AVA':
 				$('#inst').html('Register the newly purchased devices and put them into PUBLIC pool of our lab.');
 				$('#title').html('Make Device Public');
-			}
-			for (i = 0; i < quantity; i++) {
-				$('#allocation_table').append('<tr><td style="padding:10px">' + model + '</td><td><input type="text" class="form-control minput" placeholder="input device id" name="sn" required></td></tr>');
-			}
-		} else { // status == 'LOC'
-			console.log($('#lab_location').val());
-			$('#inst').html('Choose location of the central lab for the devices.');
-			$('#title').html('Set location');
-			$('#allocation_table').append('<tr><td style="padding:10px"><input type="radio" name="location" value="Bej">Bejing</td> \
-				<td style="padding:10px"><input type="radio" name="location" value="MTV">Mountain View</td> \
-				<td style="padding:10px"><input type="radio" name="location" value="TWD">Taiwan DC</td></tr> \
-				<tr><td style="padding:10px">Current: ' + $('#lab_location').val() + '</td></tr>' );
+				for (i = 0; i < quantity; i++) {
+					$('#allocation_table').append('<tr><td style="padding:10px">' + model + '</td><td><input type="text" class="form-control" placeholder="input device id" name="did" required></td></tr>');
+				}
+				break;
+			case 'LOC':
+				console.log($('#lab_location').val());
+				$('#inst').html('Choose location of the central lab for the devices.');
+				$('#title').html('Set location');
+				$('#allocation_table').append('<tr><td style="padding:10px"><input type="radio" name="location" value="Bej">Bejing</td> \
+					<td style="padding:10px"><input type="radio" name="location" value="MTV">Mountain View</td> \
+					<td style="padding:10px"><input type="radio" name="location" value="TWD">Taiwan DC</td></tr> \
+					<tr><td style="padding:10px;color:red">Current: ' + $('#lab_location').val() + '</td></tr>' );
+				break;
+			default:
 		}
 
 		$('#allocation_table').append('<tr><td><input type="hidden" name="pk" value=' + primary_key + '></td></tr>');

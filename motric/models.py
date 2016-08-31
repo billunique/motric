@@ -54,8 +54,9 @@ class RequestedDevice(DeviceStatus):
 		# return self.model_type
 
 class LabDevice(DeviceStatus):
-	# model = models.OneToOneField(RequestedDevice)
-	model = models.ForeignKey(RequestedDevice)
+	# model = models.OneToOneField(RequestedDevice)  # OneToOne is smilar to ForeignKey but unique=true, this is not the case.
+	# model = models.ForeignKey(RequestedDevice)
+	model = models.ManyToManyField(RequestedDevice)
 	device_id = models.CharField(max_length=100)
 	register_date = models.DateTimeField('date device_id recorded', auto_now_add=True) # The register date is basically fixed. While other status could be mutable. 
 	os = models.CharField(max_length=50, blank=True)
@@ -66,7 +67,7 @@ class LabDevice(DeviceStatus):
 
 
 	def __unicode__(self):
-		return self.device_sn
+		return self.device_id
 
 
 class Event(models.Model):

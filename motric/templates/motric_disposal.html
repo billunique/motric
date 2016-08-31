@@ -43,7 +43,7 @@
 	  <tbody>
 		{% for device in device_list %}
 		<tr>
-		  <td>{{ device.id}}</td>
+		  <td>{{ device.id }}</td>
 		  <td>{{ device.requester.ldap }}</td>
 		  <td>{{ device.requester.cost_center }}</td>
 		  <td>{{ device.requester.project }}</td>
@@ -68,7 +68,8 @@
 	  	  	  <option value="REF">Decline</option>
 	  	  	  <option value="APP">Approve</option>
 	  	  	  <option value="AVA">Make public</option>
-	  	  	  <option value="ASS">Allocate</option>
+	  	  	  <option value="ASS">Allocate New</option>
+	  	  	  <option value="CUR">Allocate Cur</option>
 	  	  	  <option value="LOC">Set location</option>
 	  	  	</select>
 	  	  </td>
