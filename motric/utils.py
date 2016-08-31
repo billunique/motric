@@ -102,19 +102,17 @@ def request_editor(request):
     recipient = [requester + '@google.com']
     cc_rcpt = ['mobileharness-ops@google.com']
 
+    response = column_value
+
     if column == 'po_number':
         rd.po_number = column_value
         rd.po_date = timezone.now()
-        response = rd.po_number
     elif column == 'price_cny':
         rd.price_cny = column_value
-        response = rd.price_cny
     elif column == 'price_usd':
         rd.price_usd = column_value
-        response = rd.price_usd
     elif column == 'ex_rate':
         rd.ex_rate = column_value
-        response = rd.ex_rate
     elif column == 'status':
         rd.status = column_value
         if column_value == 'REF': # status'value could be REF-refuse, ORD-ordered, etc.
@@ -133,7 +131,6 @@ def request_editor(request):
         response = requester +'\t' + rd.model_type +'\t' + rd.status
     elif column == 'approve_date':
         rd.approve_date = timezone.now()
-        response = rd.approve_date
     elif column == 'device_user':
         ld.user = column_value
     else:
@@ -200,3 +197,10 @@ def device_allocate(request):
 
     return HttpResponse('Saved successfully!')
     # return HttpResponseRedirect('/request_disposal/')
+
+def details(request):
+    q = request.GET.copy()
+    data = json.dumps(q)
+    pk = q['pk']
+    did = q['did']
+    return render(request, 'motric_details.html', {'pk':pk, 'did':did})

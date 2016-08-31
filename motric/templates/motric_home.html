@@ -17,7 +17,7 @@
 	  	  <th>Project</th>
 	  	  <th class="btn-success">Requester</th>
 	  	  <th title='Cost Center' class="btn-success">CC</th>
-	  	  <th title='Purchase Order ID' class="btn-success">PO#</th>
+	  	  <th title='Purchase Order ID on Pivt system' class="btn-success">PO#<img src='/static/img/question.png' style="width:21px;"></th>
 	  	  <th class="btn-success">Price(USD)</th>
 	  	  <th class="btn-success">Price(CNY)</th>
 	  	  <th class="btn-danger">Status</th>
@@ -28,7 +28,7 @@
 		<tr>
 		  <td>{{ device.id }}</td>
 		  <td>{{ device.model.all.last.model_type }}</td> {# Niubility! django's model and template #}
-		  <td>{{ device.device_id }}</td>
+		  <td><a href="/details/?did={{ device.device_id }}&pk={{ device.id }}" target="_blank">{{ device.device_id }}</td>
 		  <td><a href="#" data-target="labd_editor" data-name="os" data-title="Edit os version" data-pk="{{ device.id }}">{{ device.os}}</a></td>
 		  <td><a href="#" data-target="labd_editor" data-name="owner" data-title="Edit device owner" data-pk="{{ device.id }}">{{ device.owner }}</a></td>
 		  <td><a href="#" data-target="labd_editor" data-name="user" data-title="Edit device user" data-pk="{{ device.id }}">{{ device.user }}</a></td>

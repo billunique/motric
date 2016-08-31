@@ -1,0 +1,31 @@
+{% extends 'motric_moresrc.html' %}
+
+{% block title %}Details of device{% endblock %}
+
+{% block body %}
+	<h3>Details of device {{ did }}<h3>
+	<table class="table table-hover text-center font-compacted">
+	  <thead>
+	  	<tr class="btn-primary">
+	  	  <th>Model</th>
+	  	  <th title="For Android, it's serial number; for iOS, it's unique identifier.">Device ID<img src='/static/img/question.png' style="width:21px;"></th>
+	  	  <th>OS</th>
+	  	  <th title='Those who have the property ownership of the device.'>Owner<img src='/static/img/question.png' style="width:21px;"></th>
+	  	  <th title='Those who have the current usage access of the device. If empty, it is same as owner.'>User<img src='/static/img/question.png' style="width:21px;"></th>
+	  	  <!-- <th title='Info displayed on the MobileHarness client homepage.'>Label<img src='/static/img/question.png' style="width:21px;"></th> -->
+	  	  <th>Project</th>
+	  	  <th class="btn-success">Requester</th>
+	  	  <th title='Cost Center' class="btn-success">CC</th>
+	  	  <th title='Purchase Order ID on Pivt system' class="btn-success">PO#<img src='/static/img/question.png' style="width:21px;"></th>
+	  	  <th class="btn-success">Price(USD)</th>
+	  	  <th class="btn-success">Price(CNY)</th>
+	  	  <th class="btn-danger">Status</th>
+	  	</tr>
+	  </thead>
+	  <tbody>
+		<tr>
+
+		</tr>
+	  </tbody>
+	</table>
+{% endblock %}
