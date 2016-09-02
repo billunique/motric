@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.core.mail import send_mail, EmailMessage
 from django.utils import timezone
 from models import *
-import time, json, threading
+import time, json, threading, getpass
 
 
 def expection_carrier():
@@ -159,6 +159,9 @@ def labdevice_editor(request):
     # target = field_value
     ld.__dict__[field] = field_value
     ld.save()
+    event_msg = {'timestamp':timezone.now(), 'operation':field + "'s value was changed to " + field_value, 'operator':getpass.getuser()}
+    evt = Event(device=ld, event=event_msg)
+    evt.save()
     message += "\n" + field + " " + field_value + " saved successfully."
     return HttpResponse(field_value, status=200, charset='utf8')
 
@@ -166,9 +169,11 @@ def labdevice_editor(request):
 def device_allocate(request):
     dict = request.POST.copy()
     # try:
-    pk = dict['pk'];
+    pk = dict['pk']
     status = dict['status']
     rd = RequestedDevice.objects.get(pk=pk)
+    register_date = timezone.now()
+    event_msg = {}
     if status == 'LOC':
         rd.lab_location = dict['location']
     elif status == 'CUR':
@@ -181,13 +186,19 @@ def device_allocate(request):
             ld.status = 'ASS'
             ld.model.add(rd)
             ld.save()
+            event_msg = {'timestamp':register_date, 'operation':'made ' + ld.get_status_display(), 'operator':getpass.getuser()}
+            evt = Event(device=ld, event=event_msg)
+            evt.save()
     else: # status is 'ASS' or 'AVA'
         serial_no = dict.pop('did') # got a list of serial number;
         for i in range(len(serial_no)):
-            ld = LabDevice(device_id=serial_no[i], status=status, register_date=timezone.now(), os=rd.os_version, owner=rd.requester.device_owner, label=rd.requester.device_label, project=rd.requester.project) # LabDevice.model must be a RequestedDevice instance.
+            ld = LabDevice(device_id=serial_no[i], status=status, register_date=register_date, os=rd.os_version, owner=rd.requester.device_owner, label=rd.requester.device_label, project=rd.requester.project) # LabDevice.model must be a RequestedDevice instance.
             ld.save()
             ld.model.add(rd)
             ld.save()
+            event_msg = {'timestamp':register_date, 'operation':'made ' + ld.get_status_display(), 'operator':getpass.getuser()}
+            evt = Event(device=ld, event=event_msg)
+            evt.save()
         rd.status = status
         rd.resolved = True
     rd.save()
@@ -203,4 +214,6 @@ def details(request):
     data = json.dumps(q)
     pk = q['pk']
     did = q['did']
-    return render(request, 'motric_details.html', {'pk':pk, 'did':did})
+    ld = LabDevice.objects.get(pk=pk)
+    event_list = Event.objects.filter(device=ld)
+    return render(request, 'motric_details.html', {'device':ld, 'did':did, 'event_list':event_list})
