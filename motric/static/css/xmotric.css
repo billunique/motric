@@ -18,6 +18,10 @@
     font-size:14px;
 }
 
+.font-small {
+    font-size:13px;
+}
+
 .required {
 	color:red;
 }

@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 from django.db import models
+from jsonfield import JSONField
 
 # Create your models here.
 
@@ -32,7 +33,7 @@ class Requester(models.Model):
 	device_label = models.CharField(max_length=50)
 
 	def __unicode__(self):
-		return self.ldap
+		return u'%s, from project %s' % (self.ldap, self.project)
 
 class RequestedDevice(DeviceStatus):
 	model_type = models.CharField(max_length=30)
@@ -67,13 +68,14 @@ class LabDevice(DeviceStatus):
 
 
 	def __unicode__(self):
-		return self.device_id
+		return u'%s, for project %s' % (self.device_id, self.project)
 
 
 class Event(models.Model):
 	event_id = models.AutoField(primary_key=True)
 	device = models.ForeignKey(LabDevice, on_delete=models.CASCADE)
-	event = models.CharField(max_length=512) # used to store all the events expressed in JSON.
+	# event = models.CharField(max_length=512) # used to store all the events expressed in JSON.
+	event = JSONField() # used to store all the events expressed in JSON.
 
 	def __unicode__(self):
-		return self.event
+		return u'%s, %s' % (self.event_id, self.event)

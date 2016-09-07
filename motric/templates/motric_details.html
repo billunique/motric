@@ -81,11 +81,18 @@
 	  	</tr>
 	</table>
 
-	<table class="table table-bordered font-compacted">
+	<table class="table table-bordered table-condensed font-compacted">
 		<caption>Event History</caption>
+		<tr class="btn-success">
+			<th>Timestamp</th>
+			<th>Operator</th>
+			<th class="btn-warning">Operation</th>
+		</tr>
 		{% for event in event_list %}
 		<tr>
-		  <td>{{ event }}</td>
+			<td>{{ event.event.items.1.1 }}</td>
+			<td>{{ event.event.items.0.1 }}</td>
+			<td>{{ event.event.items.2.1 }}</td>
 		</tr>
 		{% endfor %}
 	</table>

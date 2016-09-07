@@ -239,9 +239,9 @@ $(document).ready(function(){
 
 						setTimeout(function() {
 							td_project.editable('submit', {
-								data:{value:'moha'},
+								data:{value:'PUBLIC'},
 								success: function(data) {
-									td_project.editable('setValue', 'moha', false);
+									td_project.editable('setValue', 'PUBLIC', false);
 								},
 								error: function(errors) {
 									console.log($(this));
@@ -259,7 +259,7 @@ $(document).ready(function(){
 							}, 200);
 							$(this).editable('setValue', oldValue, true);
 						} else { // owner is other than mobileharness, it's probably modified ahead.
-							if ( td_project.text() == 'moha' ) {
+							if ( td_project.text() == 'PUBLIC' ) {
 								setTimeout(function() {
 									td_project.editable('show');
 								}, 200);

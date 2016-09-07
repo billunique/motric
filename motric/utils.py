@@ -1,7 +1,8 @@
-from django.http import HttpResponse, HttpRequest, QueryDict, HttpResponseRedirect
+from django.http import HttpResponse, HttpRequest
 from django.shortcuts import render
 from django.core.mail import send_mail, EmailMessage
 from django.utils import timezone
+from django.core import serializers
 from models import *
 import time, json, threading, getpass
 
@@ -159,7 +160,11 @@ def labdevice_editor(request):
     # target = field_value
     ld.__dict__[field] = field_value
     ld.save()
-    event_msg = {'timestamp':timezone.now(), 'operation':field + "'s value was changed to " + field_value, 'operator':getpass.getuser()}
+    if field_value == 'AVA':
+        field_value = 'Public'
+    if field_value == 'ASS':
+        field_value = 'Assigned'
+    event_msg = {'timestamp':timezone.now(), 'operation':field + " was changed to " + field_value, 'operator':getpass.getuser()}
     evt = Event(device=ld, event=event_msg)
     evt.save()
     message += "\n" + field + " " + field_value + " saved successfully."
@@ -173,6 +178,7 @@ def device_allocate(request):
     status = dict['status']
     rd = RequestedDevice.objects.get(pk=pk)
     register_date = timezone.now()
+    # register_date = time.ctime()
     event_msg = {}
     if status == 'LOC':
         rd.lab_location = dict['location']
