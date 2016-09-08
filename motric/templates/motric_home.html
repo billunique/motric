@@ -3,6 +3,9 @@
 {% block title %}All devices running on Mobile Harness{% endblock %}
 
 {% block body %}
+
+{% include 'motric_modal.html' %}
+
 	<table class="table table-bordered table-hover text-center font-compacted">
 	  {% csrf_token %}
 	  <thead>
@@ -28,7 +31,7 @@
 		<tr>
 		  <td>{{ device.id }}</td>
 		  <td>{{ device.model.all.last.model_type }}</td> {# Niubility! django's model and template #}
-		  <td><a href="/details/?did={{ device.device_id }}&pk={{ device.id }}" target="_blank">{{ device.device_id }}</td>
+		  <td><a href="/details/?did={{ device.device_id }}&pk={{ device.id }}" target="_blank">{{ device.device_id }}</a><button data-pk="{{ device.id }}" title="use other device to replace this" class="btn btn-xs btn-hidden" style="float:right">Replace</button></td>
 		  <td><a href="#" data-target="labd_editor" data-name="os" data-title="Edit os version" data-pk="{{ device.id }}">{{ device.os}}</a></td>
 		  <td><a href="#" data-target="labd_editor" data-name="owner" data-title="Edit device owner" data-pk="{{ device.id }}">{{ device.owner }}</a></td>
 		  <td><a href="#" data-target="labd_editor" data-name="user" data-title="Edit device user" data-pk="{{ device.id }}">{{ device.user }}</a></td>

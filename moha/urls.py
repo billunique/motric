@@ -24,6 +24,7 @@ urlpatterns = [
     url(r'^home/', views.home, name='home'),
     url(r'^public_device/', views.public_device, name='public'),
     url(r'^dedicated_device/', views.dedicated_device, name='dedicated'),
+    url(r'^broken_device/', views.broken_device, name='broken'),
     url(r'^device_request/', views.device_request, name='request'),
     url(r'^request_disposal/', views.request_disposal, name='disposal'),
     # url(r'^faq/', views.faq, name='faq'),
@@ -34,6 +35,7 @@ urlpatterns = [
     url(r'^edit_labdevice/', utils.labdevice_editor, name='labd_editor'),
 
     url(r'^details/', utils.details, name='details'),
+    url(r'^device_replacement/', utils.device_replacement, name='replacement'),
     url(r'^admin/', admin.site.urls),
 ]
 

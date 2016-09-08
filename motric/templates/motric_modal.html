@@ -1,7 +1,6 @@
 <!-- Modal -->
 <div class="modal fade" id="confirm_modal" role="dialog">
   <div class="modal-dialog">
-  
     <!-- Modal content-->
     <div class="modal-content">
       <div class="modal-header">
@@ -22,7 +21,6 @@
 
 <div class="modal fade" id="allocation_modal" role="dialog">
   <div class="modal-dialog">
-  
     <!-- Modal content-->
     <div id="content" class="modal-content">
       <div class="modal-header">
@@ -41,6 +39,25 @@
         <button class="btn btn-info btn-md button_in_modal" id="cancel" data-dismiss="modal">Cancel</button>
       </div>
     </form>
+    </div>
+  </div>
+
+
+</div><div class="modal fade" id="replacement_modal" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Device replacement</h4>
+      </div>
+      <div class="modal-body">
+        <p>Which device is wanted to replace this one? Please enter the <span class="noticeable">first #</span> here.</p><p></p>
+        <input type="text" class="form-control mtinput" id="replacement_pk" placeholder="input first #" required>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-warning btn-md button_in_modal" id="submit_rep" type="submit">Submit</button>
+        <button class="btn btn-info btn-md button_in_modal" id="cancel_rep" data-dismiss="modal">Cancel</button>
+      </div>
     </div>
   </div>
 </div>

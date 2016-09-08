@@ -6,7 +6,7 @@ from django.core import serializers
 from models import *
 import time, json, threading, getpass
 
-
+operator = getpass.getuser()
 def expection_carrier():
     import sys
     dict = {}
@@ -160,10 +160,9 @@ def labdevice_editor(request):
     # target = field_value
     ld.__dict__[field] = field_value
     ld.save()
-    if field_value == 'AVA':
-        field_value = 'Public'
-    if field_value == 'ASS':
-        field_value = 'Assigned'
+    if field == 'status':
+        field_value = ld.get_status_display()
+
     event_msg = {'timestamp':timezone.now(), 'operation':field + " was changed to " + field_value, 'operator':getpass.getuser()}
     evt = Event(device=ld, event=event_msg)
     evt.save()
@@ -192,7 +191,7 @@ def device_allocate(request):
             ld.status = 'ASS'
             ld.model.add(rd)
             ld.save()
-            event_msg = {'timestamp':register_date, 'operation':'made ' + ld.get_status_display(), 'operator':getpass.getuser()}
+            event_msg = {'timestamp':register_date, 'operation':'made ' + ld.get_status_display(), 'operator':operator}
             evt = Event(device=ld, event=event_msg)
             evt.save()
     else: # status is 'ASS' or 'AVA'
@@ -202,7 +201,7 @@ def device_allocate(request):
             ld.save()
             ld.model.add(rd)
             ld.save()
-            event_msg = {'timestamp':register_date, 'operation':'made ' + ld.get_status_display(), 'operator':getpass.getuser()}
+            event_msg = {'timestamp':register_date, 'operation':'made ' + ld.get_status_display(), 'operator':operator}
             evt = Event(device=ld, event=event_msg)
             evt.save()
         rd.status = status
@@ -223,3 +222,23 @@ def details(request):
     ld = LabDevice.objects.get(pk=pk)
     event_list = Event.objects.filter(device=ld)
     return render(request, 'motric_details.html', {'device':ld, 'did':did, 'event_list':event_list})
+
+
+def device_replacement(request):
+    p = request.POST.copy()
+    data = json.dumps(p)
+    pk = p['pk']
+    repk = p['replacement_pk']
+    ld_hold = LabDevice.objects.get(pk=pk)
+    ld_attack = LabDevice.objects.get(pk=repk)
+    replace_date = timezone.now()
+    ld_hold.replaced_by.add(ld_attack)
+    ld_hold.save()
+    rd = RequestedDevice.objects.filter(labdevice=repk)
+    event_hold = {'timestamp':replace_date, 'operation':'be replaced by device ' + rd[len(rd)-1].model_type +' (' + ld_attack.device_id +')', 'operator':operator}
+    event_attack = {'timestamp':replace_date, 'operation':'replaced ' + str(ld_hold), 'operator':operator}
+    evt_hold = Event(device=ld_hold, event=event_hold)
+    evt_attack = Event(device=ld_attack, event=event_attack)
+    evt_hold.save()
+    evt_attack.save()
+    return HttpResponse(data)

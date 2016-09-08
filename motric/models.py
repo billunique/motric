@@ -65,10 +65,10 @@ class LabDevice(DeviceStatus):
 	user = models.CharField(max_length=100, blank=True)  # Those who have the device usage access.
 	label = models.CharField(max_length=50, blank=True)
 	project = models.CharField(max_length=50, blank=True)
-
+	replaced_by = models.ManyToManyField('self', symmetrical=False)
 
 	def __unicode__(self):
-		return u'%s, for project %s' % (self.device_id, self.project)
+		return u'%s, %s, for project %s' % (self.model, self.device_id, self.project)
 
 
 class Event(models.Model):

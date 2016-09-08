@@ -19,6 +19,10 @@ def dedicated_device(request):
 	device_list = LabDevice.objects.filter(status='ASS').order_by('-id')
 	return render(request, 'motric_dedicated.html', {'device_list':device_list})
 
+def broken_device(request):
+	device_list = LabDevice.objects.filter(status='BRO').order_by('-id')
+	return render(request, 'motric_broken.html', {'device_list':device_list})
+
 def device_request(request):
 	return render(request, 'motric_request.html')
 

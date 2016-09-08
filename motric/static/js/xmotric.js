@@ -192,7 +192,8 @@ $(document).ready(function(){
 		 	// {text: ''},
 		 	{value: 'AVA', text: 'Public'},
 		 	{value: 'ASS', text: 'Assigned'},
-			// {value: '123', text:'12343'}
+			{value: 'BRO', text: 'Broken'},
+			// {value: 'SUB', text: 'Replaced'}
         ],
         // prepend: $(this).text(),
 
@@ -270,6 +271,9 @@ $(document).ready(function(){
 						}
 					} // end of condition newValue 'ASS'.
 				} // end of condition newValue 'AVA' or 'ASS'.
+			}
+			if (newValue == 'BRO') {
+				$(this).parent().parent().fadeOut(1500);
 			}
 		}
 
@@ -369,16 +373,6 @@ $(document).ready(function(){
 
 			}
 
-			// $('#confirm_modal').on('hide.bs.modal', data, function(event) {
-			// 	var mod = $(this);
-			// 	console.log(mod);
-			// 	alert('primary key of this element: ' + event.data.pk);
-			// 	// console.log('target', event.target);
-			// 	// console.log('currentTarget', event.currentTarget);
-			// 	// console.log('relatedTarget', event.relatedTarget);
-			// 	// console.log('delegateTarget', event.delegateTarget);
-			// 	console.log('~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-			// });		
 		}
 	);
 
@@ -424,7 +418,7 @@ $(document).ready(function(){
 
 
 /* Dynamically create the input box based on the devices' quantity user requested. */
-	$('#allocation_modal').on('shown.bs.modal', {pk:primary_key, st:status}, function(event) {
+	$('#allocation_modal').on('show.bs.modal', {pk:primary_key, st:status}, function(event) {  /* Note show is way better than shown in latency */
 		var td_quantity = $('a[data-pk=' + primary_key + ']').first().parent().prev()
 		console.log($(td_quantity));
 		var quantity = td_quantity.text();
@@ -504,6 +498,29 @@ $(document).ready(function(){
         	alert("Error! You might input something illegal.")
         });	
         event.preventDefault();
+	});
+
+
+/* When user clicks the Replace button of every device item */
+	$('.btn-hidden').on('click', function(event) {
+		primary_key = $(this).attr('data-pk');
+		$('#replacement_modal').modal({backdrop: "static"});
+	});
+
+	$('#submit_rep').on('click', {pk:primary_key}, function(event) {
+  		$.post('/device_replacement/', {pk: primary_key, replacement_pk:$('#replacement_pk').val(), 'csrfmiddlewaretoken': token})
+			.done( function(response) {
+				toastr.success('Saved successfully!', {timeOut: 2000});
+				$('#replacement_modal').modal('hide');
+				$('#replacement_pk').val('');
+			})
+			.fail(function() {
+        		alert("Error! You might input something illegal.")
+        	});	
+	});
+
+	$('#cancel_rep').click(function() {
+		$('#replacement_pk').val('');
 	});
 
 	// $('select').each(function(index) {

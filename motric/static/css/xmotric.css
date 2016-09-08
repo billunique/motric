@@ -158,3 +158,19 @@ thead th {
     float:left;
     margin-right:16px;
 }
+
+.btn-hidden{
+    /*opacity:0;*/
+    /*visibility:hidden;*/
+    display:none;
+}
+tr td:hover button{
+    /*opacity:1.0;*/
+    /*visibility: visible;*/
+    display:inline; /*DONOT use block, as block will impact others, like bootstrap editable's display. */ 
+}
+
+.noticeable{
+    color:red;
+    font-weight: bold;
+}
