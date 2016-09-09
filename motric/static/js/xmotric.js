@@ -451,7 +451,7 @@ $(document).ready(function(){
 				console.log($('#lab_location').val());
 				$('#inst').html('Choose location of the central lab for the devices.');
 				$('#title').html('Set location');
-				$('#allocation_table').append('<tr><td style="padding:10px"><input type="radio" name="location" value="Bej">Bejing</td> \
+				$('#allocation_table').append('<tr><td style="padding:10px"><input type="radio" name="location" value="BEJ">Bejing</td> \
 					<td style="padding:10px"><input type="radio" name="location" value="MTV">Mountain View</td> \
 					<td style="padding:10px"><input type="radio" name="location" value="TWD">Taiwan DC</td></tr> \
 					<tr><td style="padding:10px;color:red">Current: ' + $('#lab_location').val() + '</td></tr>' );

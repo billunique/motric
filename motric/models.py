@@ -31,6 +31,7 @@ class Requester(models.Model):
 	project = models.CharField(max_length=50)
 	device_owner = models.CharField(max_length=100)
 	device_label = models.CharField(max_length=50)
+	pref_location = models.CharField(max_length=3)
 
 	def __unicode__(self):
 		return u'%s, from project %s' % (self.ldap, self.project)

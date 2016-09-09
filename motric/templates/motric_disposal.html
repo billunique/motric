@@ -24,19 +24,20 @@
 	  	<tr class="btn-primary">
 	  	  <th>#</th>
 	  	  <th>Requester</th>
-	  	  <th>Cost Center</th>
+	  	  <th>CCenter</th>
 	  	  <th>Project</th>
-	  	  <th class="btn-success">Device Owner</th>
-	  	  <th class="btn-success">Device Label</th>
+	  	  <th>Device Owner</th>
+	  	  <th>Device Label</th>
+	  	  <th>PreferLab</th>
+	  	  <th>Expected OS</th>
 	  	  <th class="btn-success">Model</th>
-	  	  <th class="btn-success">Expected OS</th>
 	  	  <th class="btn-success">Quantity</th>
 	  	  <!-- <th class="btn-danger">Status</th> -->
-	  	  <th class="btn-info">PO#</th>
-	  	  <th class="btn-info">Price(CNY)</th>
+	  	  <th class="btn-success">PO#</th>
+	  	  <th class="btn-success">Price(CNY)</th>
 	  	  <!-- <th class="btn-info" id="rate"><a href="#" data-value="" title="Bulk edit the exchange rate">Exrate</a></th> -->
-	  	  <th class="btn-info" id="rate">Exrate</a></th>
-	  	  <th class="btn-info">Price(USD)</th>
+	  	  <th class="btn-success">Exrate</a></th>
+	  	  <th class="btn-success">Price(USD)</th>
 	  	  <th class="btn-danger">Action</th>
 	  	</tr>
 	  </thead>
@@ -49,8 +50,9 @@
 		  <td>{{ device.requester.project }}</td>
 		  <td>{{ device.requester.device_owner }}</td>
 		  <td>{{ device.requester.device_label }}</td>
-		  <td>{{ device.model_type }}</td>
+		  <td>{{ device.requester.pref_location }}</td>
 		  <td>{{ device.os_version }}</td>
+		  <td>{{ device.model_type }}</td>
 		  <td>{{ device.quantity }}</td>
 		  <!-- <td>{{ device.get_status_display }}</td>  {# don't use it as display() #} -->
 		  <!-- <td><input type="text" name="po_number" size="10"></td> -->
