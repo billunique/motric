@@ -189,7 +189,7 @@ def device_allocate(request):
             ld.label = rd.requester.device_label
             ld.project = rd.requester.project
             ld.status = 'ASS'
-            ld.model.add(rd)
+            ld.respond_to.add(rd)
             ld.save()
             event_msg = {'timestamp':register_date, 'operation':'made ' + ld.get_status_display(), 'operator':operator}
             evt = Event(device=ld, event=event_msg)
@@ -197,9 +197,9 @@ def device_allocate(request):
     else: # status is 'ASS' or 'AVA'
         serial_no = dict.pop('did') # got a list of serial number;
         for i in range(len(serial_no)):
-            ld = LabDevice(device_id=serial_no[i], status=status, register_date=register_date, os=rd.os_version, owner=rd.requester.device_owner, label=rd.requester.device_label, project=rd.requester.project) # LabDevice.model must be a RequestedDevice instance.
+            ld = LabDevice(model=rd.model_type, device_id=serial_no[i], status=status, register_date=register_date, os=rd.os_version, owner=rd.requester.device_owner, label=rd.requester.device_label, project=rd.requester.project) # LabDevice.model must be a RequestedDevice instance.
             ld.save()
-            ld.model.add(rd)
+            ld.respond_to.add(rd)
             ld.save()
             event_msg = {'timestamp':register_date, 'operation':'made ' + ld.get_status_display(), 'operator':operator}
             evt = Event(device=ld, event=event_msg)
@@ -218,10 +218,13 @@ def details(request):
     q = request.GET.copy()
     data = json.dumps(q)
     pk = q['pk']
-    did = q['did']
+    # did = q['did']
     ld = LabDevice.objects.get(pk=pk)
+    did = ld.device_id
+    request_list = RequestedDevice.objects.filter(labdevice=pk)
     event_list = Event.objects.filter(device=ld)
-    return render(request, 'motric_details.html', {'device':ld, 'did':did, 'event_list':event_list})
+    replacement_list = LabDevice.objects.filter(labdevice=pk)
+    return render(request, 'motric_details.html', {'device':ld, 'did':did, 'request_list':request_list, 'event_list':event_list, 'replacement_list':replacement_list})
 
 
 def device_replacement(request):
@@ -232,13 +235,19 @@ def device_replacement(request):
     ld_hold = LabDevice.objects.get(pk=pk)
     ld_attack = LabDevice.objects.get(pk=repk)
     replace_date = timezone.now()
+
     ld_hold.replaced_by.add(ld_attack)
     ld_hold.save()
-    rd = RequestedDevice.objects.filter(labdevice=repk)
-    event_hold = {'timestamp':replace_date, 'operation':'be replaced by device ' + rd[len(rd)-1].model_type +' (' + ld_attack.device_id +')', 'operator':operator}
-    event_attack = {'timestamp':replace_date, 'operation':'replaced ' + str(ld_hold), 'operator':operator}
+    # rd = RequestedDevice.objects.filter(labdevice=repk)
+    # event_hold = {'timestamp':replace_date, 'operation':'be replaced by device ' + rd[len(rd)-1].model_type +' (' + ld_attack.device_id +')', 'operator':operator}
+    event_hold = {'timestamp':replace_date, 'operation':'be replaced by <a href="/details/?pk=' + str(ld_attack.id) + '" target="_blank">' + str(ld_attack) + '</a>', 'operator':operator}
+    event_attack = {'timestamp':replace_date, 'operation':'replaced <a href="/details/?pk=' + str(ld_hold.id) + '" target="_blank">' + str(ld_hold) + '</a>', 'operator':operator}
     evt_hold = Event(device=ld_hold, event=event_hold)
     evt_attack = Event(device=ld_attack, event=event_attack)
     evt_hold.save()
     evt_attack.save()
+
+    rd = RequestedDevice.objects.filter(labdevice=pk) # get the QuerySet of requesteddevice of the be_replaced device.
+    rd_last = rd[len(rd)-1] # get the last object of the QuerySet, it's just the current requesteddevice that the be_replaced device are responding.
+    ld_attack.respond_to.add(rd_last)
     return HttpResponse(data)

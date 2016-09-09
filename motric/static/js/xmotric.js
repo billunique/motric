@@ -217,13 +217,13 @@ $(document).ready(function(){
 				// var oldValue = $(this).editable('getValue', true);  // by this way, oldValue could be empty.
 				// console.log(oldValue);
 				var oldText = ($(this).text());
-				var oldValue;
-				if ( oldText == 'Public') {
-					oldValue = 'AVA';
-				} else { oldValue = 'ASS'; }
+				var valuedict = {'Public':'AVA', 'Assigned':'ASS', 'Broken':'BRO'};
+				var oldValue = valuedict[oldText];
 
 				$(this).editable('setValue', newValue, false); 
 				$(this).editable('hide');
+
+				var htitle = document.title;
 				if (newValue == 'AVA' || 'ASS') { // newValue is much better than $(this).text(), it reflects the change.
 					var td_owner = $(this).parent().prevAll().find('a[data-name="owner"]');
 					var td_project = $(this).parent().prevAll().find('a[data-name="project"]');
@@ -250,7 +250,7 @@ $(document).ready(function(){
 							});
 						}, 200);
 
-						if ((document.title).startsWith("Dedicated")) {
+						if ( htitle.startsWith("Dedicated") || htitle.startsWith("Broken") ) {
 							$(this).parent().parent().fadeOut(1500);
 						}
 					} else if ( newValue == 'ASS' ) {  // to avoid the case newValue is empty, explicitly state the else if.
@@ -265,14 +265,14 @@ $(document).ready(function(){
 									td_project.editable('show');
 								}, 200);
 								$(this).editable('setValue', oldValue, false);
-							} else if ( (document.title).startsWith("Public") ) {
+							} else if ( htitle.startsWith("Public") || htitle.startsWith("Broken") ) {
 								$(this).parent().parent().fadeOut(1500);
 							}
 						}
 					} // end of condition newValue 'ASS'.
 				} // end of condition newValue 'AVA' or 'ASS'.
 			}
-			if (newValue == 'BRO') {
+			if ( newValue == 'BRO' && !htitle.startsWith("Broken") ) {
 				$(this).parent().parent().fadeOut(1500);
 			}
 		}

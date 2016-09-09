@@ -4,7 +4,7 @@
 
 {% block body %}
   <div class="container">
-	<h3>Details of device {{ did }}<h3>
+	<h3>Details of device {{ did }}</h3>
 	<table class="table table-bordered font-compacted">
 	    <caption>Ownership Info</caption>
 	  	<tr class="btn-primary">
@@ -17,7 +17,7 @@
 	  	  <th class="btn-danger">Status</th>
 	  	</tr>
 	  	<tr>
-	  	  <td>{{ device.model.last.model_type }}</td>
+	  	  <td>{{ device.model }}</td>
 	  	  <td>{{ device.os }}</td>
 	  	  <td>{{ device.owner }}</td>
 	  	  <td>{{ device.user }}</td>
@@ -39,17 +39,27 @@
 	  	  <th>Price(CNY)</th>
 		</tr>
 		<tr>
-	  	  <td>{{ device.model.last.requester.ldap }}</td>
-	  	  <td>{{ device.model.last.request_date}}
-	  	  <td>{{ device.model.last.requester.cost_center }}</td>
-	  	  <td>{{ device.model.last.po_number }}</td>
-	  	  <td>{{ device.model.last.po_date }}</td>
-	  	  <td>{{ device.model.last.price_usd }}</td>
-	  	  <td>{{ device.model.last.price_cny }}</td>
+	  	  <td>{{ device.respond_to.last.requester.ldap }}</td>
+	  	  <td>{{ device.respond_to.last.request_date}}
+	  	  <td>{{ device.respond_to.last.requester.cost_center }}</td>
+	  	  <td>{{ device.respond_to.first.po_number }}</td>
+	  	  <td>{{ device.respond_to.first.po_date }}</td>
+	  	  <td>{{ device.respond_to.first.price_usd }}</td>
+	  	  <td>{{ device.respond_to.first.price_cny }}</td>
 	  	</tr>
-	</table>
+	</table>	
 
 	<table class="table table-bordered font-compacted">
+	    <caption>Requests this device had responded towards</caption>
+		{% for request in request_list %}
+		<tr>
+	  	  <td>#{{ request.id }}</td>
+	  	  <td>{{ request }}</td>
+	  	</tr>
+	  	{% endfor %}
+	</table>
+
+<!-- 	<table class="table table-bordered font-compacted">
 	    <caption>Ownership Info</caption>
 	  	<tr>
 	  	  <th class="btn-primary">Model</th>
@@ -79,6 +89,18 @@
 	  	  <th class="btn-danger">Status</th>
 	  	  <td>{{ device.get_status_display }}</td>
 	  	</tr>
+	</table> -->
+
+	<table class="table table-bordered font-compacted">
+	    <caption>Replacement History (replaced by)</caption>
+		{% for rep in replacement_list %}
+		<tr>
+	  	  <td>#{{ rep.id }}</td>
+	  	  <td><a href="/details/?pk={{ rep.id }}" target="_blank">{{ rep }}</a></td>
+	  	</tr>
+	  	{% empty %}
+	  	<tr><td>None.</td></tr>
+	  	{% endfor %}
 	</table>
 
 	<table class="table table-bordered table-condensed font-compacted">
@@ -92,7 +114,7 @@
 		<tr>
 			<td>{{ event.event.items.1.1 }}</td>
 			<td>{{ event.event.items.0.1 }}</td>
-			<td>{{ event.event.items.2.1 }}</td>
+			<td>{{ event.event.items.2.1 |safe }}</td>
 		</tr>
 		{% endfor %}
 	</table>

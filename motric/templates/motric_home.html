@@ -30,7 +30,8 @@
 		{% for device in device_list %}
 		<tr>
 		  <td>{{ device.id }}</td>
-		  <td>{{ device.model.all.last.model_type }}</td> {# Niubility! django's model and template #}
+		  <!-- <td>{{ device.model.all.last.model_type }}</td> {# Niubility! django's model and template #} -->
+		  <td>{{ device.model }}</td>
 		  <td><a href="/details/?did={{ device.device_id }}&pk={{ device.id }}" target="_blank">{{ device.device_id }}</a><button data-pk="{{ device.id }}" title="use other device to replace this" class="btn btn-xs btn-hidden" style="float:right">Replace</button></td>
 		  <td><a href="#" data-target="labd_editor" data-name="os" data-title="Edit os version" data-pk="{{ device.id }}">{{ device.os}}</a></td>
 		  <td><a href="#" data-target="labd_editor" data-name="owner" data-title="Edit device owner" data-pk="{{ device.id }}">{{ device.owner }}</a></td>
@@ -38,11 +39,11 @@
 		  <!-- <td><a href="#" data-type="text" data-name="device_label" data-title="Change device label" data-pk="{{ device.id }}">{{ device.model.requester.device_label }}</td> -->
 		  <td><a href="#" data-target="labd_editor" data-name="project" data-title="Edit project" data-pk="{{ device.id }}">{{ device.project }}</a></td>
 		  <!-- <td>{{ device.model.requester.ldap }}</td> -->
-		  <td>{{ device.model.last.requester.ldap }}</td>
-		  <td>{{ device.model.all.last.requester.cost_center }}</td>
-		  <td>{{ device.model.all.last.po_number }}</td>
-		  <td>{{ device.model.all.last.price_usd }}</td>
-		  <td>{{ device.model.all.last.price_cny }}</td>
+		  <td>{{ device.respond_to.all.last.requester.ldap }}</td>
+		  <td>{{ device.respond_to.all.last.requester.cost_center }}</td>
+		  <td>{{ device.respond_to.all.first.po_number }}</td>
+		  <td>{{ device.respond_to.all.first.price_usd }}</td>
+		  <td>{{ device.respond_to.all.first.price_cny }}</td>
 		  <td><a href="#" data-target="labd_editor" data-name="status" data-type="select" data-title="Change Status" data-pk="{{ device.id }}">{{ device.get_status_display }}</td>  {# don't use it as display() #}
 		</tr>
 		{% endfor %}

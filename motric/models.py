@@ -51,13 +51,14 @@ class RequestedDevice(DeviceStatus):
 	resolved = models.BooleanField(default=False)
 
 	def __unicode__(self):
-		return u'%s, with os %s, requested by %s, for %s project' % (self.model_type, self.os_version, self.requester.ldap, self.requester.project)
+		return u'%s %s, with os %s, requested by %s, for %s project' % (self.quantity, self.model_type, self.os_version, self.requester.ldap, self.requester.project)
 		# return self.model_type
 
 class LabDevice(DeviceStatus):
 	# model = models.OneToOneField(RequestedDevice)  # OneToOne is smilar to ForeignKey but unique=true, this is not the case.
 	# model = models.ForeignKey(RequestedDevice)
-	model = models.ManyToManyField(RequestedDevice)
+	model = models.CharField(max_length=30)
+	respond_to = models.ManyToManyField(RequestedDevice)  # Many labdevices could respond to one requesteddevice; meanwhile many requesteddevice could be responded by one labdevice (such as firstly public then assigned, or as result of device replacement.)
 	device_id = models.CharField(max_length=100)
 	register_date = models.DateTimeField('date device_id recorded', auto_now_add=True) # The register date is basically fixed. While other status could be mutable. 
 	os = models.CharField(max_length=50, blank=True)
