@@ -164,7 +164,7 @@ def labdevice_editor(request):
     if field == 'status':
         field_value = ld.get_status_display()
 
-    event_msg = {'timestamp':timezone.now(), 'operation':field + " was changed to " + field_value, 'operator':getpass.getuser()}
+    event_msg = {'timestamp':timezone.now(), 'operation':field + " was changed to " + field_value, 'operator':operator}
     evt = Event(device=ld, event=event_msg)
     evt.save()
     message += "\n" + field + " " + field_value + " saved successfully."
@@ -195,8 +195,12 @@ def device_allocate(request):
             event_msg = {'timestamp':register_date, 'operation':'made ' + ld.get_status_display(), 'operator':operator}
             evt = Event(device=ld, event=event_msg)
             evt.save()
+        rd.resolved = True
     else: # status is 'ASS' or 'AVA'
         serial_no = dict.pop('did') # got a list of serial number;
+        if status == 'AVA':
+            rd.requester.device_owner = 'mobileharness'
+            rd.requester.project = 'PUBLIC'
         for i in range(len(serial_no)):
             ld = LabDevice(model=rd.model_type, device_id=serial_no[i], status=status, register_date=register_date, os=rd.os_version, owner=rd.requester.device_owner, label=rd.requester.device_label, project=rd.requester.project) # LabDevice.model must be a RequestedDevice instance.
             ld.save()
@@ -228,6 +232,10 @@ def details(request):
     return render(request, 'motric_details.html', {'device':ld, 'did':did, 'request_list':request_list, 'event_list':event_list, 'replacement_list':replacement_list})
 
 
+def log_generator(timestamp, operation, operator):
+    evt_content = {'timestamp':timestamp, 'operation':operation, 'operator':operator}
+    return evt_content
+
 def device_replacement(request):
     p = request.POST.copy()
     data = json.dumps(p)
@@ -251,4 +259,25 @@ def device_replacement(request):
     rd = RequestedDevice.objects.filter(labdevice=pk) # get the QuerySet of requesteddevice of the be_replaced device.
     rd_last = rd[len(rd)-1] # get the last object of the QuerySet, it's just the current requesteddevice that the be_replaced device are responding.
     ld_attack.respond_to.add(rd_last)
+    evt = Event(device=ld_attack, event=log_generator(replace_date, 'Request target added: <b>' + str(rd_last) + '</b>', operator))
+    evt.save()
+
+    owner_old = ld_attack.owner
+    user_old = ld_attack.user
+    label_old = ld_attack.label
+    project_old = ld_attack.project
+
+    ld_attack.owner = ld_hold.owner
+    ld_attack.user = ld_hold.user
+    ld_attack.label = ld_hold.label
+    ld_attack.project = ld_hold.project
+    ld_attack.save()
+
+    evt = Event(device=ld_attack, event=log_generator(replace_date, 'Properties are changed in bundle.<br/>' \
+        + 'owner from ' + owner_old + ' --> <b>' + ld_attack.owner + '</b>;<br/>' 
+        + 'user from ' + user_old + ' --> <b>' + ld_attack.user + '</b>;<br/>' \
+        + 'label from ' + label_old + ' --> <b>' + ld_attack.label + '</b>;<br/>' \
+        + 'project from ' + project_old + ' --> <b>' + ld_attack.project + '</b>.', operator))
+    evt.save()
+
     return HttpResponse(data)

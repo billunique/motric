@@ -84,6 +84,69 @@ function getFormData() {
 	}
 }
 
+function onSignIn(googleUser) {
+  var profile = googleUser.getBasicProfile();
+  console.log(profile.getName() + ' is signed in! -------------------------')
+  console.log('ID: ' + profile.getId()); 
+  console.log('Name: ' + profile.getName());
+  console.log('Image URL: ' + profile.getImageUrl());
+  console.log('Email: ' + profile.getEmail());
+
+  var name = profile.getGivenName();
+  document.getElementById("signed_name").innerText = "Welcome, " + name + "!";
+  document.getElementById("signout").style.visibility = "visible";
+}
+
+function SignIn() {
+	var auth2 = gapi.auth2.getAuthInstance();
+	auth2.signIn();	
+}
+
+function SignOut() {
+	var auth2 = gapi.auth2.getAuthInstance();
+	auth2.signOut();
+	document.getElementById("signed_name").innerText = '';
+	auth2.disconnect();
+	var user = auth2.currentUser.get();
+	var profile = user.getBasicProfile();
+	console.log('After signing out, I still know -------------------------- ')
+	console.log('ID: ' + profile.getId()); 
+	console.log('Name: ' + profile.getName());
+	console.log('Image URL: ' + profile.getImageUrl());
+	console.log('Email: ' + profile.getEmail());
+	document.getElementById("signout").style.visibility = "hidden";
+}
+
+function getUser() {
+	var auth2 = gapi.auth2.getAuthInstance();
+	var user = auth2.currentUser.get();
+	return user;
+}
+
+function getProfile() {
+	var auth2 = gapi.auth2.getAuthInstance();
+	var user = auth2.currentUser.get();
+	var profile = user.getBasicProfile();
+	return profile;
+}
+
+function getUserName() {
+	var profile = getProfile();
+	console.log('ID: ' + profile.getId()); 
+	console.log('Name: ' + profile.getName());
+	console.log('Image URL: ' + profile.getImageUrl());
+	console.log('Email: ' + profile.getEmail());
+	return profile.getName();
+}
+
+function getLdap() {
+	var profile = getProfile();
+	var email = profile.getEmail();
+	var ldap = email.split('@')[0];
+	console.log('Ldap: ' + ldap);
+	return ldap
+}
+
 // toastr.options.progressBar = true;
 toastr.options.closeButton = true;
 // toastr.options.closeMethod = 'fadeOut';
@@ -98,6 +161,7 @@ $(document).ready(function(){
 	// });
 	// $.fn.editable.defaults.mode = 'inline';
 	// toastr.success('Saved successfully!', 'IAmTitle', {timeOut: 1000}); // Must override the title before the timeOut override takes effect.
+
 	var token = $('input[name="csrfmiddlewaretoken"]').prop('value');
 	$('a[data-target="req_editor"]').editable({
 		// type: 'text',
@@ -527,5 +591,46 @@ $(document).ready(function(){
 		// console.log(index + ': ' + $(this).text());
 	// });
 
+});
 
+$(window).on('load', function() {
+
+	// gapi.load('auth2', function() {
+	//   auth2 = gapi.auth2.init({
+	//     client_id: '613024433503-bplsrhovk0a60ng7lrlb6slg49ta320h.apps.googleusercontent.com',
+	//     scope:'profile email',
+	//   });
+	//   console.log(auth2);
+	//   var guser = auth2.currentUser.get();
+	//   console.log(guser);
+	//   // console.log(guser.getBasicProfile().getName());
+	//   auth2.signIn().then(function(){
+	//   	var guser2 = auth2.currentUser.get()
+	//   	var profile = guser2.getBasicProfile();
+	//   	console.log('Current User: ', guser2);
+	//   	console.log('Current Username: ', profile.getName());
+	// 	var name = profile.getGivenName();
+	//     $('#signed_name').text("Welcome, " + name + "!");
+	//     $('#signout').css('visibility', 'visible');
+	//     // onSignIn(guser2);
+	//   });
+	// });
+
+    var auth2 = gapi.auth2.getAuthInstance();
+    var guser = auth2.currentUser.get();
+    var profile = guser.getBasicProfile();
+    console.log('Current User: ', guser);
+    console.log('User profile: ', profile);
+    if (profile === undefined) {
+    	auth2.signIn().then(function(){
+		  	var guser2 = auth2.currentUser.get()
+		  	var profile = guser2.getBasicProfile();
+		  	console.log('Current User: ', guser2);
+		  	console.log('Current Username: ', profile.getName());
+			var name = profile.getGivenName();
+		    $('#signed_name').text("Welcome, " + name + "!");
+		    $('#signout').css('visibility', 'visible');
+		    onSignIn(guser);
+		});
+    }
 });

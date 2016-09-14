@@ -9,11 +9,14 @@
 	  <li><a href="/device_request/" target="main">Device Request<span class="glyphicon glyphicon-phone navicon"></a></li>
 	  <li><a href="/request_disposal/" target="main">Request Disposal<span class="glyphicon glyphicon-edit navicon"></a></li>
 	  <li><a href="http://go/moha-bej/" target="_blank">MH Frontend<span class="glyphicon glyphicon-new-window navicon"></a></li>
-	  <li><a href="http://go/mobileharness" target="_blank">MH UserGuide<span class="glyphicon glyphicon-leaf navicon"></a></li>
-	  <li><a href="http://go/ezreq" target="_blank">Pivt<span class="glyphicon glyphicon-usd navicon"></a></li>
-	  <li><a href="http://go/mh-bug" target="_blank">File Bug<span class="glyphicon glyphicon-send navicon"></a></li>
+	  <!-- <li><a href="http://go/mobileharness" target="_blank">MH UserGuide<span class="glyphicon glyphicon-leaf navicon"></a></li> -->
+	  <!-- <li><a href="http://go/ezreq" target="_blank">Pivt<span class="glyphicon glyphicon-usd navicon"></a></li> -->
+	  <li><a href="http://go/mh-labops-request" target="_blank">File Bug<span class="glyphicon glyphicon-send navicon"></a></li>
+	  <div style="margin:50 0 0 50" class="g-signin2" data-onsuccess="onSignIn" id="g-signin"></div>
+	  <div style="margin:10 0 0 30;display:inline-block" id="signed_name"></div>
+	  <div style="margin:15 30 0 0;display:inline-block; font-size:12px; visibility:hidden" id="signout"><a href="#" onclick="SignOut()">(Sign out)</a></div>
 	  <li style="margin-top:120px;"><img src="{% static 'img/motric-logo_m.png' alt='motric-logo' %}"></li>
-	  <li style="margin:0 0 10px 10px;">Powerd by <span style="color:red">Mobile Harness Team</span> ©2016 </li>
+	  <li style="margin:0 0 10 10;">Powerd by <span style="color:red">Mobile Harness Team</span> ©2016 </li>
 	</ul>
 	<iframe class="xframe" src="/home" name="main" ></iframe>
 {% endblock %}
