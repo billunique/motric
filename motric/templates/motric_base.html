@@ -1,17 +1,17 @@
 <html>
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="google-signin-scope" content="profile email">
-  <meta name="google-signin-client_id" content="613024433503-bplsrhovk0a60ng7lrlb6slg49ta320h.apps.googleusercontent.com">
+  {% block meta %}{% endblock meta %}
   <title>{% block title %}{% endblock title %}</title>
-  {% load staticfiles %}
   {% block extrafile %}{% endblock extrafile %}
+  {% load staticfiles %}
   <script src="{% static 'js/xmotric.js' %}"></script>
   <link rel="stylesheet" href="{% static 'css/xmotric.css' %}" />
   <link rel="shortcut icon" href="{% static 'favicon.ico' %}">
 </head>
 
 <body class="motric-font">
+	<!-- <div class="g-signin2 btn-hidden" data-onsuccess="onSignIn"></div> -->
   {% block body %}{% endblock body %}
 </body>
 </html>

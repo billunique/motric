@@ -89,12 +89,23 @@ function onSignIn(googleUser) {
   console.log(profile.getName() + ' is signed in! -------------------------')
   console.log('ID: ' + profile.getId()); 
   console.log('Name: ' + profile.getName());
-  console.log('Image URL: ' + profile.getImageUrl());
   console.log('Email: ' + profile.getEmail());
+  var ldap = profile.getEmail().split('@')[0];
+  console.log('Ldap: ' + ldap);
 
   var name = profile.getGivenName();
   document.getElementById("signed_name").innerText = "Welcome, " + name + "!";
   document.getElementById("signout").style.visibility = "visible";
+
+  var token = $('input[name="csrfmiddlewaretoken"]').prop('value');
+  $.ajax({
+      type: 'POST',
+      url: '/who/',
+      data: {operator: ldap, 'csrfmiddlewaretoken': token},
+      success: function(result) {
+        // Handle or verify the server response.
+      },
+    });
 }
 
 function SignIn() {
@@ -144,7 +155,7 @@ function getLdap() {
 	var email = profile.getEmail();
 	var ldap = email.split('@')[0];
 	console.log('Ldap: ' + ldap);
-	return ldap
+	return ldap;
 }
 
 // toastr.options.progressBar = true;
@@ -156,6 +167,8 @@ toastr.options.timeOut = '2000';
 
 /* jQury functions start from here. */
 $(document).ready(function(){
+	// alert(window.location.href);
+	// alert(window.location.pathname);
 	// $("th, td").each (function(index) {
 	// 	console.log(index + ": " + $(this).text());
 	// });
@@ -176,6 +189,7 @@ $(document).ready(function(){
         params: function(params) {
 		    //originally params contain pk, name and value
 		    params.csrfmiddlewaretoken = token;
+		    // params.operator = getLdap();
 		    return params;
 		},
         // emptytext:'Input',
@@ -264,6 +278,7 @@ $(document).ready(function(){
         params: function(params) {
 		    //originally params contain pk, name and value
 		    params.csrfmiddlewaretoken = token;
+		    // params.operator = getLdap();
 		    return params;
 		},
 
@@ -525,6 +540,7 @@ $(document).ready(function(){
 
 		$('#allocation_table').append('<tr><td><input type="hidden" name="pk" value=' + primary_key + '></td></tr>');
 		$('#allocation_table').append('<tr><td><input type="hidden" name="status" value=' + status + '></td></tr>');
+		$('#allocation_table').append('<tr><td><input type="hidden" name="operator" value=' + Gldap + '></td></tr>');
 
  	});
 
@@ -572,7 +588,7 @@ $(document).ready(function(){
 	});
 
 	$('#submit_rep').on('click', {pk:primary_key}, function(event) {
-  		$.post('/device_replacement/', {pk: primary_key, replacement_pk:$('#replacement_pk').val(), 'csrfmiddlewaretoken': token})
+  		$.post('/device_replacement/', {pk: primary_key, replacement_pk:$('#replacement_pk').val(), 'csrfmiddlewaretoken': token, 'operator': Gldap})
 			.done( function(response) {
 				toastr.success('Saved successfully!', {timeOut: 2000});
 				$('#replacement_modal').modal('hide');
@@ -616,21 +632,42 @@ $(window).on('load', function() {
 	//   });
 	// });
 
-    var auth2 = gapi.auth2.getAuthInstance();
-    var guser = auth2.currentUser.get();
-    var profile = guser.getBasicProfile();
-    console.log('Current User: ', guser);
-    console.log('User profile: ', profile);
-    if (profile === undefined) {
-    	auth2.signIn().then(function(){
-		  	var guser2 = auth2.currentUser.get()
-		  	var profile = guser2.getBasicProfile();
-		  	console.log('Current User: ', guser2);
-		  	console.log('Current Username: ', profile.getName());
-			var name = profile.getGivenName();
-		    $('#signed_name').text("Welcome, " + name + "!");
-		    $('#signout').css('visibility', 'visible');
-		    onSignIn(guser);
-		});
-    }
+	if ( window.location.pathname == '/') {  /* ONLY detect sign-in state on the navigation page. */
+	    var auth2 = gapi.auth2.getAuthInstance();
+	    var guser = auth2.currentUser.get();
+	    var profile = guser.getBasicProfile();
+	    console.log('Current User: ', guser);
+	    console.log('User profile: ', profile);
+	    if (profile === undefined) {
+	    	var yip;
+	    	// copied from http://stackoverflow.com/questions/391979/how-to-get-clients-ip-address-using-javascript-only
+			var findIP = new Promise(r=>{var w=window,a=new (w.RTCPeerConnection||w.mozRTCPeerConnection||w.webkitRTCPeerConnection)({iceServers:[]}),b=()=>{};a.createDataChannel("");a.createOffer(c=>a.setLocalDescription(c,b,b),b);a.onicecandidate=c=>{try{c.candidate.candidate.match(/([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/g).forEach(r)}catch(e){}}})
+
+			findIP.then(ip => {console.log('your ip: ', ip); yip = ip }).catch(e => console.error(e))
+
+			setTimeout(function() {
+				$.ajax({
+				  type: 'POST',
+				  url: '/who/',
+				  data: {operator: yip, 'csrfmiddlewaretoken': token},
+				  success: function(result) {
+				    // Handle or verify the server response.
+				  },
+				});
+			}, 600);
+			var token = $('input[name="csrfmiddlewaretoken"]').prop('value');
+
+	    	auth2.signIn().then(function(){
+			  	var guser2 = auth2.currentUser.get();
+			  	var profile = guser2.getBasicProfile();
+			  	console.log('Current User: ', guser2);
+			  	console.log('Current Username: ', profile.getName());
+				var name = profile.getGivenName();
+			    $('#signed_name').text("Welcome, " + name + "!");
+			    $('#signout').css('visibility', 'visible');
+			    // onSignIn(guser);
+			});
+	    }
+	}
+
 });

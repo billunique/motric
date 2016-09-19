@@ -36,6 +36,8 @@ urlpatterns = [
 
     url(r'^details/', utils.details, name='details'),
     url(r'^device_replacement/', utils.device_replacement, name='replacement'),
+
+    url(r'^who/', utils.who_are_you, name='who'),
     url(r'^admin/', admin.site.urls),
 ]
 

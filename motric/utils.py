@@ -6,7 +6,8 @@ from django.core import serializers
 from models import *
 import time, json, threading, getpass
 
-operator = getpass.getuser()
+operator = ''
+
 def expection_carrier():
     import sys
     dict = {}
@@ -14,6 +15,14 @@ def expection_carrier():
     dict['message'] = info
     dict['create_at'] = str(time.ctime())
     return json.dumps(dict)
+
+def who_are_you(request):
+    p = request.POST.copy()
+    data = json.dumps(p)
+    who = p['operator']
+    global operator
+    operator = who
+    return HttpResponse(data)
 
 
 class EmailThread(threading.Thread):
