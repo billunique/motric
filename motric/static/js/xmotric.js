@@ -190,6 +190,7 @@ $(document).ready(function(){
 		    //originally params contain pk, name and value
 		    params.csrfmiddlewaretoken = token;
 		    // params.operator = getLdap();
+		    // params.ov = $(this).text();
 		    return params;
 		},
         // emptytext:'Input',
@@ -279,80 +280,82 @@ $(document).ready(function(){
 		    //originally params contain pk, name and value
 		    params.csrfmiddlewaretoken = token;
 		    // params.operator = getLdap();
+		    params.ov = $(this).text();
 		    return params;
 		},
 
 		success: function(response, newValue) {
+			console.log('-------------In success block----------------');
 			console.log(response);
-			console.log(newValue);
+			// var oldValue = $(this).editable('getValue', true);  // by this way, oldValue could be empty.
+			// console.log(oldValue);
+			var oldText = ($(this).text());
+			var valuedict = {'Public':'AVA', 'Assigned':'ASS', 'Broken':'BRO'};
+			var oldValue = valuedict[oldText];
+
+			$(this).editable('setValue', newValue, false); 
+			$(this).editable('hide');
+
+			var htitle = document.title;
+			if (newValue == 'AVA' || 'ASS') { // newValue is much better than $(this).text(), it reflects the change.
+				var td_owner = $(this).parent().prevAll().find('a[data-name="owner"]');
+				var td_project = $(this).parent().prevAll().find('a[data-name="project"]');
+				if (newValue == 'AVA') {
+					td_owner.editable('submit', {
+						data:{value:'mobileharness'},
+						success: function(data) {
+							td_owner.editable('setValue', 'mobileharness', false);
+						},
+						error: function(errors) {
+							console.log($(this));
+						}
+					});
+
+					setTimeout(function() {
+						td_project.editable('submit', {
+							data:{value:'PUBLIC'},
+							success: function(data) {
+								td_project.editable('setValue', 'PUBLIC', false);
+							},
+							error: function(errors) {
+								console.log($(this));
+							}
+						});
+					}, 200);
+
+					if ( htitle.startsWith("Dedicated") || htitle.startsWith("Broken") ) {
+						$(this).parent().parent().fadeOut(1500);
+					}
+				} else if ( newValue == 'ASS' ) {  // to avoid the case newValue is empty, explicitly state the else if.
+					if ( td_owner.text() == 'mobileharness' ) {
+						setTimeout(function() {
+							td_owner.editable('show');
+						}, 200);
+						$(this).editable('setValue', oldValue, true);
+					} else { // owner is other than mobileharness, it's probably modified ahead.
+						if ( td_project.text() == 'PUBLIC' ) {
+							setTimeout(function() {
+								td_project.editable('show');
+							}, 200);
+							$(this).editable('setValue', oldValue, false);
+						} else if ( htitle.startsWith("Public") || htitle.startsWith("Broken") ) {
+							$(this).parent().parent().fadeOut(1500);
+						}
+					}
+				} // end of condition newValue 'ASS'.
+			} // end of condition newValue 'AVA' or 'ASS'.
+			if ( newValue == 'BRO' && !htitle.startsWith("Broken") ) {
+				$(this).parent().parent().fadeOut(1500);
+			}
 		},
 
 		error: function(response, newValue) {
 			if (response.status === 500) {
 				return 'submit might be illegal, try again.';
 			} else if (response.status === 200) {
+				console.error('-------------In error block----------------');
 				console.log(response);
 				console.log('newValue is: ', newValue);
-				// var oldValue = $(this).editable('getValue', true);  // by this way, oldValue could be empty.
-				// console.log(oldValue);
-				var oldText = ($(this).text());
-				var valuedict = {'Public':'AVA', 'Assigned':'ASS', 'Broken':'BRO'};
-				var oldValue = valuedict[oldText];
-
-				$(this).editable('setValue', newValue, false); 
-				$(this).editable('hide');
-
-				var htitle = document.title;
-				if (newValue == 'AVA' || 'ASS') { // newValue is much better than $(this).text(), it reflects the change.
-					var td_owner = $(this).parent().prevAll().find('a[data-name="owner"]');
-					var td_project = $(this).parent().prevAll().find('a[data-name="project"]');
-					if (newValue == 'AVA') {
-						td_owner.editable('submit', {
-							data:{value:'mobileharness'},
-							success: function(data) {
-								td_owner.editable('setValue', 'mobileharness', false);
-							},
-							error: function(errors) {
-								console.log($(this));
-							}
-						});
-
-						setTimeout(function() {
-							td_project.editable('submit', {
-								data:{value:'PUBLIC'},
-								success: function(data) {
-									td_project.editable('setValue', 'PUBLIC', false);
-								},
-								error: function(errors) {
-									console.log($(this));
-								}
-							});
-						}, 200);
-
-						if ( htitle.startsWith("Dedicated") || htitle.startsWith("Broken") ) {
-							$(this).parent().parent().fadeOut(1500);
-						}
-					} else if ( newValue == 'ASS' ) {  // to avoid the case newValue is empty, explicitly state the else if.
-						if ( td_owner.text() == 'mobileharness' ) {
-							setTimeout(function() {
-								td_owner.editable('show');
-							}, 200);
-							$(this).editable('setValue', oldValue, true);
-						} else { // owner is other than mobileharness, it's probably modified ahead.
-							if ( td_project.text() == 'PUBLIC' ) {
-								setTimeout(function() {
-									td_project.editable('show');
-								}, 200);
-								$(this).editable('setValue', oldValue, false);
-							} else if ( htitle.startsWith("Public") || htitle.startsWith("Broken") ) {
-								$(this).parent().parent().fadeOut(1500);
-							}
-						}
-					} // end of condition newValue 'ASS'.
-				} // end of condition newValue 'AVA' or 'ASS'.
-			}
-			if ( newValue == 'BRO' && !htitle.startsWith("Broken") ) {
-				$(this).parent().parent().fadeOut(1500);
 			}
 		}
 
@@ -391,10 +394,10 @@ $(document).ready(function(){
     $('#approval').prop('checked', false); //In case when user browse back, the checkbox is checked but the submit button is disabled.
 
 
-/* Handle the various select options */
+/* Handle the various select options on the Request Disposal page. */
 	var primary_key = 'hello world';
 	var status = '';
-    $('select').on('change.sel', 
+    $('select').on('change', 
     	// { pk: $(this).attr('data-pk') },
     	function(event) {
     		console.log(this);
@@ -540,7 +543,6 @@ $(document).ready(function(){
 
 		$('#allocation_table').append('<tr><td><input type="hidden" name="pk" value=' + primary_key + '></td></tr>');
 		$('#allocation_table').append('<tr><td><input type="hidden" name="status" value=' + status + '></td></tr>');
-		$('#allocation_table').append('<tr><td><input type="hidden" name="operator" value=' + Gldap + '></td></tr>');
 
  	});
 
@@ -588,7 +590,7 @@ $(document).ready(function(){
 	});
 
 	$('#submit_rep').on('click', {pk:primary_key}, function(event) {
-  		$.post('/device_replacement/', {pk: primary_key, replacement_pk:$('#replacement_pk').val(), 'csrfmiddlewaretoken': token, 'operator': Gldap})
+  		$.post('/device_replacement/', {pk: primary_key, replacement_pk:$('#replacement_pk').val(), 'csrfmiddlewaretoken': token})
 			.done( function(response) {
 				toastr.success('Saved successfully!', {timeOut: 2000});
 				$('#replacement_modal').modal('hide');

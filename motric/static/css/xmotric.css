@@ -174,3 +174,7 @@ tr td:hover button{
     color:red;
     font-weight: bold;
 }
+
+.bold{
+    font-weight: bold;
+}

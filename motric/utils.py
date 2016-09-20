@@ -154,6 +154,11 @@ def request_editor(request):
     return HttpResponse(response)
 
 
+def log_generator(timestamp, operation, operator):
+    evt_content = {'timestamp':timestamp, 'operation':operation, 'operator':operator}
+    return evt_content
+
+
 def labdevice_editor(request):
     message = ''
     dict = request.POST.copy()
@@ -163,8 +168,10 @@ def labdevice_editor(request):
     pk = dict['pk']
     ld = LabDevice.objects.get(pk=pk)
 
+    ## data is like this: {"pk": "191", "csrfmiddlewaretoken": "ZPUe3zv9snleUyycvG4Nr8UdlySz0iYD", "name": "os", "value": "Android 6.0.1", "ov": "Android 4.4.4"} ##
     field = dict.values()[2]
     field_value = dict.values()[3]
+    oldvalue = dict['ov']
 
     # target = getattr(ld, field)
     # target = field_value
@@ -173,11 +180,11 @@ def labdevice_editor(request):
     if field == 'status':
         field_value = ld.get_status_display()
 
-    event_msg = {'timestamp':timezone.now(), 'operation':field + " was changed to " + field_value, 'operator':operator}
+    event_msg = log_generator(timezone.now(), '<span class="">' + field + '</span> was changed from <span class="required">' + oldvalue + '</span> --> <span class="bold">' + field_value + '</span>', operator)
     evt = Event(device=ld, event=event_msg)
     evt.save()
     message += "\n" + field + " " + field_value + " saved successfully."
-    return HttpResponse(field_value, status=200, charset='utf8')
+    return HttpResponse(data, status=200, charset='utf8')
 
 
 def device_allocate(request):
@@ -201,7 +208,7 @@ def device_allocate(request):
             ld.status = 'ASS'
             ld.respond_to.add(rd)
             ld.save()
-            event_msg = {'timestamp':register_date, 'operation':'made ' + ld.get_status_display(), 'operator':operator}
+            event_msg = log_generator(register_date, 'made <span class="bold">' + ld.get_status_display() + '</span>', operator)
             evt = Event(device=ld, event=event_msg)
             evt.save()
         rd.resolved = True
@@ -215,7 +222,7 @@ def device_allocate(request):
             ld.save()
             ld.respond_to.add(rd)
             ld.save()
-            event_msg = {'timestamp':register_date, 'operation':'made ' + ld.get_status_display(), 'operator':operator}
+            event_msg = log_generator(register_date, 'made <span class="bold">' + ld.get_status_display() + '</span>', operator)
             evt = Event(device=ld, event=event_msg)
             evt.save()
         rd.status = status
@@ -240,10 +247,6 @@ def details(request):
     replacement_list = LabDevice.objects.filter(labdevice=pk)
     return render(request, 'motric_details.html', {'device':ld, 'did':did, 'request_list':request_list, 'event_list':event_list, 'replacement_list':replacement_list})
 
-
-def log_generator(timestamp, operation, operator):
-    evt_content = {'timestamp':timestamp, 'operation':operation, 'operator':operator}
-    return evt_content
 
 def device_replacement(request):
     p = request.POST.copy()
@@ -283,10 +286,10 @@ def device_replacement(request):
     ld_attack.save()
 
     evt = Event(device=ld_attack, event=log_generator(replace_date, 'Properties are changed in bundle.<br/>' \
-        + 'owner from ' + owner_old + ' --> <b>' + ld_attack.owner + '</b>;<br/>' 
-        + 'user from ' + user_old + ' --> <b>' + ld_attack.user + '</b>;<br/>' \
-        + 'label from ' + label_old + ' --> <b>' + ld_attack.label + '</b>;<br/>' \
-        + 'project from ' + project_old + ' --> <b>' + ld_attack.project + '</b>.', operator))
+        + 'owner from <span class="required">' + owner_old + '</span> --> <b>' + ld_attack.owner + '</b>;<br/>' 
+        + 'user from <span class="required">' + user_old + '</span> --> <b>' + ld_attack.user + '</b>;<br/>' \
+        + 'label from <span class="required">' + label_old + '</span> --> <b>' + ld_attack.label + '</b>;<br/>' \
+        + 'project from <span class="required">' + project_old + '</span> --> <b>' + ld_attack.project + '</b>.', operator))
     evt.save()
 
     return HttpResponse(data)
