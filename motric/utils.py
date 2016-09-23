@@ -193,26 +193,30 @@ def device_allocate(request):
     pk = dict['pk']
     status = dict['status']
     rd = RequestedDevice.objects.get(pk=pk)
-    register_date = timezone.now()
-    # register_date = time.ctime()
     event_msg = {}
     if status == 'LOC':
         rd.lab_location = dict['location']
     elif status == 'CUR':
         ld_pk = dict.pop('pkid')
+        feed_date = timezone.now()
         for i in range(len(ld_pk)):
             ld = LabDevice.objects.get(pk=ld_pk[i])
             ld.owner = rd.requester.device_owner
             ld.label = rd.requester.device_label
             ld.project = rd.requester.project
             ld.status = 'ASS'
-            ld.respond_to.add(rd)
+            # ld.respond_to.add(rd)
+            rr = ResponseRelationship.objects.create(device=ld, request=rd, response_date=feed_date)
+            rr.save()
             ld.save()
-            event_msg = log_generator(register_date, 'made <span class="bold">' + ld.get_status_display() + '</span>', operator)
+            event_msg = log_generator(feed_date, 'Made <span class="bold">' + ld.get_status_display() + '</span>, from public pool.', operator)
             evt = Event(device=ld, event=event_msg)
             evt.save()
         rd.resolved = True
+        rd.resolved_date = feed_date
     else: # status is 'ASS' or 'AVA'
+        register_date = timezone.now()
+        # register_date = time.ctime()
         serial_no = dict.pop('did') # got a list of serial number;
         if status == 'AVA':
             rd.requester.device_owner = 'mobileharness'
@@ -220,13 +224,16 @@ def device_allocate(request):
         for i in range(len(serial_no)):
             ld = LabDevice(model=rd.model_type, device_id=serial_no[i], status=status, register_date=register_date, os=rd.os_version, owner=rd.requester.device_owner, label=rd.requester.device_label, project=rd.requester.project) # LabDevice.model must be a RequestedDevice instance.
             ld.save()
-            ld.respond_to.add(rd)
+            # ld.respond_to.add(rd)
+            rr = ResponseRelationship.objects.create(device=ld, request=rd, response_date=register_date)
+            rr.save()
             ld.save()
-            event_msg = log_generator(register_date, 'made <span class="bold">' + ld.get_status_display() + '</span>', operator)
+            event_msg = log_generator(register_date, 'Made <span class="bold">' + ld.get_status_display() + '</span>, from new purchase.', operator)
             evt = Event(device=ld, event=event_msg)
             evt.save()
         rd.status = status
         rd.resolved = True
+        rd.resolved_date = register_date
     rd.save()
 
     # except:
@@ -242,10 +249,13 @@ def details(request):
     # did = q['did']
     ld = LabDevice.objects.get(pk=pk)
     did = ld.device_id
-    request_list = RequestedDevice.objects.filter(labdevice=pk)
+    # request_list = RequestedDevice.objects.filter(labdevice=pk).order_by('resolved_date')
+    request_list = ld.respond_to.all().distinct()  ## Naturally this list is ordered by the response_date!;  distict() can elimilate the duplications. 
+    first_response_target = request_list[0]  ## But there is a KengDie design in django template, the first|last filter will re-sort the querySet by Objects' primary key, not the original position it's in the set. 
+    last_response_target = request_list[len(request_list)-1]
     event_list = Event.objects.filter(device=ld)
     replacement_list = LabDevice.objects.filter(labdevice=pk)
-    return render(request, 'motric_details.html', {'device':ld, 'did':did, 'request_list':request_list, 'event_list':event_list, 'replacement_list':replacement_list})
+    return render(request, 'motric_details.html', {'device':ld, 'did':did, 'request_list':request_list, 'first_target':first_response_target, 'last_target':last_response_target, 'event_list':event_list, 'replacement_list':replacement_list})
 
 
 def device_replacement(request):
@@ -261,35 +271,43 @@ def device_replacement(request):
     ld_hold.save()
     # rd = RequestedDevice.objects.filter(labdevice=repk)
     # event_hold = {'timestamp':replace_date, 'operation':'be replaced by device ' + rd[len(rd)-1].model_type +' (' + ld_attack.device_id +')', 'operator':operator}
-    event_hold = {'timestamp':replace_date, 'operation':'be replaced by <a href="/details/?pk=' + str(ld_attack.id) + '" target="_blank">' + str(ld_attack) + '</a>', 'operator':operator}
-    event_attack = {'timestamp':replace_date, 'operation':'replaced <a href="/details/?pk=' + str(ld_hold.id) + '" target="_blank">' + str(ld_hold) + '</a>', 'operator':operator}
+    event_hold = log_generator(replace_date, 'be replaced by <a href="/details/?pk=' + str(ld_attack.id) + '" target="_blank">' + str(ld_attack) + '</a>', operator)
+    event_attack = log_generator(replace_date, 'replaced <a href="/details/?pk=' + str(ld_hold.id) + '" target="_blank">' + str(ld_hold) + '</a>', operator)
     evt_hold = Event(device=ld_hold, event=event_hold)
     evt_attack = Event(device=ld_attack, event=event_attack)
     evt_hold.save()
     evt_attack.save()
 
-    rd = RequestedDevice.objects.filter(labdevice=pk) # get the QuerySet of requesteddevice of the be_replaced device.
-    rd_last = rd[len(rd)-1] # get the last object of the QuerySet, it's just the current requesteddevice that the be_replaced device are responding.
-    ld_attack.respond_to.add(rd_last)
-    evt = Event(device=ld_attack, event=log_generator(replace_date, 'Request target added: <b>' + str(rd_last) + '</b>', operator))
+    # rdl = RequestedDevice.objects.filter(labdevice=pk).order_by('resolved_date') # get the QuerySet of requesteddevice of the be_replaced device.  ## Bad criteria!
+    # rdl = ld.respond_to.all().order_by('resolved_date')
+    rrl = ResponseRelationship.objects.filter(device=pk).order_by('response_date')  ## actually the order_by section can be omitted.
+    rd_last = rrl[len(rrl)-1].request # get the last object of the QuerySet, it's just the current requesteddevice that the be_replaced device are responding to. 
+    # ld_attack.respond_to.add(rd_last)
+    rr = ResponseRelationship.objects.create(device=ld_attack, request=rd_last, response_date=replace_date)
+    rr.save()
+    evt = Event(device=ld_attack, event=log_generator(replace_date, 'Request target added: <a>' + str(rd_last) + '</a>', operator))
     evt.save()
 
     owner_old = ld_attack.owner
     user_old = ld_attack.user
     label_old = ld_attack.label
     project_old = ld_attack.project
+    status_old = ld_attack.status
+    status_d = {'AVA':'Public', 'ASS':'Assigned', 'BRO':'Broken'}
 
     ld_attack.owner = ld_hold.owner
     ld_attack.user = ld_hold.user
     ld_attack.label = ld_hold.label
     ld_attack.project = ld_hold.project
+    ld_attack.status = 'ASS'
     ld_attack.save()
 
     evt = Event(device=ld_attack, event=log_generator(replace_date, 'Properties are changed in bundle.<br/>' \
         + 'owner from <span class="required">' + owner_old + '</span> --> <b>' + ld_attack.owner + '</b>;<br/>' 
         + 'user from <span class="required">' + user_old + '</span> --> <b>' + ld_attack.user + '</b>;<br/>' \
         + 'label from <span class="required">' + label_old + '</span> --> <b>' + ld_attack.label + '</b>;<br/>' \
-        + 'project from <span class="required">' + project_old + '</span> --> <b>' + ld_attack.project + '</b>.', operator))
+        + 'project from <span class="required">' + project_old + '</span> --> <b>' + ld_attack.project + '</b><br/>' \
+        + 'status from <span class="required">' + status_d[status_old] + '</span> --> <b>' + ld_attack.get_status_display() + '</b>.', operator))
     evt.save()
 
     return HttpResponse(data)

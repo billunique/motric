@@ -39,13 +39,18 @@
 	  	  <th>Price(CNY)</th>
 		</tr>
 		<tr>
-	  	  <td>{{ device.respond_to.last.requester.ldap }}</td>
-	  	  <td>{{ device.respond_to.last.request_date}}
-	  	  <td>{{ device.respond_to.last.requester.cost_center }}</td>
-	  	  <td>{{ device.respond_to.first.po_number }}</td>
-	  	  <td>{{ device.respond_to.first.po_date }}</td>
-	  	  <td>{{ device.respond_to.first.price_usd }}</td>
-	  	  <td>{{ device.respond_to.first.price_cny }}</td>
+		{# with last_target=device.respond_to.all|dictsort:"resolved_date"|last first_target=device.respond_to.all|dictsort:"resolved_date"|first #}
+		{# with last_target=device.respond_to.all.distinct.last first_target=device.respond_to.all.0 #}
+		{# with last_target=device.respond_to.all.distinct|dictsort:"responserelationship.response_date"|last first_target=device.respond_to.all.0 #}
+		{# with index=device.respond_to.all.distinct|length|add:"-1" last_target=device.respond_to.all.index first_target=device.respond_to.all.0 #}
+	  	  <td>{{ last_target.requester.ldap }}</td>
+	  	  <td>{{ last_target.request_date }}
+	  	  <td>{{ last_target.requester.cost_center }}</td>
+	  	  <td>{{ first_target.po_number }}</td>
+	  	  <td>{{ first_target.po_date }}</td>
+	  	  <td>{{ first_target.price_usd }}</td>
+	  	  <td>{{ first_target.price_cny }}</td>
+	  	{# endwith #}
 	  	</tr>
 	</table>	
 

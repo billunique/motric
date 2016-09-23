@@ -15,7 +15,7 @@
 	  	  <th>OS</th>
 	  	  <th title='Those who have the property ownership of the device.'>Owner<img src='/static/img/question.png' style="width:21px;"></th>
 	  	  <th title='Those who have the current usage access of the device. If empty, it is same as owner.'>User<img src='/static/img/question.png' style="width:21px;"></th>
-	  	  <!-- <th title='Info displayed on the MobileHarness client homepage.'>Label<img src='/static/img/question.png' style="width:21px;"></th> -->
+	  	  <th title='Info displayed on the MobileHarness client homepage.'>Label<img src='/static/img/question.png' style="width:21px;"></th>
 	  	  <th>Project</th>
 	  	  <th class="btn-success">Requester</th>
 	  	  <th title='Cost Center' class="btn-success">CC</th>
@@ -35,14 +35,19 @@
 		  <td><a href="#" data-target="labd_editor" data-name="os" data-title="Edit os version" data-pk="{{ device.id }}">{{ device.os}}</a></td>
 		  <td><a href="#" data-target="labd_editor" data-name="owner" data-title="Edit device owner" data-pk="{{ device.id }}">{{ device.owner }}</a></td>
 		  <td><a href="#" data-target="labd_editor" data-name="user" data-title="Edit device user" data-pk="{{ device.id }}">{{ device.user }}</a></td>
-		  <!-- <td><a href="#" data-type="text" data-name="device_label" data-title="Change device label" data-pk="{{ device.id }}">{{ device.model.requester.device_label }}</td> -->
-		  <td><a href="#" data-target="labd_editor" data-name="project" data-title="Edit project" data-pk="{{ device.id }}">{{ device.project }}</a></td>
+		  <td><a href="#" data-target="labd_editor" data-name="label" data-title="Edit device label" data-pk="{{ device.id }}">{{ device.label }}</td>
+		  <td><a href="#" data-target="labd_editor" data-name="project" data-title="Edit device project" data-pk="{{ device.id }}">{{ device.project }}</a></td>
 		  <!-- <td>{{ device.model.requester.ldap }}</td> -->
-		  <td>{{ device.respond_to.all.last.requester.ldap }}</td>
-		  <td>{{ device.respond_to.all.last.requester.cost_center }}</td>
-		  <td>{{ device.respond_to.all.first.po_number }}</td>
-		  <td>{{ device.respond_to.all.first.price_usd }}</td>
-		  <td>{{ device.respond_to.all.first.price_cny }}</td>
+		  {# with last_target=device.respond_to.all|dictsort:"resolved_date"|last first_target=device.respond_to.all|dictsort:"resolved_date"|first #}
+		  {# with last_target=device.respond_to.all.last first_target=device.respond_to.all.0 #}
+		  {% with last_target=device.responserelationship_set.all.last.request first_target=device.respond_to.all.0 %}
+		  <td>{{ last_target.requester.ldap }}</td>
+		  <td>{{ last_target.requester.cost_center }}</td>
+		  <td>{{ first_target.po_number }}</td>
+		  <td>{{ first_target.price_usd }}</td>
+		  <td>{{ first_target.price_cny }}</td>
+		  {% endwith %}
+		  
 		  <td><a href="#" data-target="labd_editor" data-name="status" data-type="select" data-title="Change Status" data-pk="{{ device.id }}">{{ device.get_status_display }}</td>  {# don't use it as display() #}
 		</tr>
 		{% endfor %}

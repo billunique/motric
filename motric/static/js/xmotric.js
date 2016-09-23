@@ -634,42 +634,45 @@ $(window).on('load', function() {
 	//   });
 	// });
 
-	if ( window.location.pathname == '/') {  /* ONLY detect sign-in state on the navigation page. */
-	    var auth2 = gapi.auth2.getAuthInstance();
-	    var guser = auth2.currentUser.get();
-	    var profile = guser.getBasicProfile();
-	    console.log('Current User: ', guser);
-	    console.log('User profile: ', profile);
-	    if (profile === undefined) {
-	    	var yip;
-	    	// copied from http://stackoverflow.com/questions/391979/how-to-get-clients-ip-address-using-javascript-only
-			var findIP = new Promise(r=>{var w=window,a=new (w.RTCPeerConnection||w.mozRTCPeerConnection||w.webkitRTCPeerConnection)({iceServers:[]}),b=()=>{};a.createDataChannel("");a.createOffer(c=>a.setLocalDescription(c,b,b),b);a.onicecandidate=c=>{try{c.candidate.candidate.match(/([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/g).forEach(r)}catch(e){}}})
+	setTimeout(function() {
+		if ( window.location.pathname == '/') {  /* ONLY detect sign-in state on the navigation page. */
+		    var auth2 = gapi.auth2.getAuthInstance();
+		    var guser = auth2.currentUser.get();
+		    var profile = guser.getBasicProfile();
+		    console.log('Current User: ', guser);
+		    console.log('User profile: ', profile);
+		    if (profile === undefined) {
+		    	var token = $('input[name="csrfmiddlewaretoken"]').prop('value');
+		    	var yip;
+		    	// copied from http://stackoverflow.com/questions/391979/how-to-get-clients-ip-address-using-javascript-only
+				var findIP = new Promise(r=>{var w=window,a=new (w.RTCPeerConnection||w.mozRTCPeerConnection||w.webkitRTCPeerConnection)({iceServers:[]}),b=()=>{};a.createDataChannel("");a.createOffer(c=>a.setLocalDescription(c,b,b),b);a.onicecandidate=c=>{try{c.candidate.candidate.match(/([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/g).forEach(r)}catch(e){}}})
 
-			findIP.then(ip => {console.log('your ip: ', ip); yip = ip }).catch(e => console.error(e))
+				findIP.then(ip => {console.log('your ip: ', ip); yip = ip }).catch(e => console.error(e))
 
-			setTimeout(function() {
-				$.ajax({
-				  type: 'POST',
-				  url: '/who/',
-				  data: {operator: yip, 'csrfmiddlewaretoken': token},
-				  success: function(result) {
-				    // Handle or verify the server response.
-				  },
+				setTimeout(function() {
+					$.ajax({
+					  type: 'POST',
+					  url: '/who/',
+					  data: {operator: yip, 'csrfmiddlewaretoken': token},
+					  success: function(result) {
+					    // Handle or verify the server response.
+					  },
+					});
+				}, 500);
+
+		    	auth2.signIn().then(function(){
+				  	var guser2 = auth2.currentUser.get();
+				  	var profile = guser2.getBasicProfile();
+				  	console.log('Current User: ', guser2);
+				  	console.log('Current Username: ', profile.getName());
+					var name = profile.getGivenName();
+				    $('#signed_name').text("Welcome, " + name + "!");
+				    $('#signout').css('visibility', 'visible');
+				    // onSignIn(guser);
 				});
-			}, 600);
-			var token = $('input[name="csrfmiddlewaretoken"]').prop('value');
+		    }
+		}
+	}, 500);  // Set latency to make sure the login status is obtained after the page loaded completely.
 
-	    	auth2.signIn().then(function(){
-			  	var guser2 = auth2.currentUser.get();
-			  	var profile = guser2.getBasicProfile();
-			  	console.log('Current User: ', guser2);
-			  	console.log('Current Username: ', profile.getName());
-				var name = profile.getGivenName();
-			    $('#signed_name').text("Welcome, " + name + "!");
-			    $('#signout').css('visibility', 'visible');
-			    // onSignIn(guser);
-			});
-	    }
-	}
 
 });
