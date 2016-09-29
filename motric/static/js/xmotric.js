@@ -158,6 +158,46 @@ function getLdap() {
 	return ldap;
 }
 
+// Create the XHR object.
+function createCORSRequest(method, url) {
+  var xhr = new XMLHttpRequest();
+  if ("withCredentials" in xhr) {
+    // XHR for Chrome/Firefox/Opera/Safari.
+    xhr.open(method, url, true); // true for asynchronous.
+  } else if (typeof XDomainRequest != "undefined") {
+    // XDomainRequest for IE.
+    xhr = new XDomainRequest();
+    xhr.open(method, url);
+  } else {
+    // CORS not supported.
+    xhr = null;
+  }
+  return xhr;
+}
+
+
+// Make the actual CORS request.
+function makeCorsRequest(url) {
+
+  var xhr = createCORSRequest('GET', url);
+  if (!xhr) {
+    alert('CORS not supported');
+    return;
+  }
+
+  // Response handlers.
+  xhr.onload = function() {
+    var text = xhr.responseText;
+    return text;
+  };
+
+  // xhr.onerror = function() {
+  //   alert('Woops, there was an error making the request.');
+  // };
+
+  xhr.send();
+}
+
 // toastr.options.progressBar = true;
 toastr.options.closeButton = true;
 // toastr.options.closeMethod = 'fadeOut';
@@ -176,6 +216,7 @@ $(document).ready(function(){
 	// toastr.success('Saved successfully!', 'IAmTitle', {timeOut: 1000}); // Must override the title before the timeOut override takes effect.
 
 	var token = $('input[name="csrfmiddlewaretoken"]').prop('value');
+	var currency_rate = '6';
 	$('a[data-target="req_editor"]').editable({
 		// type: 'text',
 		placement: 'left',
@@ -199,48 +240,100 @@ $(document).ready(function(){
     		// if (response.status === 200) { // This needs to be defined by server definitely.
     			// alert('oldValue: ' + $(this).text() +'\nnewValue: ' + newValue);
     		// }
-    			if ($(this).attr('data-name') == 'ex_rate') {
-    				var rate = newValue;
-    				var preMatching = $(this).parent().prev().find('a');
-    				var nextMatching = $(this).parent().next().find('a');
-    				// var price_c = $(this).parent().prev().text();
-    				var price_c = preMatching.editable('getValue', true);  // Boolean: wheter to return just value of single element.
-    				var price_u = nextMatching.editable('getValue', true);
-    				console.log(price_c + price_u)
-    				// if ( price_c != 'Empty') {  // for the text() method inside editable, will identify the empty value as string 'Empty'.
-    				if ( price_c ) {
-    					price_u = (price_c / rate).toFixed(2);
-    					// This is for the database restore.
-    					$(nextMatching).editable('submit', {
-    						// ajaxOptions: {
-					             // dataType: 'json', 
-					             // headers: { "X-CSRFToken": token }
-						    // }, 
-    						data: {
-    							'value': price_u,
-    							// 'csrfmiddlewaretoken': token
-    						}
-    					});
-    					// This is for the UI presentation.
-    					$(nextMatching).editable('setValue', price_u, false); // Boolean: whether to convert value from string to internal format.				
-    				} else if ( price_u ) {
-    					price_c = (price_u * rate).toFixed(2);
-    					$(preMatching).editable('submit', {
-    						// ajaxOptions: {
-					             // dataType: 'json', 
-					             // headers: { "X-CSRFToken": token }
-						    // }, 
-    						data: {
-    							'value': price_c,
-    						}
-    					});
-    					$(preMatching).editable('setValue', price_c, false);       
-    				}
-    			}
+    			// if ($(this).attr('data-name') == 'ex_rate') {
+    			// 	var rate = newValue;
+    			// 	var preMatching = $(this).parent().prev().find('a');
+    			// 	var nextMatching = $(this).parent().next().find('a');
+    			// 	// var price_c = $(this).parent().prev().text();
+    			// 	var price_c = preMatching.editable('getValue', true);  // Boolean: wheter to return just value of single element.
+    			// 	var price_u = nextMatching.editable('getValue', true);
+    			// 	console.log(price_c + price_u)
+    			// 	// if ( price_c != 'Empty') {  // for the text() method inside editable, will identify the empty value as string 'Empty'.
+    			// 	if ( price_c ) {
+    			// 		price_u = (price_c / rate).toFixed(2);
+    			// 		// This is for the database restore.
+    			// 		$(nextMatching).editable('submit', {
+    			// 			// ajaxOptions: {
+					  //            // dataType: 'json', 
+					  //            // headers: { "X-CSRFToken": token }
+						 //    // }, 
+    			// 			data: {
+    			// 				'value': price_u,
+    			// 				// 'csrfmiddlewaretoken': token
+    			// 			}
+    			// 		});
+    			// 		// This is for the UI presentation.
+    			// 		$(nextMatching).editable('setValue', price_u, false); // Boolean: whether to convert value from string to internal format.				
+    			// 	} else if ( price_u ) {
+    			// 		price_c = (price_u * rate).toFixed(2);
+    			// 		$(preMatching).editable('submit', {
+    			// 			// ajaxOptions: {
+					  //            // dataType: 'json', 
+					  //            // headers: { "X-CSRFToken": token }
+						 //    // }, 
+    			// 			data: {
+    			// 				'value': price_c,
+    			// 			}
+    			// 		});
+    			// 		$(preMatching).editable('setValue', price_c, false);       
+    			// 	}
+    			// }
 
     			if ($(this).attr('data-name') == 'po_number') {
     				$.post('/edit_request/', {pk:$(this).attr('data-pk'), target: 'status', target_value:'ORD', 'csrfmiddlewaretoken': token})
     			}
+
+    			if ($(this).attr('data-name') == 'price_cny') {
+    				var pkid = $(this).attr('data-pk');
+    				var td_ex_rate = $(this).parent().next().find('a');
+    				var td_price_u = $(this).parent().next().next().find('a');
+    				$(td_ex_rate).editable('submit', {
+    					data: {
+    						'value': currency_rate,
+    					}
+    				});
+    				$(td_ex_rate).editable('setValue', currency_rate, false);
+    				var price_c = newValue;
+    				var price_u = (price_c / currency_rate).toFixed(2);
+
+    				setTimeout(function() {
+						// $(td_price_u).editable('submit', {
+	    	// 				data: {
+	    	// 					'value': price_u,
+	    	// 				}
+    		// 			});
+    					$.post('/edit_request/', {pk:pkid, name: 'price_usd', value: price_u, 'csrfmiddlewaretoken': token});
+    					$(td_price_u).editable('setValue', price_u, false);
+					}, 200);
+
+    			}    			
+
+    			if ($(this).attr('data-name') == 'price_usd') {
+    				var pkid = $(this).attr('data-pk');
+    				var td_ex_rate = $(this).parent().prev().find('a');
+    				var td_price_c = $(this).parent().prev().prev().find('a');
+    				$(td_ex_rate).editable('submit', {
+    					data: {
+    						'value': currency_rate,
+    					}
+    				});
+    				$(td_ex_rate).editable('setValue', currency_rate, false);
+    				var price_u = newValue;
+    				var price_c = (price_u * currency_rate);
+
+    				setTimeout(function() {
+						// $(td_price_c).editable('submit', {
+	    	// 				data: {
+	    	// 					'value': price_c,
+	    	// 				}
+    		// 			});
+    					$.post('/edit_request/', {pk:pkid, name: 'price_cny', value: price_c, 'csrfmiddlewaretoken': token});
+    					$(td_price_c).editable('setValue', price_c, false);
+					}, 200);
+
+    			}
+
+
 		},
 		error: function(response, newValue) {
 			if (response.status === 500) {
@@ -609,70 +702,87 @@ $(document).ready(function(){
 		// console.log(index + ': ' + $(this).text());
 	// });
 
-});
 
-$(window).on('load', function() {
+	$(window).on('load', function() {
 
-	// gapi.load('auth2', function() {
-	//   auth2 = gapi.auth2.init({
-	//     client_id: '613024433503-bplsrhovk0a60ng7lrlb6slg49ta320h.apps.googleusercontent.com',
-	//     scope:'profile email',
-	//   });
-	//   console.log(auth2);
-	//   var guser = auth2.currentUser.get();
-	//   console.log(guser);
-	//   // console.log(guser.getBasicProfile().getName());
-	//   auth2.signIn().then(function(){
-	//   	var guser2 = auth2.currentUser.get()
-	//   	var profile = guser2.getBasicProfile();
-	//   	console.log('Current User: ', guser2);
-	//   	console.log('Current Username: ', profile.getName());
-	// 	var name = profile.getGivenName();
-	//     $('#signed_name').text("Welcome, " + name + "!");
-	//     $('#signout').css('visibility', 'visible');
-	//     // onSignIn(guser2);
-	//   });
-	// });
+		// gapi.load('auth2', function() {
+		//   auth2 = gapi.auth2.init({
+		//     client_id: '613024433503-bplsrhovk0a60ng7lrlb6slg49ta320h.apps.googleusercontent.com',
+		//     scope:'profile email',
+		//   });
+		//   console.log(auth2);
+		//   var guser = auth2.currentUser.get();
+		//   console.log(guser);
+		//   // console.log(guser.getBasicProfile().getName());
+		//   auth2.signIn().then(function(){
+		//   	var guser2 = auth2.currentUser.get()
+		//   	var profile = guser2.getBasicProfile();
+		//   	console.log('Current User: ', guser2);
+		//   	console.log('Current Username: ', profile.getName());
+		// 	var name = profile.getGivenName();
+		//     $('#signed_name').text("Welcome, " + name + "!");
+		//     $('#signout').css('visibility', 'visible');
+		//     // onSignIn(guser2);
+		//   });
+		// });
 
-	setTimeout(function() {
-		if ( window.location.pathname == '/') {  /* ONLY detect sign-in state on the navigation page. */
-		    var auth2 = gapi.auth2.getAuthInstance();
-		    var guser = auth2.currentUser.get();
-		    var profile = guser.getBasicProfile();
-		    console.log('Current User: ', guser);
-		    console.log('User profile: ', profile);
-		    if (profile === undefined) {
-		    	var token = $('input[name="csrfmiddlewaretoken"]').prop('value');
-		    	var yip;
-		    	// copied from http://stackoverflow.com/questions/391979/how-to-get-clients-ip-address-using-javascript-only
-				var findIP = new Promise(r=>{var w=window,a=new (w.RTCPeerConnection||w.mozRTCPeerConnection||w.webkitRTCPeerConnection)({iceServers:[]}),b=()=>{};a.createDataChannel("");a.createOffer(c=>a.setLocalDescription(c,b,b),b);a.onicecandidate=c=>{try{c.candidate.candidate.match(/([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/g).forEach(r)}catch(e){}}})
+		setTimeout(function() {
+			if ( window.location.pathname == '/') {  /* ONLY detect sign-in state on the navigation page. */
+			    var auth2 = gapi.auth2.getAuthInstance();
+			    var guser = auth2.currentUser.get();
+			    var profile = guser.getBasicProfile();
+			    console.log('Current User: ', guser);
+			    console.log('User profile: ', profile);
+			    if (profile === undefined) {
+			    	var token = $('input[name="csrfmiddlewaretoken"]').prop('value');
+			    	var yip;
+			    	// copied from http://stackoverflow.com/questions/391979/how-to-get-clients-ip-address-using-javascript-only
+					var findIP = new Promise(r=>{var w=window,a=new (w.RTCPeerConnection||w.mozRTCPeerConnection||w.webkitRTCPeerConnection)({iceServers:[]}),b=()=>{};a.createDataChannel("");a.createOffer(c=>a.setLocalDescription(c,b,b),b);a.onicecandidate=c=>{try{c.candidate.candidate.match(/([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/g).forEach(r)}catch(e){}}})
 
-				findIP.then(ip => {console.log('your ip: ', ip); yip = ip }).catch(e => console.error(e))
+					findIP.then(ip => {console.log('your ip: ', ip); yip = ip }).catch(e => console.error(e))
 
-				setTimeout(function() {
-					$.ajax({
-					  type: 'POST',
-					  url: '/who/',
-					  data: {operator: yip, 'csrfmiddlewaretoken': token},
-					  success: function(result) {
-					    // Handle or verify the server response.
-					  },
+					setTimeout(function() {
+						$.ajax({
+						  type: 'POST',
+						  url: '/who/',
+						  data: {operator: yip, 'csrfmiddlewaretoken': token},
+						  success: function(result) {
+						    // Handle or verify the server response.
+						  },
+						});
+					}, 500);
+
+			    	auth2.signIn().then(function(){
+					  	var guser2 = auth2.currentUser.get();
+					  	var profile = guser2.getBasicProfile();
+					  	console.log('Current User: ', guser2);
+					  	console.log('Current Username: ', profile.getName());
+						var name = profile.getGivenName();
+					    $('#signed_name').text("Welcome, " + name + "!");
+					    $('#signout').css('visibility', 'visible');
+					    // onSignIn(guser);
 					});
-				}, 500);
+			    }
+			}
+		}, 500);  // Set latency to make sure the login status is obtained after the page loaded completely.
 
-		    	auth2.signIn().then(function(){
-				  	var guser2 = auth2.currentUser.get();
-				  	var profile = guser2.getBasicProfile();
-				  	console.log('Current User: ', guser2);
-				  	console.log('Current Username: ', profile.getName());
-					var name = profile.getGivenName();
-				    $('#signed_name').text("Welcome, " + name + "!");
-				    $('#signout').css('visibility', 'visible');
-				    // onSignIn(guser);
-				});
-		    }
+		if ( window.location.pathname == '/request_disposal/') {
+			$.ajax({
+				type: 'GET',
+				dataType: 'jsonp',
+				jsonp: 'callback',
+				// jsonpCallback: '?',
+				// url: 'http://freecurrencyrates.com/api/action.php?s=fcr&iso=USDCNY&f=USD&v=1&do=cvals&ln=en',
+				url: 'http://api.fixer.io/latest?base=USD&symbols=CNY',
+				crossDomain: true,
+				success: function(data) {
+					// var jsonobj = JSON.parse(data);
+					console.log('Newest currency(USD -> CNY): ', data.rates.CNY);
+					currency_rate = data.rates.CNY;
+				}
+			});
 		}
-	}, 500);  // Set latency to make sure the login status is obtained after the page loaded completely.
 
+	});
 
 });

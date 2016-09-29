@@ -78,12 +78,12 @@ def form_receiver(request):
     except:
         return HttpResponse(expection_carrier())
 
-    message = ldap + ' raised device request for:\n\n' + combo + '\n\nPlease go to http://motric.bej.corp.google.com:8083/request_disposal for details.'
+    message = ldap + ' raised device request for:\n\n' + combo + '\n\nPlease go to http://motric/request_disposal for details.'
     motric_send_mail(
         '[Motric]Somebody raised device request!',
         message,
         'mobileharness.motric@gmail.com',
-        ['xiawang@google.com', 'yanyanl@google.com', 'ligang@google.com'],
+        ['xiawang@google.com', 'yanyanl@google.com', 'ligang@google.com', 'jinrui@google.com', 'derekchen@google.com', 'joyl@google.com', 'nanz@google.com'],
         ['mobileharness-ops@google.com']
     )
 
@@ -251,7 +251,7 @@ def details(request):
     did = ld.device_id
     # request_list = RequestedDevice.objects.filter(labdevice=pk).order_by('resolved_date')
     request_list = ld.respond_to.all().distinct()  ## Naturally this list is ordered by the response_date!;  distict() can elimilate the duplications. 
-    first_response_target = request_list[0]  ## But there is a KengDie design in django template, the first|last filter will re-sort the querySet by Objects' primary key, not the original position it's in the set. 
+    first_response_target = request_list[0]  ## But there is a KengDie design in django template, the .first .last (filter |first |last doesn't work - will raise a Negative Index Error) will re-sort the querySet by Objects' primary key, not the original position it's in the set. 
     last_response_target = request_list[len(request_list)-1]
     event_list = Event.objects.filter(device=ld)
     replacement_list = LabDevice.objects.filter(labdevice=pk)
