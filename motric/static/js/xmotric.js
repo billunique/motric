@@ -773,7 +773,7 @@ $(document).ready(function(){
 				jsonp: 'callback',
 				// jsonpCallback: '?',
 				// url: 'http://freecurrencyrates.com/api/action.php?s=fcr&iso=USDCNY&f=USD&v=1&do=cvals&ln=en',
-				url: 'http://api.fixer.io/latest?base=USD&symbols=CNY',
+				url: 'https://api.fixer.io/latest?base=USD&symbols=CNY',
 				crossDomain: true,
 				success: function(data) {
 					// var jsonobj = JSON.parse(data);
