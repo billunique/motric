@@ -280,7 +280,13 @@ $(document).ready(function(){
     			// }
 
     			if ($(this).attr('data-name') == 'po_number') {
-    				$.post('/edit_request/', {pk:$(this).attr('data-pk'), target: 'status', target_value:'ORD', 'csrfmiddlewaretoken': token, ov:$(this).text()})
+    				var td_status = $(this).parent().next().next().next().next();
+    				var oldValue = td_status.text();
+    				var pkid = $(this).attr('data-pk');
+    				$.post('/edit_request/', {pk:pkid, target: 'status', target_value:'ORD', 'csrfmiddlewaretoken': token, ov:oldValue});
+    				td_status.html('Ordered');
+    				$("select[data-pk=" + pkid + "] option[value='REF']").remove();
+    				$("select[data-pk=" + pkid + "] option[value='APP']").remove();
     			}
 
     			if ($(this).attr('data-name') == 'price_cny') {
@@ -355,7 +361,7 @@ $(document).ready(function(){
 	$('a[data-target="labd_editor"]').editable({
 		// mode: 'inline',
 		// type:'text',
-		placement: 'left',
+		placement: 'bottom',
 		url: '/edit_labdevice/',
         ajaxOptions: {
            dataType: 'json', 
@@ -527,7 +533,12 @@ $(document).ready(function(){
 					break;
 
 				case 'APP': 
-					$.post('/edit_request/', {pk: primary_key, target: 'status', target_value:'APP', 'csrfmiddlewaretoken': token, })
+    				var td_status = $(this).parent().prev();
+    				var oldValue = td_status.text();
+					$.post('/edit_request/', {pk: primary_key, target: 'status', target_value:'APP', 'csrfmiddlewaretoken': token, ov:oldValue});
+					td_status.html('Approved');
+					$("select[data-pk=" + primary_key + "] option[value='REF']").remove();
+    				$("select[data-pk=" + primary_key + "] option[value='APP']").remove();
 					// $(this).parent().prevAll().find('a[data-name="po_number"]').trigger("click");
 					var poi = $(this).parent().prevAll().find('a[data-name="po_number"]');
 					console.log(poi, poi.val(), poi.text());
@@ -571,7 +582,7 @@ $(document).ready(function(){
   // 		console.log('pageX + pageY', event.pageX, event.pageY);
   // 		console.log('offsetX + offsetY', event.offsetX, event.offsetY);
   // 		console.log('----------------------------------------------');
-  		$.post('/edit_request/', {pk: primary_key, target: 'status', target_value:'REF', 'csrfmiddlewaretoken': token})
+  		$.post('/edit_request/', {pk: primary_key, target: 'status', target_value:'REF', 'csrfmiddlewaretoken': token, ov:'Requested'})
   			.done( function(response) {
   				// alert('Response is ' + response);
   				$('a[data-pk=' + primary_key + ']').parent().parent().fadeOut(1000);

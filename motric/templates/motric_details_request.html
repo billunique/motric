@@ -59,6 +59,8 @@
 		<tr>
 	  	  <td><a href="/details/?t=d&pk={{ device.id }}" target="_blank">{{ device }}<span class="required"> ({{ device.get_status_display }})</span></a></td>
 	  	</tr>
+	  	{% empty %}
+	  	<tr><td>None yet.</td></tr>
 	  	{% endfor %}
 	</table>
 

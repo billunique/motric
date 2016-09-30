@@ -150,7 +150,7 @@ def request_editor(request):
         # email = EmailMessage(subject, body, sender, recipient, cc_rcpt, headers={'Cc': ','.join(cc_rcpt)})  # headers section must be included into the EmailMessage brackets.
         # email.send(fail_silently=False)
         motric_send_mail(subject, body, sender, recipient, cc_rcpt)
-        # response = requester +'\t' + rd.model_type +'\t' + rd.status
+        column_value = rd.get_status_display()
 
     rd.save()
 
