@@ -59,7 +59,7 @@
 		{% for request in request_list %}
 		<tr>
 	  	  <td>#{{ request.id }}</td>
-	  	  <td>{{ request }}</td>
+	  	  <td><a href="/details?t=r&pk={{ request.id }}" target="_blank">{{ request }}</a></td>
 	  	</tr>
 	  	{% endfor %}
 	</table>
@@ -101,7 +101,7 @@
 		{% for rep in replacement_list %}
 		<tr>
 	  	  <td>#{{ rep.id }}</td>
-	  	  <td><a href="/details/?pk={{ rep.id }}" target="_blank">{{ rep }}</a></td>
+	  	  <td><a href="/details/?t=d&pk={{ rep.id }}" target="_blank">{{ rep }}</a></td>
 	  	</tr>
 	  	{% empty %}
 	  	<tr><td>None.</td></tr>

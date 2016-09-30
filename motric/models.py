@@ -65,7 +65,7 @@ class LabDevice(DeviceStatus):
 	device_id = models.CharField(max_length=100)
 	register_date = models.DateTimeField('date device_id recorded', auto_now_add=True) # The register date is basically fixed. While other status could be mutable. 
 	os = models.CharField(max_length=50, blank=True)
-	owner = models.CharField(max_length=100, blank=True, null=True)
+	owner = models.CharField(max_length=100, blank=True)
 	user = models.CharField(max_length=100, blank=True)  # Those who have the device usage access.
 	label = models.CharField(max_length=50, blank=True)
 	project = models.CharField(max_length=50, blank=True)
@@ -84,7 +84,8 @@ class ResponseRelationship(models.Model):
 
 class Event(models.Model):
 	event_id = models.AutoField(primary_key=True)
-	device = models.ForeignKey(LabDevice, on_delete=models.CASCADE)
+	device = models.ForeignKey(LabDevice, on_delete=models.CASCADE, blank=True, null=True)
+	request = models.ForeignKey(RequestedDevice, on_delete=models.CASCADE, blank=True, null=True)
 	# event = models.CharField(max_length=512) # used to store all the events expressed in JSON.
 	event = JSONField() # used to store all the events expressed in JSON.
 

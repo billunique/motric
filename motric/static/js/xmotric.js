@@ -216,7 +216,7 @@ $(document).ready(function(){
 	// toastr.success('Saved successfully!', 'IAmTitle', {timeOut: 1000}); // Must override the title before the timeOut override takes effect.
 
 	var token = $('input[name="csrfmiddlewaretoken"]').prop('value');
-	var currency_rate = '6';
+	var currency_rate = '6.6';
 	$('a[data-target="req_editor"]').editable({
 		// type: 'text',
 		placement: 'left',
@@ -231,7 +231,7 @@ $(document).ready(function(){
 		    //originally params contain pk, name and value
 		    params.csrfmiddlewaretoken = token;
 		    // params.operator = getLdap();
-		    // params.ov = $(this).text();
+		    params.ov = $(this).text();
 		    return params;
 		},
         // emptytext:'Input',
@@ -280,7 +280,7 @@ $(document).ready(function(){
     			// }
 
     			if ($(this).attr('data-name') == 'po_number') {
-    				$.post('/edit_request/', {pk:$(this).attr('data-pk'), target: 'status', target_value:'ORD', 'csrfmiddlewaretoken': token})
+    				$.post('/edit_request/', {pk:$(this).attr('data-pk'), target: 'status', target_value:'ORD', 'csrfmiddlewaretoken': token, ov:$(this).text()})
     			}
 
     			if ($(this).attr('data-name') == 'price_cny') {
@@ -295,14 +295,14 @@ $(document).ready(function(){
     				$(td_ex_rate).editable('setValue', currency_rate, false);
     				var price_c = newValue;
     				var price_u = (price_c / currency_rate).toFixed(2);
-
+    				var oldValue = td_price_u.text();
     				setTimeout(function() {
 						// $(td_price_u).editable('submit', {
 	    	// 				data: {
 	    	// 					'value': price_u,
 	    	// 				}
     		// 			});
-    					$.post('/edit_request/', {pk:pkid, name: 'price_usd', value: price_u, 'csrfmiddlewaretoken': token});
+    					$.post('/edit_request/', {pk:pkid, name: 'price_usd', value: price_u, 'csrfmiddlewaretoken': token, ov:oldValue});
     					$(td_price_u).editable('setValue', price_u, false);
 					}, 200);
 
@@ -320,6 +320,7 @@ $(document).ready(function(){
     				$(td_ex_rate).editable('setValue', currency_rate, false);
     				var price_u = newValue;
     				var price_c = (price_u * currency_rate);
+    				var oldValue = td_price_c.text();
 
     				setTimeout(function() {
 						// $(td_price_c).editable('submit', {
@@ -327,7 +328,7 @@ $(document).ready(function(){
 	    	// 					'value': price_c,
 	    	// 				}
     		// 			});
-    					$.post('/edit_request/', {pk:pkid, name: 'price_cny', value: price_c, 'csrfmiddlewaretoken': token});
+    					$.post('/edit_request/', {pk:pkid, name: 'price_cny', value: price_c, 'csrfmiddlewaretoken': token, ov:oldValue});
     					$(td_price_c).editable('setValue', price_c, false);
 					}, 200);
 
@@ -526,7 +527,7 @@ $(document).ready(function(){
 					break;
 
 				case 'APP': 
-					$.post('/edit_request/', {pk: primary_key, target: 'approve_date', target_value:event.timeStamp, 'csrfmiddlewaretoken': token})
+					$.post('/edit_request/', {pk: primary_key, target: 'status', target_value:'APP', 'csrfmiddlewaretoken': token, })
 					// $(this).parent().prevAll().find('a[data-name="po_number"]').trigger("click");
 					var poi = $(this).parent().prevAll().find('a[data-name="po_number"]');
 					console.log(poi, poi.val(), poi.text());
@@ -623,7 +624,6 @@ $(document).ready(function(){
 				}
 				break;
 			case 'LOC':
-				console.log($('#lab_location').val());
 				$('#inst').html('Choose location of the central lab for the devices.');
 				$('#title').html('Set location');
 				$('#allocation_table').append('<tr><td style="padding:10px"><input type="radio" name="location" value="BEJ">Bejing</td> \

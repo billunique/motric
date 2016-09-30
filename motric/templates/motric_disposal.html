@@ -42,40 +42,42 @@
 	  	</tr>
 	  </thead>
 	  <tbody>
-		{% for device in device_list %}
+		{% for request in request_list %}
 		<tr>
-		  <td>{{ device.id }}</td>
-		  <td>{{ device.requester.ldap }}</td>
-		  <td>{{ device.requester.cost_center }}</td>
-		  <td>{{ device.requester.project }}</td>
-		  <td>{{ device.requester.device_owner }}</td>
-		  <td>{{ device.requester.device_label }}</td>
-		  <td>{{ device.requester.pref_location }}</td>
-		  <td>{{ device.os_version }}</td>
-		  <td>{{ device.model_type }}</td>
-		  <td>{{ device.quantity }}</td>
+		  <td><a href="/details?t=r&pk={{ request.id }}" target="_blank">{{ request.id }}</a></td>
+		  <td>{{ request.requester.ldap }}</td>
+		  <td>{{ request.requester.cost_center }}</td>
+		  <td>{{ request.requester.project }}</td>
+		  <td>{{ request.requester.device_owner }}</td>
+		  <td>{{ request.requester.device_label }}</td>
+		  <td>{{ request.requester.pref_location }}</td>
+		  <td>{{ request.os_version }}</td>
+		  <td>{{ request.model_type }}</td>
+		  <td>{{ request.quantity }}</td>
 		  <!-- <td>{{ device.get_status_display }}</td>  {# don't use it as display() #} -->
 		  <!-- <td><input type="text" name="po_number" size="10"></td> -->
 		  <!-- <td><input type="text" name="price_cny" maxlength="5" size="5"></td> -->
 		  <!-- <td><input type="text" name="price_usd" maxlength="5" size="5"></td> -->
-		  <td><a href="#" data-target="req_editor" data-name="po_number" data-title="Enter PO ID" data-pk="{{ device.id }}">{{ device.po_number |default:"" }}</a></td>
-		  <td><a href="#" data-target="req_editor" data-target="req_editor" data-name="price_cny" data-title="Enter Price(CNY)" data-pk="{{ device.id }}">{{ device.price_cny |default:"" }}</a></td>
-		  <td><a href="#" data-target="req_editor" data-target="req_editor" data-name="ex_rate" data-title="Enter exchange rate" data-pk="{{ device.id }}">{{ device.ex_rate |default:"" }}</a></td>
-		  <td><a href="#" data-target="req_editor" data-name="price_usd" data-title="Enter Price(USD)" data-pk="{{ device.id }}">{{ device.price_usd |default:"" }}</a></td>
+		  <td><a href="#" data-target="req_editor" data-name="po_number" data-title="Enter PO ID" data-pk="{{ request.id }}">{{ request.po_number |default:"" }}</a></td>
+		  <td><a href="#" data-target="req_editor" data-target="req_editor" data-name="price_cny" data-title="Enter Price(CNY)" data-pk="{{ request.id }}">{{ request.price_cny |default:"" }}</a></td>
+		  <td><a href="#" data-target="req_editor" data-target="req_editor" data-name="ex_rate" data-title="Enter exchange rate" data-pk="{{ request.id }}">{{ request.ex_rate |default:"" }}</a></td>
+		  <td><a href="#" data-target="req_editor" data-name="price_usd" data-title="Enter Price(USD)" data-pk="{{ request.id }}">{{ request.price_usd |default:"" }}</a></td>
 
 		  <td>
-		    <!-- <a href="#" data-type="select" data-name="req_action" data-title="Choose action" data-pk="{{ device.id }}">{{ device.status |default:"not selected" }}</a> -->
-		    <select class="form-control" data-name="req_action" data-title="Choose action" data-pk="{{ device.id }}">
+		    <!-- <a href="#" data-type="select" data-name="req_action" data-title="Choose action" data-pk="{{ request.id }}">{{ request.status |default:"not selected" }}</a> -->
+		    <select class="form-control" data-name="req_action" data-title="Choose action" data-pk="{{ request.id }}">
 		      <option></option>
+		      {% if request.status == 'REQ' %}
 	  	  	  <option value="REF">Decline</option>
 	  	  	  <option value="APP">Approve</option>
+	  	  	  {% endif %}
 	  	  	  <option value="AVA">Make public</option>
 	  	  	  <option value="ASS">Allocate New</option>
 	  	  	  <option value="CUR">Allocate Cur</option>
 	  	  	  <option value="LOC">Set location</option>
 	  	  	</select>
 	  	  </td>
-	  	  <input id="lab_location" type="hidden" value="{{ device.lab_location }}">
+	  	  <input id="lab_location" type="hidden" value="{{ request.lab_location }}">
 		</tr>
 		{% endfor %}
 	  </tbody>

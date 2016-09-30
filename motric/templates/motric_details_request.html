@@ -1,0 +1,83 @@
+{% extends 'motric_moresrc.html' %}
+
+{% block title %}Details of request{% endblock %}
+
+{% block body %}
+  <div class="container">
+	<h3>Details of request #{{ request.id }}<span class="required">{% if request.resolved == 1 %} (resolved){% else %} (open)</span>{% endif %}</h3>
+	<table class="table table-bordered font-compacted">
+	    <caption>Requester Info</caption>
+	  	<tr class="btn-primary">
+	  	  <th>Requester</th>
+	  	  <th>Cost Center</th>
+	  	  <th>Project</th>
+	  	  <th>Device Owner</th>
+	  	  <th>Device label</th>
+	  	  <th>Preferred lab</th>
+	  	  <th>Request date</th>
+	  	</tr>
+	  	<tr>
+	  	  {% with request.requester as requester %}
+	  	  <td>{{ requester.ldap }}</td>
+	  	  <td>{{ requester.cost_center }}</td>
+	  	  <td>{{ requester.project }}</td>
+	  	  <td>{{ requester.device_owner }}</td>
+	  	  <td>{{ requester.device_label }}</td>
+	  	  <td>{{ requester.pref_location }}</td>
+	  	  {% endwith %}
+	  	  <td>{{ request.request_date }}</td>
+	  	</tr>
+	</table>
+
+	<table class="table table-bordered font-compacted">
+	    <caption>Requested Device Info</caption>
+		<tr class="btn-success">
+	  	  <th>Model</th>
+	  	  <th>Expected OS</th>
+	  	  <th>Quantity</th>
+	  	  <th>PO ID</th>
+	  	  <th>PO Date</th>
+	  	  <th>Price(USD)</th>
+	  	  <th>Price(CNY)</th>
+	  	  <th class="btn-danger">Status</th>
+		</tr>
+		<tr>
+	  	  <td>{{ request.model_type }}</td>
+	  	  <td>{{ request.os_version }}
+	  	  <td>{{ request.quantity }}</td>
+	  	  <td>{{ request.po_number }}</td>
+	  	  <td>{{ request.po_date }}</td>
+	  	  <td>{{ request.price_usd }}</td>
+	  	  <td>{{ request.price_cny }}</td>
+	  	  <td>{{ request.get_status_display }}
+	  	</tr>
+	</table>	
+
+	<table class="table table-bordered font-compacted">
+	    <caption>Devices responded to this request</caption>
+		{% for device in device_list %}
+		<tr>
+	  	  <td><a href="/details/?t=d&pk={{ device.id }}" target="_blank">{{ device }}<span class="required"> ({{ device.get_status_display }})</span></a></td>
+	  	</tr>
+	  	{% endfor %}
+	</table>
+
+
+	<table class="table table-bordered table-condensed font-compacted">
+		<caption>Event History</caption>
+		<tr class="btn-success">
+			<th>Timestamp</th>
+			<th>Operator</th>
+			<th class="btn-warning">Operation</th>
+		</tr>
+		{% for event in event_list %}
+		<tr>
+			<td>{{ event.event.items.1.1 }}</td>
+			<td>{{ event.event.items.0.1 }}</td>
+			<td>{{ event.event.items.2.1 |safe }}</td>
+		</tr>
+		{% endfor %}
+	</table>
+  </div>
+
+{% endblock %}

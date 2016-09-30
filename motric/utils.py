@@ -90,6 +90,12 @@ def form_receiver(request):
     # return HttpResponse("Thanks for using Mobile Harness! We've received your request, if it's approved, we'll start purchasing shortly. Please stay tuned.")
     return render(request, 'motric_thanks.html')
 
+
+def log_generator(timestamp, operation, operator):
+    evt_content = {'timestamp':timestamp, 'operation':operation, 'operator':operator}
+    return evt_content
+
+
 def request_editor(request):
     message = ''
     if request.method == 'POST':
@@ -106,6 +112,7 @@ def request_editor(request):
     rd = RequestedDevice.objects.get(pk=pk)
     column = dict.values()[2]
     column_value = dict.values()[3]
+    oldvalue = dict['ov']
 
     requester = rd.requester.ldap
     subject = "[Motric]Updates of your device request for mobile-harness"
@@ -113,50 +120,51 @@ def request_editor(request):
     recipient = [requester + '@google.com']
     cc_rcpt = ['mobileharness-ops@google.com']
 
+    # if column == 'po_number':
+    #     rd.po_number = column_value
+    # elif column == 'price_cny':
+    #     rd.price_cny = column_value
+    # elif column == 'price_usd':
+    #     rd.price_usd = column_value
+    # elif column == 'ex_rate':
+    #     rd.ex_rate = column_value
+
+    rd.__dict__[column] = column_value
     response = column_value
 
-    if column == 'po_number':
-        rd.po_number = column_value
-        rd.po_date = timezone.now()
-    elif column == 'price_cny':
-        rd.price_cny = column_value
-    elif column == 'price_usd':
-        rd.price_usd = column_value
-    elif column == 'ex_rate':
-        rd.ex_rate = column_value
-    elif column == 'status':
-        rd.status = column_value
+    if column == 'status':
         if column_value == 'REF': # status'value could be REF-refuse, ORD-ordered, etc.
             rd.resolved = True
-
             body = "Dear " + requester + ",\n\nWe're sorry that your device request for " + rd.model_type + " (quantity: " + str(rd.quantity) + ") is temporarily refused for some reason.\n" + "Please contact mobileharness-ops@goole.com for details."
 
+        if column_value == 'APP':
+            rd.approve_date = timezone.now();
+            body = "Dear " + requester + ",\n\nThis is to inform you that your device request for " + rd.model_type + " (quantity: " + str(rd.quantity) + ") is approved.\n" + "We will start your purchase order shortly. Please stay tuned."
+
         if column_value == 'ORD': # this request is autoly submit after the po_number is inputted, so rd.po_number has gotten value.
+            rd.po_date = timezone.now()
             url = "https://pivt.googleplex.com/viewPo?poid=" + rd.po_number
-            body = "Dear " + requester + ",\n\nThis is to inform you that your device request for " + rd.model_type + " (quantity: " + str(rd.quantity) + ") is approved.\n" + "We have started your purchase order: " + url + " Please stay tuned."
+            # body = "Dear " + requester + ",\n\nThis is to inform you that your device request for " + rd.model_type + " (quantity: " + str(rd.quantity) + ") is approved.\n" + "We have started your purchase order: " + url + " Please stay tuned."
+            body = "Dear " + requester + ",\n\nThis is to inform you that the purchase order for your request is raised.\n" + "You can check it here: " + url + " Looking forward to seeing you get and run these devices."
 
         # email = EmailMessage(subject, body, sender, recipient, cc_rcpt, headers={'Cc': ','.join(cc_rcpt)})  # headers section must be included into the EmailMessage brackets.
         # email.send(fail_silently=False)
         motric_send_mail(subject, body, sender, recipient, cc_rcpt)
+        # response = requester +'\t' + rd.model_type +'\t' + rd.status
 
-        response = requester +'\t' + rd.model_type +'\t' + rd.status
-    elif column == 'approve_date':
-        rd.approve_date = timezone.now()
-    elif column == 'device_user':
-        ld.user = column_value
-    else:
-        response = data
     rd.save()
+
+    event_msg = log_generator(timezone.now(), '<span class="">' + column + '</span> was changed from <span class="required">' + oldvalue + '</span> --> <span class="bold">' + column_value + '</span>', operator)
+    evt = Event(request=rd, event=event_msg)
+    evt.save()
+
+
     # except:
     #     return HttpResponse(expection_carrier())
 
 
     return HttpResponse(response)
 
-
-def log_generator(timestamp, operation, operator):
-    evt_content = {'timestamp':timestamp, 'operation':operation, 'operator':operator}
-    return evt_content
 
 
 def labdevice_editor(request):
@@ -246,16 +254,23 @@ def details(request):
     q = request.GET.copy()
     data = json.dumps(q)
     pk = q['pk']
+    tp = q['t']
     # did = q['did']
-    ld = LabDevice.objects.get(pk=pk)
-    did = ld.device_id
-    # request_list = RequestedDevice.objects.filter(labdevice=pk).order_by('resolved_date')
-    request_list = ld.respond_to.all().distinct()  ## Naturally this list is ordered by the response_date!;  distict() can elimilate the duplications. 
-    first_response_target = request_list[0]  ## But there is a KengDie design in django template, the .first .last (filter |first |last doesn't work - will raise a Negative Index Error) will re-sort the querySet by Objects' primary key, not the original position it's in the set. 
-    last_response_target = request_list[len(request_list)-1]
-    event_list = Event.objects.filter(device=ld)
-    replacement_list = LabDevice.objects.filter(labdevice=pk)
-    return render(request, 'motric_details.html', {'device':ld, 'did':did, 'request_list':request_list, 'first_target':first_response_target, 'last_target':last_response_target, 'event_list':event_list, 'replacement_list':replacement_list})
+    if tp == 'd': # query device
+        ld = LabDevice.objects.get(pk=pk)
+        did = ld.device_id
+        # request_list = RequestedDevice.objects.filter(labdevice=pk).order_by('resolved_date')
+        request_list = ld.respond_to.all().distinct()  ## Naturally this list is ordered by the response_date!;  distict() can elimilate the duplications. 
+        first_response_target = request_list[0]  ## But there is a KengDie design in django template, the .first .last (filter |first |last doesn't work - will raise a Negative Index Error) will re-sort the querySet by Objects' primary key, not the original position it's in the set. 
+        last_response_target = request_list[len(request_list)-1]
+        event_list = Event.objects.filter(device=ld)
+        replacement_list = LabDevice.objects.filter(labdevice=pk)
+        return render(request, 'motric_details_device.html', {'device':ld, 'did':did, 'request_list':request_list, 'first_target':first_response_target, 'last_target':last_response_target, 'event_list':event_list, 'replacement_list':replacement_list})
+    if tp == 'r': # query request
+        rd = RequestedDevice.objects.get(pk=pk)
+        event_list = Event.objects.filter(request=rd)
+        device_list = rd.labdevice_set.all().distinct()
+        return render(request, 'motric_details_request.html', {'request':rd, 'device_list':device_list, 'event_list':event_list})
 
 
 def device_replacement(request):
@@ -271,8 +286,8 @@ def device_replacement(request):
     ld_hold.save()
     # rd = RequestedDevice.objects.filter(labdevice=repk)
     # event_hold = {'timestamp':replace_date, 'operation':'be replaced by device ' + rd[len(rd)-1].model_type +' (' + ld_attack.device_id +')', 'operator':operator}
-    event_hold = log_generator(replace_date, 'be replaced by <a href="/details/?pk=' + str(ld_attack.id) + '" target="_blank">' + str(ld_attack) + '</a>', operator)
-    event_attack = log_generator(replace_date, 'replaced <a href="/details/?pk=' + str(ld_hold.id) + '" target="_blank">' + str(ld_hold) + '</a>', operator)
+    event_hold = log_generator(replace_date, 'be replaced by <a href="/details/?t=d&pk=' + str(ld_attack.id) + '" target="_blank">' + str(ld_attack) + '</a>', operator)
+    event_attack = log_generator(replace_date, 'replaced <a href="/details/?t=d&pk=' + str(ld_hold.id) + '" target="_blank">' + str(ld_hold) + '</a>', operator)
     evt_hold = Event(device=ld_hold, event=event_hold)
     evt_attack = Event(device=ld_attack, event=event_attack)
     evt_hold.save()
@@ -285,7 +300,7 @@ def device_replacement(request):
     # ld_attack.respond_to.add(rd_last)
     rr = ResponseRelationship.objects.create(device=ld_attack, request=rd_last, response_date=replace_date)
     rr.save()
-    evt = Event(device=ld_attack, event=log_generator(replace_date, 'Request target added: <a>' + str(rd_last) + '</a>', operator))
+    evt = Event(device=ld_attack, event=log_generator(replace_date, 'Request target added: <a href="/details/?t=r&pk=' + str(rd_last.id) + '" target="_blank">' + str(rd_last) + '</a>', operator))
     evt.save()
 
     owner_old = ld_attack.owner
