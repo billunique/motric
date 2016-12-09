@@ -147,6 +147,13 @@ def request_editor(request):
             # body = "Dear " + requester + ",\n\nThis is to inform you that your device request for " + rd.model_type + " (quantity: " + str(rd.quantity) + ") is approved.\n" + "We have started your purchase order: " + url + " Please stay tuned."
             body = "Dear " + requester + ",\n\nThis is to inform you that the purchase order for your request is raised.\n" + "You can check it here: " + url + " Looking forward to seeing you get and run these devices."
 
+        if column_value == 'REC':
+            rd.receive_date = timezone.now();
+            url = "https://motric/details/?t=r&pk=" + pk
+            body = "Hi Gang,\n\nThis is to inform you that the devices of request " + url + " already arrived.\n" + "Yanyan will hand them to you, please be ready to register them and make them online."
+            recipient = ['ligang@google.com', 'yanyanl@google.com']
+            cc_rcpt = ['xiawang@google.com', 'jinrui@google.com', 'derekchen@google.com', 'joyl@google.com']
+
         # email = EmailMessage(subject, body, sender, recipient, cc_rcpt, headers={'Cc': ','.join(cc_rcpt)})  # headers section must be included into the EmailMessage brackets.
         # email.send(fail_silently=False)
         motric_send_mail(subject, body, sender, recipient, cc_rcpt)

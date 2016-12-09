@@ -159,11 +159,18 @@ thead th {
     margin-right:16px;
 }
 
-.btn-hidden{
+.btn-hidden-replace{
     /*opacity:0;*/
     /*visibility:hidden;*/
     display:none;
 }
+
+.btn-hidden-receive{
+    /*opacity:0;*/
+    /*visibility:hidden;*/
+    display:none;
+}
+
 tr td:hover button{
     /*opacity:1.0;*/
     /*visibility: visible;*/

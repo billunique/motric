@@ -49,6 +49,7 @@ class RequestedDevice(DeviceStatus):
 	price_usd = models.DecimalField(max_digits=6, decimal_places=1, blank=True, null=True)
 	price_cny = models.DecimalField(max_digits=6, decimal_places=1, blank=True, null=True)
 	ex_rate = models.FloatField(blank=True, null=True)
+	receive_date = models.DateTimeField(blank=True, null=True)
 	resolved = models.BooleanField(default=False)
 	resolved_date = models.DateTimeField(blank=True, null=True)
 

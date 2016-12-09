@@ -688,7 +688,7 @@ $(document).ready(function(){
 
 
 /* When user clicks the Replace button of every device item */
-	$('.btn-hidden').on('click', function(event) {
+	$('.btn-hidden-replace').on('click', function(event) {
 		primary_key = $(this).attr('data-pk');
 		$('#replacement_modal').modal({backdrop: "static"});
 	});
@@ -709,6 +709,18 @@ $(document).ready(function(){
 		$('#replacement_pk').val('');
 	});
 
+
+/* When user clicks the Received button of every device item */
+	$('.btn-hidden-receive').on('click', function(event) {
+		primary_key = $(this).attr('data-pk');
+		tb_status = $(this).parent()
+  		$.post('/edit_request/', {pk: primary_key, target: 'status', target_value:'REC', 'csrfmiddlewaretoken': token, ov:'Ordered'})
+  			.done( function(response) {
+  				tb_status.html('Received');
+  				// console.log($(this));
+  			});
+  	});
+
 	// $('select').each(function(index) {
 		// console.log(index + ': ' + $(this).text());
 	// });
@@ -716,32 +728,12 @@ $(document).ready(function(){
 
 	$(window).on('load', function() {
 
-		// gapi.load('auth2', function() {
-		//   auth2 = gapi.auth2.init({
-		//     client_id: '613024433503-bplsrhovk0a60ng7lrlb6slg49ta320h.apps.googleusercontent.com',
-		//     scope:'profile email',
-		//   });
-		//   console.log(auth2);
-		//   var guser = auth2.currentUser.get();
-		//   console.log(guser);
-		//   // console.log(guser.getBasicProfile().getName());
-		//   auth2.signIn().then(function(){
-		//   	var guser2 = auth2.currentUser.get()
-		//   	var profile = guser2.getBasicProfile();
-		//   	console.log('Current User: ', guser2);
-		//   	console.log('Current Username: ', profile.getName());
-		// 	var name = profile.getGivenName();
-		//     $('#signed_name').text("Welcome, " + name + "!");
-		//     $('#signout').css('visibility', 'visible');
-		//     // onSignIn(guser2);
-		//   });
-		// });
-
 		setTimeout(function() {
 			if ( window.location.pathname == '/') {  /* ONLY detect sign-in state on the navigation page. */
 			    var auth2 = gapi.auth2.getAuthInstance();
 			    var guser = auth2.currentUser.get();
 			    var profile = guser.getBasicProfile();
+			    console.log(window.location);
 			    console.log('Current User: ', guser);
 			    console.log('User profile: ', profile);
 			    if (profile === undefined) {
@@ -763,18 +755,47 @@ $(document).ready(function(){
 						});
 					}, 500);
 
-			    	auth2.signIn().then(function(){
-					  	var guser2 = auth2.currentUser.get();
-					  	var profile = guser2.getBasicProfile();
-					  	console.log('Current User: ', guser2);
-					  	console.log('Current Username: ', profile.getName());
-						var name = profile.getGivenName();
-					    $('#signed_name').text("Welcome, " + name + "!");
-					    $('#signout').css('visibility', 'visible');
-					    // onSignIn(guser);
-					});
+			  //   	auth2.signIn().then(function(){
+					//   	var guser2 = auth2.currentUser.get();
+					//   	var profile = guser2.getBasicProfile();
+					//   	console.log('Current User: ', guser2);
+					//   	console.log('Current Username: ', profile.getName());
+					// 	var name = profile.getGivenName();
+					//     $('#signed_name').text("Welcome, " + name + "!");
+					//     $('#signout').css('visibility', 'visible');
+					//     // onSignIn(guser);
+					// });
 			    }
+			} else {
+				gapi.load('auth2', function() {
+					auth2 = gapi.auth2.init({
+						client_id: '613024433503-bplsrhovk0a60ng7lrlb6slg49ta320h.apps.googleusercontent.com',
+					    scope:'profile email',
+					});
+					console.log(window.location, '\nauth2: ', auth2);
+					var guser = auth2.currentUser.get();
+					console.log('User: ', guser);
+					var profile = guser.getBasicProfile();
+				 //  auth2.signIn().then(function(){
+				 //  	var guser2 = auth2.currentUser.get()
+				 //  	var profile = guser2.getBasicProfile();
+				 //  	console.log('Current User: ', guser2);
+				 //  	console.log('Current Username: ', profile.getName());
+					// var name = profile.getGivenName();
+				 //    $('#signed_name').text("Welcome, " + name + "!");
+				 //    $('#signout').css('visibility', 'visible');
+				 //    // onSignIn(guser2);
+				 //  });
+				 	if ( profile === undefined ) {
+			    		// window.location.replace("https://accounts.google.com/signin/oauth?client_id=613024433503-bplsrhovk0a60ng7lrlb6slg49ta320h.apps.googleusercontent.com&as=11abbfd16a3d1ede&destination=http://xiawang.bej:8080&approval_state=*AH-1Ng3728E7_XHAWrYGZDv7wKsXH2NYLw7aSahU09SpwhQw2K6YL361iwJ_d31kIKy6LnVFisafGLSze9ZjYE_RYQvdMZCTQe4rpJuJMzl98A9_qJG9H2FMbzIt50Op2Ym3KzYg3WJT4nHoXiI6tC8saEvsxYUjog0XRVb2-XcKtxU0oR1Fzsy_6Z_Pc3Cc6xvJv-pmWuQWLZ__9XxDTJu4C3LgQcCCUP4U0MkmCX29cYYzdh6fEwA7iMWIv7rhjivznXn-Soy7anKX2kJM3YoxYUkEcv4ZjgDFdPVQbDPdxlQ2aTpghTfuTK-aEut6pfizx9Mcot3GjuCNpVv-n8_vxUrZfY2t89u0pCk5KGDKp0QMAy4bZ0FG_8rBWbo7BPiHthxyylT4ieUW9UJ7w-UvuB5h_WdSKjgaicxM6GNeg474I6--CB8Sz7RjQC6KkoDpSQWhXJTMN8uNagvKLm-nWqqimwQKyYJy-u5nWpLFfFtYKnQ3cSSDSG58dOh5vAA_TV4PROeUH_BJUxjXojJajVyoKuXe1V0UIFbqDcdQnM9mb8gzCcc%3D&xsrfsig=AHgIfE9IrH541bWSBsw2lzTCF0fEh6J4Og");
+			    		// $(location).attr('target', "_blank");
+			    		// $(location).attr('href', "https://www.baidu.com");
+			    		// auth2.signIn();
+			    		$('#g-signin').trigger("click");
+			    	}
+				});
 			}
+
 		}, 500);  // Set latency to make sure the login status is obtained after the page loaded completely.
 
 		if ( window.location.pathname == '/request_disposal/') {
