@@ -554,6 +554,7 @@ $(document).ready(function(){
 				case 'CUR':
 				case 'LOC':
 					$('#allocation_modal').modal({backdrop: "static"}); // This option is to make the click outside of modal unable to close the dialog window.
+					$(this).val('');
 					break;
 
 				default:
@@ -637,9 +638,9 @@ $(document).ready(function(){
 			case 'LOC':
 				$('#inst').html('Choose location of the central lab for the devices.');
 				$('#title').html('Set location');
-				$('#allocation_table').append('<tr><td style="padding:10px"><input type="radio" name="location" value="BEJ">Bejing</td> \
+				$('#allocation_table').append('<tr><td style="padding:10px"><input type="radio" name="location" value="PEK">Beijing</td> \
 					<td style="padding:10px"><input type="radio" name="location" value="MTV">Mountain View</td> \
-					<td style="padding:10px"><input type="radio" name="location" value="TWD">Taiwan DC</td></tr> \
+					<td style="padding:10px"><input type="radio" name="location" value="TWD">Taiwan DataCenter</td></tr> \
 					<tr><td style="padding:10px;color:red">Current: ' + $('#lab_location').val() + '</td></tr>' );
 				break;
 			default:
