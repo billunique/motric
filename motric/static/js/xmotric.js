@@ -551,6 +551,13 @@ $(document).ready(function(){
 
 				case 'ASS':
 				case 'AVA':
+    				var td_price_c = $('a[data-pk=' + primary_key + '][data-name="price_cny"]')
+					var td_price_u = $('a[data-pk=' + primary_key + '][data-name="price_usd"]')
+					if (td_price_c.text() == 'Empty' || td_price_u.text() == 'Empty'){
+						alert("Please input complete price info first!");
+						$(this).val('');
+						break;
+					}
 				case 'CUR':
 				case 'LOC':
 					$('#allocation_modal').modal({backdrop: "static"}); // This option is to make the click outside of modal unable to close the dialog window.
