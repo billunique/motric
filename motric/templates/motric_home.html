@@ -7,6 +7,7 @@
 {% include 'motric_modal.html' %}
 	<table class="table table-bordered table-hover text-center font-compacted">
 	  {% csrf_token %}
+	  <h4>Totally <span class="noticeable">{{ count }}</span> devices</h4>
 	  <thead>
 	  	<tr class="btn-primary">
 	  	  <th>#</th>
@@ -51,6 +52,7 @@
 		  
 		  <td><a href="#" data-target="labd_editor" data-name="status" data-type="select" data-title="Change Status" data-pk="{{ device.id }}">{{ device.get_status_display }}</td>  {# don't use it as display() #}
 		</tr>
+
 		{% endfor %}
 	  </tbody>
 	</table>

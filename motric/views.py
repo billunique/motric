@@ -9,19 +9,23 @@ def index(request):
 
 def home(request):
 	device_list = LabDevice.objects.filter(status__in=['AVA', 'ASS']).order_by('-id')
-	return render(request, 'motric_home.html', {'device_list':device_list})
+	count = device_list.count()
+	return render(request, 'motric_home.html', {'device_list':device_list, 'count':count})
 
 def public_device(request):
 	device_list = LabDevice.objects.filter(status='AVA').order_by('-id')
-	return render(request, 'motric_public.html', {'device_list':device_list})
+	count = device_list.count()
+	return render(request, 'motric_public.html', {'device_list':device_list, 'count':count})
 
 def dedicated_device(request):
 	device_list = LabDevice.objects.filter(status='ASS').order_by('-id')
-	return render(request, 'motric_dedicated.html', {'device_list':device_list})
+	count = device_list.count()
+	return render(request, 'motric_dedicated.html', {'device_list':device_list, 'count':count})
 
 def broken_device(request):
 	device_list = LabDevice.objects.filter(status='BRO').order_by('-id')
-	return render(request, 'motric_broken.html', {'device_list':device_list})
+	count = device_list.count()
+	return render(request, 'motric_broken.html', {'device_list':device_list, 'count':count})
 
 def device_request(request):
 	return render(request, 'motric_request.html')
