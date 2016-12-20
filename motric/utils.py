@@ -143,9 +143,10 @@ def request_editor(request):
 
         if column_value == 'ORD': # this request is autoly submit after the po_number is inputted, so rd.po_number has gotten value.
             rd.po_date = timezone.now()
-            url = "https://pivt.googleplex.com/viewPo?poid=" + rd.po_number
+            # url = "https://pivt.googleplex.com/viewPo?poid=" + rd.po_number
             # body = "Dear " + requester + ",\n\nThis is to inform you that your device request for " + rd.model_type + " (quantity: " + str(rd.quantity) + ") is approved.\n" + "We have started your purchase order: " + url + " Please stay tuned."
-            body = "Dear " + requester + ",\n\nThis is to inform you that the purchase order for your request is raised.\n" + "You can check it here: " + url + " Looking forward to seeing you get and run these devices."
+            # body = "Dear " + requester + ",\n\nThis is to inform you that the purchase order for your request is raised.\n" + "You can check it here: " + url + " Looking forward to seeing you get and run these devices."
+            body = "Dear " + requester + ",\n\nThis is to inform you that the purchase order for your request is raised.\nLooking forward to seeing you get and run these devices."
 
         if column_value == 'REC':
             rd.receive_date = timezone.now();
