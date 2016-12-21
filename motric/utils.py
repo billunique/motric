@@ -56,8 +56,9 @@ def form_receiver(request):
         project = form_dict['project']
         device_owner = form_dict['owner']
         device_label = form_dict['label']
-        pref_loc = form_dict['pref_loc']
-        usr = Requester(ldap=ldap, cost_center=cost_center, project=project, device_owner=device_owner, device_label=device_label, pref_location=pref_loc)
+        # pref_loc = form_dict['pref_loc']
+        # usr = Requester(ldap=ldap, cost_center=cost_center, project=project, device_owner=device_owner, device_label=device_label, pref_location=pref_loc)
+        usr = Requester(ldap=ldap, cost_center=cost_center, project=project, device_owner=device_owner, device_label=device_label)
         usr.save()
 
         model_type = form_dict.pop('device') # list
@@ -83,7 +84,8 @@ def form_receiver(request):
         '[Motric]Somebody raised device request!',
         message,
         'mobileharness.motric@gmail.com',
-        ['xiawang@google.com', 'yanyanl@google.com', 'ligang@google.com', 'jinrui@google.com', 'derekchen@google.com', 'joyl@google.com', 'nanz@google.com'],
+        # ['xiawang@google.com', 'yanyanl@google.com', 'ligang@google.com', 'jinrui@google.com', 'derekchen@google.com', 'joyl@google.com', 'nanz@google.com'],
+        ['xiawang@google.com', 'yanyanl@google.com'],
         ['mobileharness-ops@google.com']
     )
 
