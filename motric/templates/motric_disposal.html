@@ -79,7 +79,7 @@
 	  	  	  <option value="LOC">Set location</option>
 	  	  	</select>
 	  	  </td>
-	  	  <input id="lab_location" type="hidden" value="{{ request.lab_location }}">
+	  	  <input data-name="lab_location" data-pk="{{ request.id }}" type="hidden" value="{{ request.lab_location }}">
 		</tr>
 		{% endfor %}
 	  </tbody>

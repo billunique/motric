@@ -648,7 +648,7 @@ $(document).ready(function(){
 				$('#allocation_table').append('<tr><td style="padding:10px"><input type="radio" name="location" value="PEK">Beijing</td> \
 					<td style="padding:10px"><input type="radio" name="location" value="MTV">Mountain View</td> \
 					<td style="padding:10px"><input type="radio" name="location" value="TWD">Taiwan DataCenter</td></tr> \
-					<tr><td style="padding:10px;color:red">Current: ' + $('#lab_location').val() + '</td></tr>' );
+					<tr><td style="padding:10px;color:red">Current: ' + $('input[data-pk=' + primary_key + '][data-name="lab_location"]').val() + '</td></tr>' );
 				break;
 			default:
 		}
@@ -685,7 +685,7 @@ $(document).ready(function(){
             if (!val.includes('LOC')){ // status is 'ASS' or 'AVA'
             	$('a[data-pk=' + primary_key + ']').parent().parent().fadeOut(1000);
             } else {
-            	$('#lab_location').val(new_location);
+            	$('input[data-pk=' + primary_key + '][data-name="lab_location"]').val(new_location);
             }
         })
         .fail(function() {
