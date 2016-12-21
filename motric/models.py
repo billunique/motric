@@ -73,7 +73,7 @@ class LabDevice(DeviceStatus):
 	replaced_by = models.ManyToManyField('self', symmetrical=False)
 
 	def __unicode__(self):
-		return u'%s, %s, with %s, for project %s' % (self.model, self.device_id, self.os, self.project)
+		return u'%s, %s, with os %s, for project %s' % (self.model, self.device_id, self.os, self.project)
 
 class ResponseRelationship(models.Model):
 	device = models.ForeignKey(LabDevice, on_delete=models.CASCADE)

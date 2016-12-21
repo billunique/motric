@@ -212,46 +212,51 @@ def device_allocate(request):
     status = dict['status']
     rd = RequestedDevice.objects.get(pk=pk)
     event_msg = {}
+    allocate_date = timezone.now()
     if status == 'LOC':
         rd.lab_location = dict['location']
-    elif status == 'CUR':
-        ld_pk = dict.pop('pkid')
-        feed_date = timezone.now()
-        for i in range(len(ld_pk)):
-            ld = LabDevice.objects.get(pk=ld_pk[i])
-            ld.owner = rd.requester.device_owner
-            ld.label = rd.requester.device_label
-            ld.project = rd.requester.project
-            ld.status = 'ASS'
-            # ld.respond_to.add(rd)
-            rr = ResponseRelationship.objects.create(device=ld, request=rd, response_date=feed_date)
-            rr.save()
-            ld.save()
-            event_msg = log_generator(feed_date, 'Made <span class="bold">' + ld.get_status_display() + '</span>, from public pool.', operator)
-            evt = Event(device=ld, event=event_msg)
-            evt.save()
+    else:
+        if status == 'CUR':
+            ld_pk = dict.pop('pkid')
+            for i in range(len(ld_pk)):
+                ld = LabDevice.objects.get(pk=ld_pk[i])
+                ld.owner = rd.requester.device_owner
+                ld.label = rd.requester.device_label
+                ld.project = rd.requester.project
+                ld.status = 'ASS'
+                # ld.respond_to.add(rd)
+                rr = ResponseRelationship.objects.create(device=ld, request=rd, response_date=allocate_date)
+                rr.save()
+                ld.save()
+                event_msg = log_generator(allocate_date, 'Made <span class="bold">' + ld.get_status_display() + '</span>, from public pool.', operator)
+                evt = Event(device=ld, event=event_msg)
+                evt.save()
+            rd.status = 'ASS'
+            event_msg_rd = log_generator(allocate_date, 'Resolved by allocating current devices from public pool to fulfill.', operator)
+            evt_rd = Event(request=rd, event=event_msg_rd)
+            evt_rd.save()
+        else: # status is 'ASS' or 'AVA'
+            # register_date = time.ctime()
+            serial_no = dict.pop('did') # got a list of serial number;
+            if status == 'AVA':
+                rd.requester.device_owner = 'mobileharness'
+                rd.requester.project = 'PUBLIC'
+            for i in range(len(serial_no)):
+                ld = LabDevice(model=rd.model_type, device_id=serial_no[i], status=status, register_date=allocate_date, os=rd.os_version, owner=rd.requester.device_owner, label=rd.requester.device_label, project=rd.requester.project) # LabDevice.model must be a RequestedDevice instance.
+                ld.save()
+                # ld.respond_to.add(rd)
+                rr = ResponseRelationship.objects.create(device=ld, request=rd, response_date=allocate_date)
+                rr.save()
+                ld.save()
+                event_msg = log_generator(allocate_date, 'Made <span class="bold">' + ld.get_status_display() + '</span>, from new purchase.', operator)
+                evt = Event(device=ld, event=event_msg)
+                evt.save()
+            rd.status = status
+            event_msg_rd = log_generator(allocate_date, 'Resolved by allocating newly purchased device to fulfill.', operator)
+            evt_rd = Event(request=rd, event=event_msg_rd)
+            evt_rd.save()
         rd.resolved = True
-        rd.resolved_date = feed_date
-    else: # status is 'ASS' or 'AVA'
-        register_date = timezone.now()
-        # register_date = time.ctime()
-        serial_no = dict.pop('did') # got a list of serial number;
-        if status == 'AVA':
-            rd.requester.device_owner = 'mobileharness'
-            rd.requester.project = 'PUBLIC'
-        for i in range(len(serial_no)):
-            ld = LabDevice(model=rd.model_type, device_id=serial_no[i], status=status, register_date=register_date, os=rd.os_version, owner=rd.requester.device_owner, label=rd.requester.device_label, project=rd.requester.project) # LabDevice.model must be a RequestedDevice instance.
-            ld.save()
-            # ld.respond_to.add(rd)
-            rr = ResponseRelationship.objects.create(device=ld, request=rd, response_date=register_date)
-            rr.save()
-            ld.save()
-            event_msg = log_generator(register_date, 'Made <span class="bold">' + ld.get_status_display() + '</span>, from new purchase.', operator)
-            evt = Event(device=ld, event=event_msg)
-            evt.save()
-        rd.status = status
-        rd.resolved = True
-        rd.resolved_date = register_date
+        rd.resolved_date = allocate_date
     rd.save()
 
     # except:
