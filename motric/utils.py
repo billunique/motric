@@ -56,6 +56,7 @@ def form_receiver(request):
         project = form_dict['project']
         device_owner = form_dict['owner']
         device_label = form_dict['label']
+        comment = form_dict['comment']
         # pref_loc = form_dict['pref_loc']
         # usr = Requester(ldap=ldap, cost_center=cost_center, project=project, device_owner=device_owner, device_label=device_label, pref_location=pref_loc)
         usr = Requester(ldap=ldap, cost_center=cost_center, project=project, device_owner=device_owner, device_label=device_label)
@@ -68,7 +69,7 @@ def form_receiver(request):
 
         combo = ''
         for i in range(len(model_type)):
-            rd = RequestedDevice(model_type=model_type[i], os_version=os_version[i], quantity=quantity[i], requester=usr, request_date=timezone.now(), status=status)
+            rd = RequestedDevice(model_type=model_type[i], os_version=os_version[i], quantity=quantity[i], requester=usr, request_date=timezone.now(), comment=comment, status=status)
             rd.save()
             combo += ' * ' + model_type[i] + ' x ' + quantity[i] +'\n'
 
