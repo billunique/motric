@@ -185,3 +185,8 @@ tr td:hover button{
 .bold{
     font-weight: bold;
 }
+
+.hidden{
+    /*visibility: hidden;*/
+    display: none;
+}

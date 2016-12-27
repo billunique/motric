@@ -85,8 +85,8 @@ def form_receiver(request):
         '[Motric]Somebody raised device request!',
         message,
         'mobileharness.motric@gmail.com',
-        # ['xiawang@google.com', 'yanyanl@google.com', 'ligang@google.com', 'jinrui@google.com', 'derekchen@google.com', 'joyl@google.com', 'nanz@google.com'],
-        ['xiawang@google.com', 'yanyanl@google.com'],
+        ['xiawang@google.com', 'yanyanl@google.com', 'ligang@google.com', 'jinrui@google.com', 'derekchen@google.com', 'joyl@google.com', 'nanz@google.com'],
+        # ['xiawang@google.com', 'yanyanl@google.com'],
         ['mobileharness-ops@google.com']
     )
 

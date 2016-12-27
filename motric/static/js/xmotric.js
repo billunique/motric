@@ -734,6 +734,24 @@ $(document).ready(function(){
 	// });
 
 
+	$(':text[name="device"]').each(function() {
+		var elem = $(this);
+		elem.bind("change", function(event){ //"change" is better than "input", the latter will trigger "Nexus 5" one time before when user will actually input "Nexus 5x"
+			switch (elem.val()){
+				case 'Nexus 5':
+				case 'nexus 5':
+				case 'Nexus 5x':
+				case 'nexus 5x':
+				case 'Nexus 5X':
+				case 'nexus 5X':
+				case 'Nexus 7':
+				case 'nexus 7':
+					// alert("please expect long time for preparing!");
+					$('#notice').removeClass("hidden");
+			}
+		});
+	});
+
 	$(window).on('load', function() {
 
 		setTimeout(function() {
