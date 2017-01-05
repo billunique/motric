@@ -32,10 +32,28 @@ def device_request(request):
 
 def request_disposal(request):
 	request_list = RequestedDevice.objects.filter(status__in=['REQ', 'APP', 'ORD', 'REC']).order_by('-id') # return a list with the lastest request shown first.
+	q = request.GET.copy()
+	f = q['f']
+	if f == 'req':
+		request_list = RequestedDevice.objects.filter(status='REQ').order_by('-id')
+	if f == 'app':
+		request_list = RequestedDevice.objects.filter(status='APP').order_by('-id')
+	if f == 'ord':
+		request_list = RequestedDevice.objects.filter(status='ORD').order_by('-id')
+	if f == 'rec':
+		request_list = RequestedDevice.objects.filter(status='REC').order_by('-id')
 	return render(request, 'motric_pending_request.html', {'request_list':request_list})
 
 def request_history(request):
 	request_list = RequestedDevice.objects.filter(status__in=['ASS', 'AVA', 'REF']).order_by('-id') # return a list with the lastest request shown first.
+	q = request.GET.copy()
+	f = q['f']
+	if f == 'ass':
+		request_list = RequestedDevice.objects.filter(status='ASS').order_by('-id')
+	if f == 'pub':
+		request_list = RequestedDevice.objects.filter(status='AVA').order_by('-id')
+	if f == 'ref':
+		request_list = RequestedDevice.objects.filter(status='REF').order_by('-id')
 	return render(request, 'motric_resolved_request.html', {'request_list':request_list})
 
 # def faq(request):

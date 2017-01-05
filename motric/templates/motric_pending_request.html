@@ -1,6 +1,18 @@
 {% extends 'motric_disposal.html' %}
 {% block title %}Pending Request{% endblock %}
 {% block action_title %}<th class="btn-danger">Action</th>{% endblock %}
+{% block status %}
+	  	    <th class="btn-danger dropdown">
+	  	  	  <button class="btn btn-danger dropdown-toggle" data-toggle="dropdown">Status 
+	  	  	  <span class="caret"></span></button>
+	  	  	    <ul class="dropdown-menu">
+				  <li><a href="/request_disposal/?f=req">Requested</a></li>
+				  <li><a href="/request_disposal/?f=app">Approved</a></li>
+				  <li><a href="/request_disposal/?f=ord">Ordered</a></li>
+				  <li><a href="/request_disposal/?f=rec">Received</a></li>
+				</ul>
+			</th>
+{% endblock %}
 {% block action %}
 		  <td>
 		    <!-- <a href="#" data-type="select" data-name="req_action" data-title="Choose action" data-pk="{{ request.id }}">{{ request.status |default:"not selected" }}</a> -->

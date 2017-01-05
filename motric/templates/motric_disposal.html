@@ -26,11 +26,11 @@
 	  	  <th>Requester</th>
 	  	  <th>CCenter</th>
 	  	  <th>Project</th>
-	  	  <th>Device Owner</th>
-	  	  <th>Device Label</th>
+	  	  <th>Owner</th>
+	  	  <th>Label</th>
 	  	  <!-- <th>PreferLab</th> -->
 	  	  <th>Model</th>
-	  	  <th>Expected OS</th>
+	  	  <th>OS</th>
 	  	  <th>Quantity</th>
 	  	  <th>Comment</th>
 	  	  <!-- <th class="btn-danger">Status</th> -->
@@ -39,7 +39,8 @@
 	  	  <!-- <th class="btn-info" id="rate"><a href="#" data-value="" title="Bulk edit the exchange rate">Exrate</a></th> -->
 	  	  <th class="btn-success">Exrate</a></th>
 	  	  <th class="btn-success">Price(USD)</th>
-	  	  <th class="btn-danger">Status</th>
+	  	  <!-- <th class="btn-danger">Status</th> -->
+	  	  {% block status %}{% endblock %}
 	  	  <!-- <th class="btn-danger">Action</th> -->
 	  	  {% block action_title %}{% endblock %}
 	  	</tr>

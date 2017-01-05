@@ -1,2 +1,13 @@
 {% extends 'motric_disposal.html' %}
 {% block title %}Resolved Request{% endblock %}
+{% block status %}
+	  	    <th class="btn-danger dropdown">
+	  	  	  <button class="btn btn-danger dropdown-toggle" data-toggle="dropdown">Status 
+	  	  	  <span class="caret"></span></button>
+	  	  	    <ul class="dropdown-menu">
+				  <li><a href="/request_history/?f=ass">Assigned</a></li>
+				  <li><a href="/request_history/?f=pub">Public</a></li>
+				  <li><a href="/request_history/?f=ref">Refused</a></li>
+				</ul>
+			</th>
+{% endblock %}
