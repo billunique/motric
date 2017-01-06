@@ -80,7 +80,7 @@ def form_receiver(request):
     except:
         return HttpResponse(expection_carrier())
 
-    message = ldap + ' raised device request for:\n\n' + combo + '\n\nPlease go to http://motric/request_disposal for details.'
+    message = ldap + ' raised device request for:\n\n' + combo + '\n\nPlease go to http://motric/request_disposal/?f=req for details.'
     motric_send_mail(
         '[Motric]Somebody raised device request!',
         message,
