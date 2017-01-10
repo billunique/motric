@@ -33,7 +33,8 @@ def device_request(request):
 def request_disposal(request):
 	request_list = RequestedDevice.objects.filter(status__in=['REQ', 'APP', 'ORD', 'REC']).order_by('-id') # return a list with the lastest request shown first.
 	q = request.GET.copy()
-	f = q['f']
+	# f = q['f'] // bad method, in this way the f parameter is mandatory. 
+	f = q.get('f')
 	if f == 'req':
 		request_list = RequestedDevice.objects.filter(status='REQ').order_by('-id')
 	if f == 'app':
@@ -47,7 +48,8 @@ def request_disposal(request):
 def request_history(request):
 	request_list = RequestedDevice.objects.filter(status__in=['ASS', 'AVA', 'REF']).order_by('-id') # return a list with the lastest request shown first.
 	q = request.GET.copy()
-	f = q['f']
+	# f = q['f']
+	f = q.get('f')
 	if f == 'ass':
 		request_list = RequestedDevice.objects.filter(status='ASS').order_by('-id')
 	if f == 'pub':
