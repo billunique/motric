@@ -7,7 +7,14 @@
 {% include 'motric_modal.html' %}
 	<table class="table table-bordered table-hover text-center font-compacted">
 	  {% csrf_token %}
-	  <h4>Totally <span class="noticeable">{{ count }}</span> devices</h4>
+	  <!-- <p>URL of this page: {{ request.get_full_path }}</p> -->
+	  <h4 style="float:left">Totally <span class="noticeable">{{ count }}</span> devices</h4>
+	  <ul class="nav nav-tabs" style="float:right">
+		  <li><a href="{{ request.path }}">All</a></li>
+		  <li><a href="{{ request.path }}?loc=pek">PEK</a></li>
+		  <li><a href="{{ request.path }}?loc=mtv">MTV</a></li>
+		  <li><a href="{{ request.path }}?loc=twd">TW</a></li>
+	  </ul>
 	  <thead>
 	  	<tr class="btn-primary">
 	  	  <th>#</th>

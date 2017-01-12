@@ -6,25 +6,60 @@ from models import *
 # Create your views here.
 def index(request):
 	return render(request, 'motric_nav.html')
-	# return HttpResponse("Hello World, I'm a Django sample app named Polls, you're now at the Polls index.")
 
 def home(request):
 	device_list = LabDevice.objects.filter(status__in=['AVA', 'ASS']).order_by('-id')
+	q = request.GET.copy()
+	loc = q.get('loc')
+	if loc:
+		if loc == 'pek':
+			device_list = LabDevice.objects.filter(status__in=['AVA', 'ASS'], lab_location='PEK').order_by('-id')
+		if loc == 'mtv':
+			device_list = LabDevice.objects.filter(status__in=['AVA', 'ASS'], lab_location='mtv').order_by('-id')
+		if loc == 'twd':
+			device_list = LabDevice.objects.filter(status__in=['AVA', 'ASS'], lab_location='TWD').order_by('-id')
 	count = device_list.count()
 	return render(request, 'motric_home.html', {'device_list':device_list, 'count':count})
 
 def public_device(request):
 	device_list = LabDevice.objects.filter(status='AVA').order_by('-id')
+	q = request.GET.copy()
+	loc = q.get('loc')
+	if loc:
+		if loc == 'pek':
+			device_list = LabDevice.objects.filter(status='AVA', lab_location='PEK').order_by('-id')
+		if loc == 'mtv':
+			device_list = LabDevice.objects.filter(status='AVA', lab_location='mtv').order_by('-id')
+		if loc == 'twd':
+			device_list = LabDevice.objects.filter(status='AVA', lab_location='TWD').order_by('-id')
 	count = device_list.count()
 	return render(request, 'motric_public.html', {'device_list':device_list, 'count':count})
 
 def dedicated_device(request):
 	device_list = LabDevice.objects.filter(status='ASS').order_by('-id')
+	q = request.GET.copy()
+	loc = q.get('loc')
+	if loc:
+		if loc == 'pek':
+			device_list = LabDevice.objects.filter(status='ASS', lab_location='PEK').order_by('-id')
+		if loc == 'mtv':
+			device_list = LabDevice.objects.filter(status='ASS', lab_location='mtv').order_by('-id')
+		if loc == 'twd':
+			device_list = LabDevice.objects.filter(status='ASS', lab_location='TWD').order_by('-id')
 	count = device_list.count()
 	return render(request, 'motric_dedicated.html', {'device_list':device_list, 'count':count})
 
 def broken_device(request):
 	device_list = LabDevice.objects.filter(status='BRO').order_by('-id')
+	q = request.GET.copy()
+	loc = q.get('loc')
+	if loc:
+		if loc == 'pek':
+			device_list = LabDevice.objects.filter(status='BRO', lab_location='PEK').order_by('-id')
+		if loc == 'mtv':
+			device_list = LabDevice.objects.filter(status='BRO', lab_location='mtv').order_by('-id')
+		if loc == 'twd':
+			device_list = LabDevice.objects.filter(status='BRO', lab_location='TWD').order_by('-id')
 	count = device_list.count()
 	return render(request, 'motric_broken.html', {'device_list':device_list, 'count':count})
 
@@ -81,7 +116,6 @@ def request_history(request):
 	return render(request, 'motric_resolved_request.html', {'request_list':request_list, 'count':count})
 
 # def faq(request):
-# 	return render(request, 'motric_faq.html')
 # 	return render(request, 'motric_faq.html')
 
 # def about(request):

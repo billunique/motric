@@ -43,7 +43,7 @@ class RequestedDevice(DeviceStatus):
 	requester = models.ForeignKey(Requester, on_delete=models.CASCADE)
 	request_date = models.DateTimeField(auto_now_add=True)
 	approve_date = models.DateTimeField(blank=True, null=True, editable=False)
-	lab_location = models.CharField(max_length=3, blank=True, null=True)
+	lab_location = models.CharField(default='PEK', max_length=3, blank=True, null=True)
 	po_number = models.CharField(max_length=50, blank=True, null=True)
 	po_date = models.DateTimeField(blank=True, null=True)
 	price_usd = models.DecimalField(max_digits=6, decimal_places=1, blank=True, null=True)
@@ -71,6 +71,7 @@ class LabDevice(DeviceStatus):
 	user = models.CharField(max_length=100, blank=True)  # Those who have the device usage access.
 	label = models.CharField(max_length=50, blank=True)
 	project = models.CharField(max_length=50, blank=True)
+	lab_location = models.CharField(max_length=3, blank=True, null=True)
 	replaced_by = models.ManyToManyField('self', symmetrical=False)
 
 	def __unicode__(self):

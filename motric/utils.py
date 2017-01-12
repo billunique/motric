@@ -243,7 +243,7 @@ def device_allocate(request):
                 rd.requester.device_owner = 'mobileharness'
                 rd.requester.project = 'PUBLIC'
             for i in range(len(serial_no)):
-                ld = LabDevice(model=rd.model_type, device_id=serial_no[i], status=status, register_date=allocate_date, os=rd.os_version, owner=rd.requester.device_owner, label=rd.requester.device_label, project=rd.requester.project) # LabDevice.model must be a RequestedDevice instance.
+                ld = LabDevice(model=rd.model_type, device_id=serial_no[i], status=status, register_date=allocate_date, os=rd.os_version, owner=rd.requester.device_owner, label=rd.requester.device_label, project=rd.requester.project, lab_location=rd.lab_location) # LabDevice.model must be a RequestedDevice instance.
                 ld.save()
                 # ld.respond_to.add(rd)
                 rr = ResponseRelationship.objects.create(device=ld, request=rd, response_date=allocate_date)
