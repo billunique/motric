@@ -64,7 +64,7 @@
 		  <!-- <td><input type="text" name="po_number" size="10"></td> -->
 		  <!-- <td><input type="text" name="price_cny" maxlength="5" size="5"></td> -->
 		  <!-- <td><input type="text" name="price_usd" maxlength="5" size="5"></td> -->
-		  <td><a href="#" data-target="req_editor" data-name="comment" data-title="What do you say" data-pk="{{ request.id }}">{{ request.comment }}</a></td>
+		  <td><a href="#" data-target="req_editor" data-name="comment" data-title="What do you say" data-pk="{{ request.id }}">{{ request.comment |truncatechars:20 }}</a></td>
 		  <td><a href="#" data-target="req_editor" data-name="po_number" data-title="Enter PO ID" data-pk="{{ request.id }}">{{ request.po_number |default:"" }}</a></td>
 		  <td><a href="#" data-target="req_editor" data-name="price_cny" data-title="Enter Price(CNY)" data-pk="{{ request.id }}">{{ request.price_cny |default:"" }}</a></td>
 		  <td><a href="#" data-target="req_editor" data-name="ex_rate" data-title="Enter exchange rate" data-pk="{{ request.id }}">{{ request.ex_rate |default:"" }}</a></td>

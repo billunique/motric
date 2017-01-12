@@ -14,6 +14,7 @@
 	  	  <th title='Those who have the current usage access of the device. If empty, it is same as owner.'>User<img src='/static/img/question.png' style="width:21px;"></th>
 	  	  <th title='Info displayed on the MobileHarness client homepage.'>Label<img src='/static/img/question.png' style="width:21px;"></th>
 	  	  <th>Project</th>
+	  	  <th>Location</th>
 	  	  <th class="btn-danger">Status</th>
 	  	</tr>
 	  	<tr>
@@ -23,6 +24,7 @@
 	  	  <td>{{ device.user }}</td>
 	  	  <td>{{ device.label }}</td>
 	  	  <td>{{ device.project }}</td>
+	  	  <td>{{ device.lab_location }}</td>
 	  	  <td>{{ device.get_status_display }}</td>
 	  	</tr>
 	</table>
