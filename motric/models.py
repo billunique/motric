@@ -41,7 +41,7 @@ class RequestedDevice(DeviceStatus):
 	quantity = models.IntegerField(default=1)
 	os_version = models.CharField(max_length=50)
 	requester = models.ForeignKey(Requester, on_delete=models.CASCADE)
-	request_date = models.DateTimeField(auto_now_add=True) 
+	request_date = models.DateTimeField(auto_now_add=True)
 	approve_date = models.DateTimeField(blank=True, null=True, editable=False)
 	lab_location = models.CharField(max_length=3, blank=True, null=True)
 	po_number = models.CharField(max_length=50, blank=True, null=True)

@@ -1,5 +1,13 @@
 {% extends 'motric_disposal.html' %}
 {% block title %}Resolved Request{% endblock %}
+{% block date_filter %}
+	  <ul class="nav nav-tabs" style="float:right">
+		  <li><a href="/request_history/">All</a></li>
+		  <li><a href="/request_history/?ao=tm">This Month</a></li>
+		  <li><a href="/request_history/?ao=lm">Last Month</a></li>
+		  <li><a href="/request_history/?ao=more">More early</a></li>
+	  </ul>
+{% endblock %}
 {% block status %}
 	  	    <th class="btn-danger dropdown">
 	  	  	  <button class="btn btn-danger dropdown-toggle" data-toggle="dropdown">Status 

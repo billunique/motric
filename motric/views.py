@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+import datetime
 from models import *
 
 # Create your views here.
@@ -31,7 +32,8 @@ def device_request(request):
 	return render(request, 'motric_request.html')
 
 def request_disposal(request):
-	request_list = RequestedDevice.objects.filter(status__in=['REQ', 'APP', 'ORD', 'REC']).order_by('-id') # return a list with the lastest request shown first.
+	# request_list = RequestedDevice.objects.filter(status__in=['REQ', 'APP', 'ORD', 'REC']).order_by('-id') # return a list with the lastest request shown first.
+	request_list = RequestedDevice.objects.filter(resolved=0).order_by('-id') # return a list with the lastest request shown first.
 	q = request.GET.copy()
 	# f = q['f'] // bad method, in this way the f parameter is mandatory. 
 	f = q.get('f')
@@ -43,22 +45,43 @@ def request_disposal(request):
 		request_list = RequestedDevice.objects.filter(status='ORD').order_by('-id')
 	if f == 'rec':
 		request_list = RequestedDevice.objects.filter(status='REC').order_by('-id')
-	return render(request, 'motric_pending_request.html', {'request_list':request_list})
+	count = request_list.count()
+	return render(request, 'motric_pending_request.html', {'request_list':request_list, 'count':count})
 
 def request_history(request):
-	request_list = RequestedDevice.objects.filter(status__in=['ASS', 'AVA', 'REF']).order_by('-id') # return a list with the lastest request shown first.
+	# request_list = RequestedDevice.objects.filter(status__in=['ASS', 'AVA', 'REF']).order_by('-id') # return a list with the lastest request shown first.
+	request_list = RequestedDevice.objects.filter(resolved=1).order_by('-id') # return a list with the lastest request shown first.
 	q = request.GET.copy()
 	# f = q['f']
 	f = q.get('f')
-	if f == 'ass':
-		request_list = RequestedDevice.objects.filter(status='ASS').order_by('-id')
-	if f == 'pub':
-		request_list = RequestedDevice.objects.filter(status='AVA').order_by('-id')
-	if f == 'ref':
-		request_list = RequestedDevice.objects.filter(status='REF').order_by('-id')
-	return render(request, 'motric_resolved_request.html', {'request_list':request_list})
+	ao = q.get('ao')
+	if f:
+		if f == 'ass':
+			request_list = RequestedDevice.objects.filter(status='ASS').order_by('-id')
+		if f == 'pub':
+			request_list = RequestedDevice.objects.filter(status='AVA').order_by('-id')
+		if f == 'ref':
+			request_list = RequestedDevice.objects.filter(status='REF').order_by('-id')
+	if ao:
+		today = datetime.date.today()
+		this_month = today.month
+		last_month = 1
+		if this_month == 1:
+			last_month = 12
+		else:
+			last_month = this_month -1
+		if ao == 'tm':
+			request_list = RequestedDevice.objects.filter(request_date__month=this_month, resolved=1).order_by('-id')
+		if ao == 'lm':
+			request_list = RequestedDevice.objects.filter(request_date__month=last_month, resolved=1).order_by('-id')
+		if ao == 'more':
+			# request_list = RequestedDevice.objects.filter(request_date__date__lt=datetime.date(today.year, last_month, 1)).order_by('-id')
+			request_list = RequestedDevice.objects.filter(resolved=1).exclude(request_date__month__in=[this_month, last_month]).order_by('-id')
+	count = request_list.count()
+	return render(request, 'motric_resolved_request.html', {'request_list':request_list, 'count':count})
 
 # def faq(request):
+# 	return render(request, 'motric_faq.html')
 # 	return render(request, 'motric_faq.html')
 
 # def about(request):
