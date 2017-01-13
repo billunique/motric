@@ -190,3 +190,17 @@ tr td:hover button{
     /*visibility: hidden;*/
     display: none;
 }
+
+
+.one-line {
+   max-width:100px;
+   max-height: 100px;
+   white-space:nowrap;
+   overflow:hidden;
+   text-overflow:ellipsis;
+}
+.one-line:hover {
+   overflow:visible;
+   white-space:normal;
+}
+
