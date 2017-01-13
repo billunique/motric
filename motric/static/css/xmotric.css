@@ -193,8 +193,8 @@ tr td:hover button{
 
 
 .one-line {
-   max-width:100px;
-   max-height: 100px;
+   max-width:160px;
+   /*max-height: 100px;*/
    white-space:nowrap;
    overflow:hidden;
    text-overflow:ellipsis;
