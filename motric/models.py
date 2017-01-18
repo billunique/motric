@@ -39,7 +39,7 @@ class Requester(models.Model):
 class RequestedDevice(DeviceStatus):
 	model_type = models.CharField(max_length=30)
 	quantity = models.IntegerField(default=1)
-	os_version = models.CharField(max_length=50)
+	os_version = models.CharField(max_length=50, blank=True, null=True)
 	requester = models.ForeignKey(Requester, on_delete=models.CASCADE)
 	request_date = models.DateTimeField(auto_now_add=True)
 	approve_date = models.DateTimeField(blank=True, null=True, editable=False)
@@ -52,7 +52,7 @@ class RequestedDevice(DeviceStatus):
 	receive_date = models.DateTimeField(blank=True, null=True)
 	resolved = models.BooleanField(default=False)
 	resolved_date = models.DateTimeField(blank=True, null=True)
-	comment = models.CharField(max_length=256)
+	comment = models.CharField(max_length=256, blank=True, null=True)
 
 	def __unicode__(self):
 		return u'%s %s, with %s, requested by %s, for %s project' % (self.quantity, self.model_type, self.os_version, self.requester.ldap, self.requester.project)
