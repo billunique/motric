@@ -275,13 +275,17 @@ def details(request):
     if tp == 'd': # query device
         ld = LabDevice.objects.get(pk=pk)
         did = ld.device_id
+        first_response_target = RequestedDevice
+        last_response_target = RequestedDevice
         # request_list = RequestedDevice.objects.filter(labdevice=pk).order_by('resolved_date')
         request_list = ld.respond_to.all().distinct()  ## Naturally this list is ordered by the response_date!;  distict() can elimilate the duplications. 
-        first_response_target = request_list[0]  ## But there is a KengDie design in django template, the .first .last (filter |first |last doesn't work - will raise a Negative Index Error) will re-sort the querySet by Objects' primary key, not the original position it's in the set. 
-        last_response_target = request_list[len(request_list)-1]
+        if request_list: # http://stackoverflow.com/questions/53513/best-way-to-check-if-a-list-is-empty
+            first_response_target = request_list[0]  ## But there is a KengDie design in django template, the .first .last (filter |first |last doesn't work - will raise a Negative Index Error) will re-sort the querySet by Objects' primary key, not the original position it's in the set. 
+            last_response_target = request_list[len(request_list)-1]
         event_list = Event.objects.filter(device=ld)
         replacement_list = LabDevice.objects.filter(labdevice=pk)
         return render(request, 'motric_details_device.html', {'device':ld, 'did':did, 'request_list':request_list, 'first_target':first_response_target, 'last_target':last_response_target, 'event_list':event_list, 'replacement_list':replacement_list})
+        # return render(request, 'motric_details_device.html', {'device':ld, 'did':did, 'request_list':request_list, 'event_list':event_list, 'replacement_list':replacement_list})
     if tp == 'r': # query request
         rd = RequestedDevice.objects.get(pk=pk)
         event_list = Event.objects.filter(request=rd)
