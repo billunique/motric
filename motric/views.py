@@ -90,13 +90,6 @@ def request_history(request):
 	# f = q['f']
 	f = q.get('f')
 	ao = q.get('ao')
-	if f:
-		if f == 'ass':
-			request_list = RequestedDevice.objects.filter(status='ASS').order_by('-id')
-		if f == 'pub':
-			request_list = RequestedDevice.objects.filter(status='AVA').order_by('-id')
-		if f == 'ref':
-			request_list = RequestedDevice.objects.filter(status='REF').order_by('-id')
 	if ao:
 		today = datetime.date.today()
 		this_month = today.month
@@ -106,12 +99,27 @@ def request_history(request):
 		else:
 			last_month = this_month -1
 		if ao == 'tm':
-			request_list = RequestedDevice.objects.filter(request_date__month=this_month, resolved=1).order_by('-id')
+			# request_list = RequestedDevice.objects.filter(request_date__month=this_month, resolved=1).order_by('-id')
+			request_list = request_list.filter(request_date__month=this_month)
 		if ao == 'lm':
-			request_list = RequestedDevice.objects.filter(request_date__month=last_month, resolved=1).order_by('-id')
+			# request_list = RequestedDevice.objects.filter(request_date__month=last_month, resolved=1).order_by('-id')
+			request_list = request_list.filter(request_date__month=last_month)
 		if ao == 'more':
 			# request_list = RequestedDevice.objects.filter(request_date__date__lt=datetime.date(today.year, last_month, 1)).order_by('-id')
-			request_list = RequestedDevice.objects.filter(resolved=1).exclude(request_date__month__in=[this_month, last_month]).order_by('-id')
+			# request_list = RequestedDevice.objects.filter(resolved=1).exclude(request_date__month__in=[this_month, last_month]).order_by('-id')
+			request_list = request_list.exclude(request_date__month__in=[this_month, last_month])
+	if f:
+		if f == 'ass':
+			# request_list = RequestedDevice.objects.filter(status='ASS').order_by('-id')
+			filter_status = 'ASS'
+		if f == 'pub':
+			# request_list = RequestedDevice.objects.filter(status='AVA').order_by('-id')
+			filter_status = 'AVA'
+		if f == 'ref':
+			# request_list = RequestedDevice.objects.filter(status='REF').order_by('-id')
+			filter_status = 'REF'
+		request_list = request_list.filter(status=filter_status)
+
 	count = request_list.count()
 	return render(request, 'motric_resolved_request.html', {'request_list':request_list, 'count':count})
 

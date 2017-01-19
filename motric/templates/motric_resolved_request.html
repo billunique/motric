@@ -1,11 +1,12 @@
 {% extends 'motric_disposal.html' %}
+{% load motric_custom_tags %}
 {% block title %}Resolved Request{% endblock %}
 {% block date_filter %}
 	  <ul class="nav nav-tabs" style="float:right">
-		  <li><a href="/request_history/">All</a></li>
-		  <li><a href="/request_history/?ao=tm">This Month</a></li>
-		  <li><a href="/request_history/?ao=lm">Last Month</a></li>
-		  <li><a href="/request_history/?ao=more">More early</a></li>
+		  <li><a href="{{ request.path }}?ao=all">All</a></li>
+		  <li><a href="{{ request.path }}?ao=tm">This Month</a></li>
+		  <li><a href="{{ request.path }}?ao=lm">Last Month</a></li>
+		  <li><a href="{{ request.path }}?ao=more">More early</a></li>
 	  </ul>
 {% endblock %}
 {% block status %}
@@ -13,9 +14,11 @@
 	  	  	  <button class="btn btn-danger dropdown-toggle" data-toggle="dropdown">Status 
 	  	  	  <span class="caret"></span></button>
 	  	  	    <ul class="dropdown-menu">
-				  <li><a href="/request_history/?f=ass">Assigned</a></li>
-				  <li><a href="/request_history/?f=pub">Public</a></li>
-				  <li><a href="/request_history/?f=ref">Refused</a></li>
+	  	  	      {% with request.GET.ao as current_tab %}
+				  <li><a href="?ao={{ current_tab }}&f=ass">Assigned</a></li>
+				  <li><a href="?ao={{ current_tab }}&f=pub">Public</a></li>
+				  <li><a href="?ao={{ current_tab }}&f=ref">Refused</a></li>
+				  {% endwith %}
 				</ul>
 			</th>
 {% endblock %}
