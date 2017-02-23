@@ -373,6 +373,9 @@ $(document).ready(function(){
 		 	{value: 'ASS', text: 'Assigned'},
 			{value: 'BRO', text: 'Broken'},
 			// {value: 'SUB', text: 'Replaced'}
+			{value: 'REP', text: 'In Repair'},
+			{value: 'RET', text: 'Retrieved'},
+			{value: 'RTR', text: 'Retired'},
         ],
         // prepend: $(this).text(),
 
@@ -390,7 +393,7 @@ $(document).ready(function(){
 			// var oldValue = $(this).editable('getValue', true);  // by this way, oldValue could be empty.
 			// console.log(oldValue);
 			var oldText = ($(this).text());
-			var valuedict = {'Public':'AVA', 'Assigned':'ASS', 'Broken':'BRO'};
+			var valuedict = {'Public':'AVA', 'Assigned':'ASS', 'Broken':'BRO', 'REP':'In Repair', 'RET':'Retrieved', 'RTR':'Retired'};
 			var oldValue = valuedict[oldText];
 
 			$(this).editable('setValue', newValue, false); 
@@ -444,7 +447,7 @@ $(document).ready(function(){
 					}
 				} // end of condition newValue 'ASS'.
 			} // end of condition newValue 'AVA' or 'ASS'.
-			if ( newValue == 'BRO' && !htitle.startsWith("Broken") ) {
+			if ( (['BRO', 'REP', 'RTR'].indexOf(newValue) > -1) && !htitle.startsWith("Broken") ) {
 				$(this).parent().parent().fadeOut(1500);
 			}
 		},

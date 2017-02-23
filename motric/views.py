@@ -50,16 +50,16 @@ def dedicated_device(request):
 	return render(request, 'motric_dedicated.html', {'device_list':device_list, 'count':count})
 
 def broken_device(request):
-	device_list = LabDevice.objects.filter(status='BRO').order_by('-id')
+	device_list = LabDevice.objects.filter(status__in=['BRO', 'REP', 'RET', 'RTR']).order_by('-id')
 	q = request.GET.copy()
 	loc = q.get('loc')
 	if loc:
 		if loc == 'pek':
-			device_list = LabDevice.objects.filter(status='BRO', lab_location='PEK').order_by('-id')
+			device_list = LabDevice.objects.filter(status__in=['BRO', 'REP', 'RET', 'RTR'], lab_location='PEK').order_by('-id')
 		if loc == 'mtv':
-			device_list = LabDevice.objects.filter(status='BRO', lab_location='mtv').order_by('-id')
+			device_list = LabDevice.objects.filter(status__in=['BRO', 'REP', 'RET', 'RTR'], lab_location='mtv').order_by('-id')
 		if loc == 'twd':
-			device_list = LabDevice.objects.filter(status='BRO', lab_location='TWD').order_by('-id')
+			device_list = LabDevice.objects.filter(status__in=['BRO', 'REP', 'RET', 'RTR'], lab_location='TWD').order_by('-id')
 	count = device_list.count()
 	return render(request, 'motric_broken.html', {'device_list':device_list, 'count':count})
 

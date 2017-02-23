@@ -17,8 +17,9 @@ class DeviceStatus(models.Model):
 		('ASS', 'Assigned'), # When device is allocated to specific user.
 		('WIT', 'Withdrawn'), # When device is brought offline intendedly.
 		('BRO', 'Broken'),
-		('REP', 'In repair'),
-		('RET', 'Retired (Recycled)'),
+		('REP', 'In Repair'),
+		('RET', 'Retrieved'), # When device is successfully recovered and brought back.
+		('RTR', 'Retired'), # When device is totally withdrawn and recycled.
 	)
 	status = models.CharField(max_length=3, choices=STATUS)
 
@@ -30,8 +31,8 @@ class Requester(models.Model):
 	cost_center = models.CharField(max_length=50)
 	project = models.CharField(max_length=50)
 	device_owner = models.CharField(max_length=100)
-	device_label = models.CharField(max_length=50)
-	pref_location = models.CharField(max_length=3)
+	device_label = models.CharField(max_length=50, blank=True, null=True)
+	pref_location = models.CharField(max_length=3, blank=True, null=True)
 
 	def __unicode__(self):
 		return u'%s, from project %s' % (self.ldap, self.project)
