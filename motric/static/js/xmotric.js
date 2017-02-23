@@ -231,7 +231,7 @@ $(document).ready(function(){
 		    //originally params contain pk, name and value
 		    params.csrfmiddlewaretoken = token;
 		    // params.operator = getLdap();
-		    params.ov = $(this).text();
+		    params.ov = $(this).text();  // ov stands for OldValue, this will be recorded by default.
 		    return params;
 		},
         // emptytext:'Input',
@@ -282,11 +282,15 @@ $(document).ready(function(){
     			if ($(this).attr('data-name') == 'po_number') {
     				var td_status = $(this).parent().next().next().next().next();
     				var oldValue = td_status.text();
-    				var pkid = $(this).attr('data-pk');
-    				$.post('/edit_request/', {pk:pkid, target: 'status', target_value:'ORD', 'csrfmiddlewaretoken': token, ov:oldValue});
-    				td_status.html('Ordered');
-    				$("select[data-pk=" + pkid + "] option[value='REF']").remove();
-    				$("select[data-pk=" + pkid + "] option[value='APP']").remove();
+
+    				if ($(this).text() == 'Empty') {
+    					var pkid = $(this).attr('data-pk');
+	    				$.post('/edit_request/', {pk:pkid, target: 'status', target_value:'ORD', 'csrfmiddlewaretoken': token, ov:oldValue});
+	    				td_status.html('Ordered');
+	    				$("select[data-pk=" + pkid + "] option[value='REF']").remove();
+	    				$("select[data-pk=" + pkid + "] option[value='APP']").remove();
+    				}
+
     			}
 
     			if ($(this).attr('data-name') == 'price_cny') {
@@ -721,13 +725,24 @@ $(document).ready(function(){
 	});
 
 
-/* When user clicks the Received button of every device item */
+/* When user clicks the Received button of every request item */
 	$('.btn-hidden-receive').on('click', function(event) {
 		primary_key = $(this).attr('data-pk');
 		tb_status = $(this).parent()
   		$.post('/edit_request/', {pk: primary_key, target: 'status', target_value:'REC', 'csrfmiddlewaretoken': token, ov:'Ordered'})
   			.done( function(response) {
   				tb_status.html('Received');
+  				// console.log($(this));
+  			});
+  	});
+
+  /* When user clicks the Charged button of every request item */
+	$('.btn-hidden-charge').on('click', function(event) {
+		primary_key = $(this).attr('data-pk');
+		tb_status = $(this).parent()
+  		$.post('/edit_request/', {pk: primary_key, target: 'charged', target_value:'1', 'csrfmiddlewaretoken': token, ov:'0'})
+  			.done( function(response) {
+  				tb_status.addClass("bold_green");
   				// console.log($(this));
   			});
   	});

@@ -15,7 +15,8 @@
 	  	  	  <span class="caret"></span></button>
 	  	  	    <ul class="dropdown-menu">
 	  	  	      {% with request.GET.ao as current_tab %}
-				  <li><a href="?ao={{ current_tab }}&f=ass">Assigned</a></li>
+				  <li><a href="?ao={{ current_tab }}&f=ass_uc" title="Assigned but uncharged">Uncharged</a></li>
+				  <li><a href="?ao={{ current_tab }}&f=ass" title="All Assigned">Assigned</a></li>
 				  <li><a href="?ao={{ current_tab }}&f=pub">Public</a></li>
 				  <li><a href="?ao={{ current_tab }}&f=ref">Refused</a></li>
 				  {% endwith %}

@@ -171,6 +171,12 @@ thead th {
     display:none;
 }
 
+.btn-hidden-charge{
+    /*opacity:0;*/
+    /*visibility:hidden;*/
+    display:none;
+}
+
 tr td:hover button{
     /*opacity:1.0;*/
     /*visibility: visible;*/
@@ -204,3 +210,7 @@ tr td:hover button{
    white-space:normal;
 }
 
+.bold_green {
+    color:green;
+    font-weight: bold;
+}

@@ -109,16 +109,14 @@ def request_history(request):
 			# request_list = RequestedDevice.objects.filter(resolved=1).exclude(request_date__month__in=[this_month, last_month]).order_by('-id')
 			request_list = request_list.exclude(request_date__month__in=[this_month, last_month])
 	if f:
+		if f == 'ass_uc':
+			request_list = request_list.filter(status='ASS', charged='0')
 		if f == 'ass':
-			# request_list = RequestedDevice.objects.filter(status='ASS').order_by('-id')
-			filter_status = 'ASS'
+			request_list = request_list.filter(status='ASS')
 		if f == 'pub':
-			# request_list = RequestedDevice.objects.filter(status='AVA').order_by('-id')
-			filter_status = 'AVA'
+			request_list = request_list.filter(status='AVA')
 		if f == 'ref':
-			# request_list = RequestedDevice.objects.filter(status='REF').order_by('-id')
-			filter_status = 'REF'
-		request_list = request_list.filter(status=filter_status)
+			request_list = request_list.filter(status='REF')
 
 	count = request_list.count()
 	return render(request, 'motric_resolved_request.html', {'request_list':request_list, 'count':count})
