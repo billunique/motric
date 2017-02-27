@@ -177,6 +177,11 @@ thead th {
     display:none;
 }
 
+.btn-hidden-attach_bug{
+    /*visibility: hidden;*/
+    display: none;
+}
+
 tr td:hover button{
     /*opacity:1.0;*/
     /*visibility: visible;*/

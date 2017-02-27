@@ -728,10 +728,10 @@ $(document).ready(function(){
 /* When user clicks the Received button of every request item */
 	$('.btn-hidden-receive').on('click', function(event) {
 		primary_key = $(this).attr('data-pk');
-		tb_status = $(this).parent()
+		td_status = $(this).parent()
   		$.post('/edit_request/', {pk: primary_key, target: 'status', target_value:'REC', 'csrfmiddlewaretoken': token, ov:'Ordered'})
   			.done( function(response) {
-  				tb_status.html('Received');
+  				td_status.html('Received');
   				// console.log($(this));
   			});
   	});
@@ -739,12 +739,29 @@ $(document).ready(function(){
   /* When user clicks the Charged button of every request item */
 	$('.btn-hidden-charge').on('click', function(event) {
 		primary_key = $(this).attr('data-pk');
-		tb_status = $(this).parent()
+		td_status = $(this).parent()
   		$.post('/edit_request/', {pk: primary_key, target: 'charged', target_value:'1', 'csrfmiddlewaretoken': token, ov:'0'})
   			.done( function(response) {
-  				tb_status.addClass("bold_green");
+  				td_status.addClass("bold_green");
   				// console.log($(this));
   			});
+  	});  
+
+  /* When user clicks the Attach_bug button of every request item */
+	$('.btn-hidden-attach_bug').on('click', function(event) {
+		primary_key = $(this).attr('data-pk');
+		td_bug = $(this).parent()
+		$('#bug_modal').modal('show'); 
+  	});
+
+  	$('#submit_bugid').on('click', function(event) {
+  		bugid = $('#bugid_input').val()
+  		$.post('/edit_request/', {pk: primary_key, target: 'bug_id', target_value: bugid, 'csrfmiddlewaretoken': token, ov:'Empty'})
+			.done( function(response) {
+				toastr.success('Saved successfully!', {timeOut: 2000});
+				td_bug.html('<a href="http://b/' + bugid + '" target="_blank">' + bugid +'</a>');
+				// console.log($(this));
+			});
   	});
 
 	// $('select').each(function(index) {

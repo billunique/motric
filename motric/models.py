@@ -55,6 +55,7 @@ class RequestedDevice(DeviceStatus):
 	resolved_date = models.DateTimeField(blank=True, null=True)
 	comment = models.CharField(max_length=256, blank=True, null=True)
 	charged = models.BooleanField(default=False)
+	bug_id = models.CharField(max_length=100, blank=True, null=True)
 
 	def __unicode__(self):
 		return u'%s %s, with %s, requested by %s, for %s project' % (self.quantity, self.model_type, self.os_version, self.requester.ldap, self.requester.project)
