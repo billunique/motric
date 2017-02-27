@@ -22,12 +22,12 @@ class RequesterAdmin(admin.ModelAdmin):
     ordering = ['cost_center']
 
 class RequestedDeviceAdmin(admin.ModelAdmin):
-    list_display = ['model_type', 'quantity', 'os_version', 'requester', 'request_date', 'status']
+    list_display = ['id', 'model_type', 'quantity', 'os_version', 'requester', 'request_date', 'status']
     ordering = ['-request_date']
     actions = [make_public, make_dedicated, make_requested]
 
 class LabDeviceAdmin(admin.ModelAdmin):
-    list_display = ['model', 'device_id', 'os', 'project', 'owner', 'status', 'lab_location']
+    list_display = ['id', 'model', 'device_id', 'os', 'project', 'owner', 'status', 'lab_location']
     ordering = ['-register_date']
     actions = [make_public, make_dedicated]
     fields = ('model', 'device_id', 'status', 'os', 'owner', 'user', 'label', 'project', 'lab_location')

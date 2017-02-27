@@ -57,8 +57,8 @@
 		  <td>{{ request.requester.ldap }}</td>
 		  <td>{{ request.requester.cost_center }}</td>
 		  <td>{{ request.requester.project }}</td>
-		  <td>{{ request.requester.device_owner }}</td>
-		  <td>{{ request.requester.device_label }}</td>
+		  <td class="one-line">{{ request.requester.device_owner }}</td>
+		  <td title="{{ request.requester.device_label }}" class="title-detail">{{ request.requester.device_label }}</td>
 		  <!-- <td>{{ request.requester.pref_location }}</td> -->
 		  <td>{{ request.model_type }}</td>
 		  <td>{{ request.os_version }}</td>
