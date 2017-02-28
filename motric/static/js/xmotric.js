@@ -226,6 +226,14 @@ $(document).ready(function(){
            dataType: 'json', 
            // headers: { "X-CSRFToken": token }
         }, 
+
+        source: [
+		 	// {text: ''},
+		 	{value: 'PEK', text: 'PEK'},
+		 	{value: 'MTV', text: 'MTV'},
+			{value: 'TWD', text: 'TWD'},
+        ],
+
         //This is not necessary if the header is set with token, vice versa. But the params option is really useful.
         params: function(params) {
 		    //originally params contain pk, name and value
@@ -759,6 +767,7 @@ $(document).ready(function(){
   		$.post('/edit_request/', {pk: primary_key, target: 'bug_id', target_value: bugid, 'csrfmiddlewaretoken': token, ov:'Empty'})
 			.done( function(response) {
 				toastr.success('Saved successfully!', {timeOut: 2000});
+				$('#bugid_input').val('');
 				td_bug.html('<a href="http://b/' + bugid + '" target="_blank">' + bugid +'</a>');
 				// console.log($(this));
 			});
