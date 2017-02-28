@@ -18,7 +18,7 @@
 	</div> -->
     <!-- <div><span><a href="#" id="ex_rate" data-name="exchange_rate" data-type="text" data-placement="right" data-title="Enter exchange rate" data-value="">Click here to input exchage rate</a></span></div> -->
 
-	  <h4 style="float:left">Totally <span class="noticeable">{{ count }}</span> requests</h4>
+	  <h4 style="float:left">Totally <span class="noticeable">{{ count }}</span> requests   <a href="http://{{ request.get_host }}" target="_parent">( Go Home )</a></h4>
 	  {% block date_filter %}{% endblock %}
 
 	<table id="disposal" class="table table-bordered table-hover table-condensed text-center font-compacted">

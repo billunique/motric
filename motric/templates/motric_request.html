@@ -10,6 +10,7 @@
       {% csrf_token %} 
       {% include 'req_generalInfo.html' %}
       {% include 'req_deviceList.html' %}
+      {% if "xiawang" in request.get_host %}<input type="hidden" name="svr" value="t">{% endif %}
       <button id ="req_submit" type="submit" class="btn btn-success" style="float:left">Submit</button> 
     </form>
     <button class="btn btn-primary" style="float:right" onclick="addDevice()">Add row</button>

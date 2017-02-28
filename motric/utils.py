@@ -67,6 +67,8 @@ def form_receiver(request):
         quantity = form_dict.pop('quantity') # list
         status = 'REQ'
 
+        server = form_dict.get('svr')
+
         combo = ''
         for i in range(len(model_type)):
             rd = RequestedDevice(model_type=model_type[i], os_version=os_version[i], quantity=quantity[i], requester=usr, request_date=timezone.now(), comment=comment, status=status)
@@ -80,14 +82,23 @@ def form_receiver(request):
     except:
         return HttpResponse(expection_carrier())
 
-    message = ldap + ' raised device request for:\n\n' + combo + '\n\nPlease go to http://motric/request_disposal/?f=req for details.'
+
+    motric_host = "motric"
+    subject = '[Motric]Somebody raised device request!'
+    sender = 'mobileharness.motric@gmail.com'
+    recipient = ['xiawang@google.com', 'yanyanl@google.com', 'ligang@google.com', 'jinrui@google.com', 'derekchen@google.com', 'joyl@google.com', 'nanz@google.com', 'magicpig@google.com', 'xmhu@google.com', 'dschlaak@google.com', 'ansalgado@google.com']
+    cc_rcpt = ['mobileharness-ops@google.com']
+    if server: # value is 't' (for test)
+        motric_host = "xiawang.bej:8080"
+        recipient = ['xiawang@google.com', 'yanyanl@google.com', 'ligang@google.com', 'jinrui@google.com', 'joyl@google.com']
+
+    message = ldap + ' raised device request for:\n\n' + combo + '\n\nPlease go to http://' + motric_host + '/request_disposal/?f=req for details.'
     motric_send_mail(
-        '[Motric]Somebody raised device request!',
+        subject,
         message,
-        'mobileharness.motric@gmail.com',
-        ['xiawang@google.com', 'yanyanl@google.com', 'ligang@google.com', 'jinrui@google.com', 'derekchen@google.com', 'joyl@google.com', 'nanz@google.com'],
-        # ['xiawang@google.com', 'yanyanl@google.com'],
-        ['mobileharness-ops@google.com']
+        sender,
+        recipient, 
+        cc_rcpt
     )
 
     # return HttpResponse("Thanks for using Mobile Harness! We've received your request, if it's approved, we'll start purchasing shortly. Please stay tuned.")
@@ -156,7 +167,7 @@ def request_editor(request):
             url = "https://motric/details/?t=r&pk=" + pk
             body = "Hi Gang,\n\nThis is to inform you that the devices of request " + url + " already arrived.\n" + "Yanyan will hand them to you, please be ready to register them and make them online."
             recipient = ['ligang@google.com', 'yanyanl@google.com']
-            cc_rcpt = ['xiawang@google.com', 'jinrui@google.com', 'derekchen@google.com', 'joyl@google.com']
+            cc_rcpt = ['xiawang@google.com', 'jinrui@google.com', 'derekchen@google.com', 'joyl@google.com', 'nanz@google.com']
 
         # email = EmailMessage(subject, body, sender, recipient, cc_rcpt, headers={'Cc': ','.join(cc_rcpt)})  # headers section must be included into the EmailMessage brackets.
         # email.send(fail_silently=False)
