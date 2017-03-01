@@ -29,6 +29,8 @@ function addDevice() {
 	inum.setAttribute("name", "quantity");
 	quan.appendChild(inum);
 
+	window.scrollTo(0,document.body.scrollHeight)  // Scroll automatically to the bottom of the page.
+
 	// window.alert(imodel.getAttribute("id") +"\n" + ios.getAttribute("id") +"\n" + inum.getAttribute("id"));
 }
 
