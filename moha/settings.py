@@ -25,7 +25,7 @@ SECRET_KEY = '2mtg7hz!r3(ic%(bfr#d*)=r8+@lg=_71#8roaujssijbi=n2n'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
