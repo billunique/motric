@@ -197,11 +197,25 @@ tr td:hover button{
     font-weight: bold;
 }
 
+.bold_green {
+    color:#4CAF50;
+    font-weight: bold;
+}
+
+/*.hidden_column{
+    display: none;
+}
+
+.shown_column{
+}*/
+
+.l2_column{
+}
+
 .hidden{
     /*visibility: hidden;*/
     display: none;
 }
-
 
 .one-line {
    max-width:150px;
@@ -213,11 +227,6 @@ tr td:hover button{
 .one-line:hover {
    overflow:visible;
    white-space:normal;
-}
-
-.bold_green {
-    color:#4CAF50;
-    font-weight: bold;
 }
 
 .title-detail {

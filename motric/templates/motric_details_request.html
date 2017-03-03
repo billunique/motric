@@ -13,7 +13,7 @@
 	  	  <th>Project</th>
 	  	  <th>Device Owner</th>
 	  	  <th>Device label</th>
-	  	  <!-- <th>Preferred lab</th> -->
+	  	  <th>Preferred lab</th>
 	  	  <th>Request date</th>
 	  	</tr>
 	  	<tr>
@@ -23,7 +23,7 @@
 	  	  <td>{{ requester.project }}</td>
 	  	  <td>{{ requester.device_owner }}</td>
 	  	  <td>{{ requester.device_label }}</td>
-	  	  <!-- <td>{{ requester.pref_location }}</td> -->
+	  	  <td>{{ requester.pref_location |default:"" }}</td>
 	  	  {% endwith %}
 	  	  <td>{{ request.request_date }}</td>
 	  	</tr>

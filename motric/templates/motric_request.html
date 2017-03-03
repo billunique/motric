@@ -1,13 +1,14 @@
 {% extends 'motric_moresrc.html' %}
 {% block title %}Device request for Mobile Harness{% endblock %}
-
 {% block body %}
+
   <div class="container">
     <h3 style="margin-bottom:20px; padding-left:10px">Request for dedicated devices in <b>Mobile Harness</b> <img src="/static/img/moha-48-mdpi.png" align="top"> Centralized Lab</h3>
     {% include 'req_prologue.html' %}
     <input type="checkbox" id="approval"><span style="color:red">  Make sure you've gotten your manager's approval before you send the request. </span><p></p>
     <form id="moha-device-request" role="form" method="post" action="/request/">
-      {% csrf_token %} 
+      {% csrf_token %}
+      {% include 'motric_modal.html' %}
       {% include 'req_generalInfo.html' %}
       {% include 'req_deviceList.html' %}
       {% if "xiawang" in request.get_host %}<input type="hidden" name="svr" value="t">{% endif %}

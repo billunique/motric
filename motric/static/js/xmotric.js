@@ -503,6 +503,7 @@ $(document).ready(function(){
       console.log('the status of the checkbox has been changed to: ' + $(this).prop('checked'));
       if ( $(this).prop('checked') ) {
         $('#req_submit').removeAttr('disabled')
+        $('#lab_modal').modal('show');
       } else {
         $('#req_submit').attr('disabled', 'disabled');
       }
@@ -514,7 +515,7 @@ $(document).ready(function(){
 /* Handle the various select options on the Request Disposal page. */
 	var primary_key = 'hello world';
 	var status = '';
-    $('select').on('change', 
+    $('select[data-name="req_action"]').on('change', 
     	// { pk: $(this).attr('data-pk') },
     	function(event) {
     		console.log(this);
@@ -755,13 +756,13 @@ $(document).ready(function(){
   				td_status.addClass("bold_green");
   				// console.log($(this));
   			});
-  	});  
+  	}); 
 
   /* When user clicks the Attach_bug button of every request item */
 	$('.btn-hidden-attach_bug').on('click', function(event) {
 		primary_key = $(this).attr('data-pk');
 		td_bug = $(this).parent()
-		$('#bug_modal').modal('show'); 
+		$('#lab_modal').modal('show'); 
   	});
 
   	$('#submit_bugid').on('click', function(event) {
@@ -774,6 +775,39 @@ $(document).ready(function(){
 				// console.log($(this));
 			});
   	});
+
+
+  /* When user clicks the Show or Hide anchor */
+	$('#toggle-show').on('click', function(event) {
+		// if($(this).text() == 'Show more') {
+		// 	$('.hidden_column').removeClass('hidden_column').addClass('shown_column');
+		// 	$(this).text('Show less')
+		// }
+		// else {
+		// 	$('.shown_column').removeClass('shown_column').addClass('hidden_column');
+		// 	$(this).text('Show more');
+		// }
+
+		if($(this).text() == 'Show more') {
+			$('.l2_column').removeClass('hidden');
+			$(this).text('Show less')
+		}
+		else {
+			$('.l2_column').addClass('hidden');
+			$(this).text('Show more');
+		}
+		// $('.l2_column').toggle();
+  	});
+
+
+   $('select[name="pref_loc"]').on('change', function(event) {
+   		var opt = $(this).val();
+   		console.log("Preferred location is: " + opt);
+   		if (opt == 'MTV'){
+   			$('#lab_modal').modal({backdrop: "static"});
+   		}
+   });
+
 
 	// $('select').each(function(index) {
 		// console.log(index + ': ' + $(this).text());

@@ -57,9 +57,9 @@ def form_receiver(request):
         device_owner = form_dict['owner']
         device_label = form_dict['label']
         comment = form_dict['comment']
-        # pref_loc = form_dict['pref_loc']
-        # usr = Requester(ldap=ldap, cost_center=cost_center, project=project, device_owner=device_owner, device_label=device_label, pref_location=pref_loc)
-        usr = Requester(ldap=ldap, cost_center=cost_center, project=project, device_owner=device_owner, device_label=device_label)
+        pref_loc = form_dict['pref_loc']
+        usr = Requester(ldap=ldap, cost_center=cost_center, project=project, device_owner=device_owner, device_label=device_label, pref_location=pref_loc)
+        # usr = Requester(ldap=ldap, cost_center=cost_center, project=project, device_owner=device_owner, device_label=device_label)
         usr.save()
 
         model_type = form_dict.pop('device') # list
