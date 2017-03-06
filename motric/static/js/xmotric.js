@@ -503,7 +503,6 @@ $(document).ready(function(){
       console.log('the status of the checkbox has been changed to: ' + $(this).prop('checked'));
       if ( $(this).prop('checked') ) {
         $('#req_submit').removeAttr('disabled')
-        $('#lab_modal').modal('show');
       } else {
         $('#req_submit').attr('disabled', 'disabled');
       }
@@ -808,6 +807,11 @@ $(document).ready(function(){
    		}
    });
 
+      $('#submit_lab').on('click', function(event) {
+   		if ( $('input[name="device_choice"]:checked').val() == 'DIY') {
+   			$('#comment').val('Buy the devices myself.');  //input uses val(), while table cell uses html() to set values.
+   		}
+   });
 
 	// $('select').each(function(index) {
 		// console.log(index + ': ' + $(this).text());
