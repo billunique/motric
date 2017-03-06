@@ -762,7 +762,7 @@ $(document).ready(function(){
 	$('.btn-hidden-attach_bug').on('click', function(event) {
 		primary_key = $(this).attr('data-pk');
 		td_bug = $(this).parent()
-		$('#lab_modal').modal('show'); 
+		$('#bug_modal').modal('show'); 
   	});
 
   	$('#submit_bugid').on('click', function(event) {
