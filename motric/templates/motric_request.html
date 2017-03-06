@@ -2,20 +2,43 @@
 {% block title %}Device request for Mobile Harness{% endblock %}
 {% block body %}
 
+<div class="modal fade" id="lab_modal" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+<!--       <div class="modal-header">
+        <h4 class="modal-title"></h4>
+      </div>  -->
+      <div class="modal-body"><span class="bold_green">Two ways to set up devices in MTV lab:</span><p></p>
+        <ul>
+          <li>Buy devices yourself and ship (or bring) them to magicpig@ (DO drop a message or your ldap on the shipment label). <span style="color:red">NO chargeback</span> for this option.</li><p></p>
+          <li>MH MTV team will procure and set the devices up for you. Please allow <span style="color:red">5-12 weeks</span> for the procurement in MTV. We will charge you back via concur or PO. </li>
+        </ul>
+        <p><span class="bold_green">So, what's your option?</span></p>
+          <label class="radio-inline"><input type="radio" name="device_choice" value="DIY">   Buy them myself.</label>
+          <label class="radio-inline"><input type="radio" name="device_choice" value="MH" checked>    Leave to MH MTV team and I'll wait.</label>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-warning btn-md" id="submit_lab" type="submit" data-dismiss="modal">All Right</button>
+        <button class="btn btn-info btn-md" id="cancel_lab" data-dismiss="modal">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
   <div class="container">
     <h3 style="margin-bottom:20px; padding-left:10px">Request for dedicated devices in <b>Mobile Harness</b> <img src="/static/img/moha-48-mdpi.png" align="top"> Centralized Lab</h3>
     {% include 'req_prologue.html' %}
     <input type="checkbox" id="approval"><span style="color:red">  Make sure you've gotten your manager's approval before you send the request. </span><p></p>
     <form id="moha-device-request" role="form" method="post" action="/request/">
       {% csrf_token %}
-      {% include 'motric_modal.html' %}
+      {#% include 'motric_modal.html' %#}
       {% include 'req_generalInfo.html' %}
       {% include 'req_deviceList.html' %}
       {% if "xiawang" in request.get_host %}<input type="hidden" name="svr" value="t">{% endif %}
       <button id ="req_submit" type="submit" class="btn btn-success" style="float:left">Submit</button> 
     </form>
     <button class="btn btn-primary" style="float:right" onclick="addDevice()">Add row</button>
-    </div>
   </div>
 
 {% endblock %}
