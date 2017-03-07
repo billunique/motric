@@ -217,7 +217,7 @@ tr td:hover button{
     display: none;
 }
 
-.one-line {
+.one-line, .one-line-sticker, .title-detail {
    max-width:150px;
    /*max-height: 100px;*/
    white-space:nowrap;
@@ -229,10 +229,9 @@ tr td:hover button{
    white-space:normal;
 }
 
-.title-detail {
-   max-width:144px;
-   /*max-height: 100px;*/
-   white-space:nowrap;
-   overflow:hidden;
-   text-overflow:ellipsis;
+.one-line-sticker:hover {
+   overflow:visible;
+   white-space:normal;
+   /*width:auto;*/
+   max-width: 500px;
 }

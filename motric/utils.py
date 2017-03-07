@@ -86,8 +86,8 @@ def form_receiver(request):
     motric_host = "motric"
     subject = '[Motric]Somebody raised device request!'
     sender = 'mobileharness.motric@gmail.com'
-    recipient = ['xiawang@google.com', 'yanyanl@google.com', 'ligang@google.com', 'jinrui@google.com', 'derekchen@google.com', 'joyl@google.com', 'nanz@google.com', 'magicpig@google.com', 'xmhu@google.com', 'dschlaak@google.com', 'ansalgado@google.com']
-    # recipient = ['xiawang@google.com', 'yanyanl@google.com']
+    # recipient = ['xiawang@google.com', 'yanyanl@google.com', 'ligang@google.com', 'jinrui@google.com', 'derekchen@google.com', 'joyl@google.com', 'nanz@google.com', 'magicpig@google.com', 'xmhu@google.com', 'dschlaak@google.com', 'ansalgado@google.com']
+    recipient = ['xiawang@google.com', 'yanyanl@google.com']
     cc_rcpt = ['mobileharness-ops@google.com']
     if server: # value is 't' (for test)
         motric_host = "xiawang.bej:8080"

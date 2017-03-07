@@ -18,7 +18,7 @@
 	</div> -->
     <!-- <div><span><a href="#" id="ex_rate" data-name="exchange_rate" data-type="text" data-placement="right" data-title="Enter exchange rate" data-value="">Click here to input exchage rate</a></span></div> -->
 
-	  <h4 style="float:left">Totally <span class="noticeable">{{ count }}</span> requests   <button class='btn'><a href="http://{{ request.get_host }}" target="_parent">Go Home</a></button>   <button class="btn"><a href="#" id="toggle-show">Show more</a></button></h4>
+	  <h4 style="float:left">Totally <span class="noticeable">{{ count }}</span> requests   <button class='btn btn-default'><a href="http://{{ request.get_host }}" target="_parent">Go Home</a></button>   <button class="btn btn-default"><a href="#" id="toggle-show">Show more</a></button></h4>
 	  {% block date_filter %}{% endblock %}
 
 	<table id="disposal" class="table table-bordered table-hover table-condensed text-center font-compacted">
@@ -27,7 +27,7 @@
 	  	<tr class="btn-primary">
 	  	  <th>#</th>
 	  	  <th>Requester</th>
-	  	  <th>CCenter</th>
+	  	  <th class="l2_column hidden">CCenter</th>
 	  	  <th>Project</th>
 	  	  <th>Owner</th>
 	  	  <th class="l2_column hidden">Label</th>
@@ -40,7 +40,7 @@
 	  	  <th class="btn-success">PO#</th>
 	  	  <th class="btn-success">Price(CNY)</th>
 	  	  <!-- <th class="btn-info" id="rate"><a href="#" data-value="" title="Bulk edit the exchange rate">Exrate</a></th> -->
-	  	  <th class="btn-success">Xrate</a></th>
+	  	  <th class="l2_column hidden btn-success">Xrate</a></th>
 	  	  <th class="btn-success">Price(USD)</th>
 	  	  <th class="btn-success">Location</th>
 	  	  <th class="btn-success">Bug#</th>
@@ -55,10 +55,11 @@
 		<tr>
 		  <td><a href="/details?t=r&pk={{ request.id }}" target="_blank">{{ request.id }}</a></td>
 		  <td>{{ request.requester.ldap }}</td>
-		  <td>{{ request.requester.cost_center }}</td>
+		  <td class="l2_column hidden">{{ request.requester.cost_center }}</td>
 		  <td>{{ request.requester.project }}</td>
 		  <td class="one-line">{{ request.requester.device_owner }}</td>
-		  <td class="l2_column hidden title-detail" title="{{ request.requester.device_label }}">{{ request.requester.device_label }}</td>
+		  <!-- <td class="l2_column hidden" title="{{ request.requester.device_label }}">{{ request.requester.device_label }}</td> -->
+		  <td class="l2_column hidden one-line-sticker">{{ request.requester.device_label }}</td>
 		  <td class="l2_column hidden">{{ request.requester.pref_location |default:"" }}</td>
 		  <td>{{ request.model_type }}</td>
 		  <td class="l2_column hidden">{{ request.os_version }}</td>
@@ -70,7 +71,7 @@
 		  <td class="l2_column hidden one-line"><a href="#" data-target="req_editor" data-name="comment" data-title="What do you say" data-pk="{{ request.id }}">{{ request.comment }}</a></td>
 		  <td><a href="#" data-target="req_editor" data-name="po_number" data-title="Enter PO ID" data-pk="{{ request.id }}">{{ request.po_number |default:"" }}</a></td>
 		  <td><a href="#" data-target="req_editor" data-name="price_cny" data-title="Enter Price(CNY)" data-pk="{{ request.id }}">{{ request.price_cny |default:"" }}</a></td>
-		  <td><a href="#" data-target="req_editor" data-name="ex_rate" data-title="Enter exchange rate" data-pk="{{ request.id }}">{{ request.ex_rate |default:"" }}</a></td>
+		  <td class="l2_column hidden"><a href="#" data-target="req_editor" data-name="ex_rate" data-title="Enter exchange rate" data-pk="{{ request.id }}">{{ request.ex_rate |default:"" }}</a></td>
 		  <td><a href="#" data-target="req_editor" data-name="price_usd" data-title="Enter Price(USD)" data-pk="{{ request.id }}">{{ request.price_usd |default:"" }}</a></td>
 		  <td><a href="#" data-target="req_editor" data-name="lab_location" data-type="select" data-title="Set lab location" data-pk="{{ request.id }}">{{ request.lab_location |default:"" }}</a></td>
 		  <td><a href="http://b/{{ request.bug_id }}" target="_blank">{{ request.bug_id |default:"" }}</a><button class="btn btn-xs btn-hidden-attach_bug" data-pk="{{ request.id }}" style="float:right"> {% if not request.bug_id %}Attach Bug{% endif %}{% if request.bug_id %}Modify ID{% endif %}</button></td>

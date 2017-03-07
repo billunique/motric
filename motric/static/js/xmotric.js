@@ -217,6 +217,7 @@ $(document).ready(function(){
 	// $.fn.editable.defaults.mode = 'inline';
 	// toastr.success('Saved successfully!', 'IAmTitle', {timeOut: 1000}); // Must override the title before the timeOut override takes effect.
 
+	$('body').css('zoom','80%');
 	var token = $('input[name="csrfmiddlewaretoken"]').prop('value');
 	var currency_rate = '6.6';
 	$('a[data-target="req_editor"]').editable({
