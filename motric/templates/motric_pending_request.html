@@ -6,10 +6,18 @@
 	  	  	  <button class="btn btn-danger dropdown-toggle" data-toggle="dropdown">Status 
 	  	  	  <span class="caret"></span></button>
 	  	  	    <ul class="dropdown-menu">
-				  <li><a href="/request_disposal/?f=req">Requested</a></li>
-				  <li><a href="/request_disposal/?f=app">Approved</a></li>
-				  <li><a href="/request_disposal/?f=ord">Ordered</a></li>
-				  <li><a href="/request_disposal/?f=rec">Received</a></li>
+	  	  	    {% with current_tab=request.GET.ao current_location=request.GET.l %}
+				  <li><a href="?ao={{ current_tab }}&l={{ current_location }}&s=all">All</a></li>
+				  <li><a href="?ao={{ current_tab }}&l={{ current_location }}&s=req">Requested</a></li>
+				  <li><a href="?ao={{ current_tab }}&l={{ current_location }}&s=app">Approved</a></li>
+				  <li><a href="?ao={{ current_tab }}&l={{ current_location }}&s=ord">Ordered</a></li>
+				  <li><a href="?ao={{ current_tab }}&l={{ current_location }}&s=rec">Received</a></li>
+				{% endwith %}
+<!-- 				  <li><a href="{{ request.path }}?s=all">All</a></li>
+				  <li><a href="{{ request.path }}?s=req">Requested</a></li>
+				  <li><a href="{{ request.path }}?s=app">Approved</a></li>
+				  <li><a href="{{ request.path }}?s=ord">Ordered</a></li>
+				  <li><a href="{{ request.path }}?s=rec">Received</a></li> -->
 				</ul>
 			</th>
 {% endblock %}

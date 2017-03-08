@@ -42,8 +42,20 @@
 	  	  <!-- <th class="btn-info" id="rate"><a href="#" data-value="" title="Bulk edit the exchange rate">Exrate</a></th> -->
 	  	  <th class="l2_column hidden btn-success">Xrate</a></th>
 	  	  <th class="btn-success">Price(USD)</th>
-	  	  <th class="btn-success">Location</th>
 	  	  <th class="btn-success">Bug#</th>
+	  	  <!-- <th class="btn-success">Location</th> -->
+	  	  <th class="btn-success dropdown">
+	  	  	  <button class="btn btn-success dropdown-toggle" data-toggle="dropdown">Location 
+	  	  	  <span class="caret"></span></button>
+	  	  	    <ul class="dropdown-menu">
+	  	  	      {% with current_tab=request.GET.ao current_status=request.GET.s %}
+	  	  	      <li><a href="?ao={{ current_tab }}&s={{ current_status }}&l=all">All</a></li>
+				  <li><a href="?ao={{ current_tab }}&s={{ current_status }}&l=pek">PEK</a></li>
+				  <li><a href="?ao={{ current_tab }}&s={{ current_status }}&l=mtv">MTV</a></li>
+				  <li><a href="?ao={{ current_tab }}&s={{ current_status }}&l=twd">TWD</a></li>
+				  {% endwith %}
+				</ul>
+			</th>
 	  	  <!-- <th class="btn-danger">Status</th> -->
 	  	  {% block status %}{% endblock %}
 	  	  <!-- <th class="btn-danger">Action</th> -->
@@ -73,8 +85,8 @@
 		  <td><a href="#" data-target="req_editor" data-name="price_cny" data-title="Enter Price(CNY)" data-pk="{{ request.id }}">{{ request.price_cny |default:"" }}</a></td>
 		  <td class="l2_column hidden"><a href="#" data-target="req_editor" data-name="ex_rate" data-title="Enter exchange rate" data-pk="{{ request.id }}">{{ request.ex_rate |default:"" }}</a></td>
 		  <td><a href="#" data-target="req_editor" data-name="price_usd" data-title="Enter Price(USD)" data-pk="{{ request.id }}">{{ request.price_usd |default:"" }}</a></td>
-		  <td><a href="#" data-target="req_editor" data-name="lab_location" data-type="select" data-title="Set lab location" data-pk="{{ request.id }}">{{ request.lab_location |default:"" }}</a></td>
 		  <td><a href="http://b/{{ request.bug_id }}" target="_blank">{{ request.bug_id |default:"" }}</a><button class="btn btn-xs btn-hidden-attach_bug" data-pk="{{ request.id }}" style="float:right"> {% if not request.bug_id %}Attach Bug{% endif %}{% if request.bug_id %}Modify ID{% endif %}</button></td>
+		  <td><a href="#" data-target="req_editor" data-name="lab_location" data-type="select" data-title="Set lab location" data-pk="{{ request.id }}">{{ request.lab_location |default:"" }}</a></td>
 		  <td {% if request.charged == 1 %} class="bold_green" {% endif %}>{{ request.get_status_display }}
 		  {% if request.get_status_display == 'Ordered' %}<button data-pk="{{ request.id }}" title="Mark the device as Received" class="btn btn-xs btn-hidden-receive" style="float:right">Received</button>{% endif %}
 		  {% if request.get_status_display == 'Assigned' and not request.charged == 1 %}<button data-pk="{{ request.id }}" title="Mark the request as Charged" class="btn btn-xs btn-hidden-charge" style="float:right">Charged</button>{% endif %}

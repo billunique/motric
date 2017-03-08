@@ -71,15 +71,29 @@ def request_disposal(request):
 	request_list = RequestedDevice.objects.filter(resolved=0).order_by('-id') # return a list with the lastest request shown first.
 	q = request.GET.copy()
 	# f = q['f'] // bad method, in this way the f parameter is mandatory. 
-	f = q.get('f')
-	if f == 'req':
-		request_list = RequestedDevice.objects.filter(status='REQ').order_by('-id')
-	if f == 'app':
-		request_list = RequestedDevice.objects.filter(status='APP').order_by('-id')
-	if f == 'ord':
-		request_list = RequestedDevice.objects.filter(status='ORD').order_by('-id')
-	if f == 'rec':
-		request_list = RequestedDevice.objects.filter(status='REC').order_by('-id')
+	s = q.get('s')
+	l = q.get('l')
+	if s:
+		if s == 'req':
+			request_list = request_list.filter(status='REQ')
+		if s == 'app':
+			request_list = request_list.filter(status='APP')
+		if s == 'ord':
+			request_list = request_list.filter(status='ORD')
+		if s == 'rec':
+			request_list = request_list.filter(status='REC')
+		if s == 'all':
+			pass
+	if l:
+		if l == 'pek':
+			request_list = request_list.filter(lab_location='PEK')
+		if l == 'mtv':
+			request_list = request_list.filter(lab_location='MTV')
+		if l == 'twd':
+			request_list = request_list.filter(lab_location='TWD')
+		if l == 'all':
+			pass
+
 	count = request_list.count()
 	return render(request, 'motric_pending_request.html', {'request_list':request_list, 'count':count})
 
@@ -88,7 +102,8 @@ def request_history(request):
 	request_list = RequestedDevice.objects.filter(resolved=1).order_by('-id') # return a list with the lastest request shown first.
 	q = request.GET.copy()
 	# f = q['f']
-	f = q.get('f')
+	s = q.get('s')
+	l = q.get('l')
 	ao = q.get('ao')
 	if ao:
 		today = datetime.date.today()
@@ -108,15 +123,26 @@ def request_history(request):
 			# request_list = RequestedDevice.objects.filter(request_date__date__lt=datetime.date(today.year, last_month, 1)).order_by('-id')
 			# request_list = RequestedDevice.objects.filter(resolved=1).exclude(request_date__month__in=[this_month, last_month]).order_by('-id')
 			request_list = request_list.exclude(request_date__month__in=[this_month, last_month])
-	if f:
-		if f == 'ass_uc':
+	if s:
+		if s == 'ass_uc':
 			request_list = request_list.filter(status='ASS', charged='0')
-		if f == 'ass':
+		if s == 'ass':
 			request_list = request_list.filter(status='ASS')
-		if f == 'pub':
+		if s == 'pub':
 			request_list = request_list.filter(status='AVA')
-		if f == 'ref':
+		if s == 'ref':
 			request_list = request_list.filter(status='REF')
+		if s == 'all':
+			pass
+	if l:
+		if l == 'pek':
+			request_list = request_list.filter(lab_location='PEK')
+		if l == 'mtv':
+			request_list = request_list.filter(lab_location='MTV')
+		if l == 'twd':
+			request_list = request_list.filter(lab_location='TWD')
+		if l == 'all':
+			pass
 
 	count = request_list.count()
 	return render(request, 'motric_resolved_request.html', {'request_list':request_list, 'count':count})

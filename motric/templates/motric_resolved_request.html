@@ -14,11 +14,12 @@
 	  	  	  <button class="btn btn-danger dropdown-toggle" data-toggle="dropdown">Status 
 	  	  	  <span class="caret"></span></button>
 	  	  	    <ul class="dropdown-menu">
-	  	  	      {% with request.GET.ao as current_tab %}
-				  <li><a href="?ao={{ current_tab }}&f=ass_uc" title="Assigned but uncharged">Uncharged</a></li>
-				  <li><a href="?ao={{ current_tab }}&f=ass" title="All Assigned">Assigned</a></li>
-				  <li><a href="?ao={{ current_tab }}&f=pub">Public</a></li>
-				  <li><a href="?ao={{ current_tab }}&f=ref">Refused</a></li>
+	  	  	      {% with current_tab=request.GET.ao current_location=request.GET.l %}
+				  <li><a href="?ao={{ current_tab }}&l={{ current_location }}&s=all"">All</a></li>
+				  <li><a href="?ao={{ current_tab }}&l={{ current_location }}&s=ass_uc" title="Assigned but uncharged">Uncharged</a></li>
+				  <li><a href="?ao={{ current_tab }}&l={{ current_location }}&s=ass" title="All Assigned">Assigned</a></li>
+				  <li><a href="?ao={{ current_tab }}&l={{ current_location }}&s=pub">Public</a></li>
+				  <li><a href="?ao={{ current_tab }}&l={{ current_location }}&s=ref">Refused</a></li>
 				  {% endwith %}
 				</ul>
 			</th>
