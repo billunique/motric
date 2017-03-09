@@ -51,13 +51,13 @@ def form_receiver(request):
     #form_dict = form_querydict.lists() # don't use like this, will get a 'list indices must be integers not str' error.
 
     try:
-        ldap = form_dict['requester']
-        cost_center = form_dict['costcenter']
-        project = form_dict['project']
-        device_owner = form_dict['owner']
-        device_label = form_dict['label']
-        comment = form_dict['comment']
-        pref_loc = form_dict['pref_loc']
+        ldap = form_dict.get('requester')
+        cost_center = form_dict.get('costcenter')
+        project = form_dict.get('project')
+        device_owner = form_dict.get('owner')
+        device_label = form_dict.get('label')
+        comment = form_dict.get('comment')
+        pref_loc = form_dict.get('pref_loc')
         usr = Requester(ldap=ldap, cost_center=cost_center, project=project, device_owner=device_owner, device_label=device_label, pref_location=pref_loc)
         # usr = Requester(ldap=ldap, cost_center=cost_center, project=project, device_owner=device_owner, device_label=device_label)
         usr.save()
@@ -123,11 +123,11 @@ def request_editor(request):
     message += data
 
     # try:
-    pk = dict['pk']
+    pk = dict.get('pk')
     rd = RequestedDevice.objects.get(pk=pk)
     column = dict.values()[2]
     column_value = dict.values()[3]
-    oldvalue = dict['ov']
+    oldvalue = dict.get('ov')
 
     requester = rd.requester.ldap
     subject = "[Motric]Updates of your device request for mobile-harness"
@@ -196,13 +196,13 @@ def labdevice_editor(request):
     data = json.dumps(dict)
     message += data
 
-    pk = dict['pk']
+    pk = dict.get('pk')
     ld = LabDevice.objects.get(pk=pk)
 
     ## data is like this: {"pk": "191", "csrfmiddlewaretoken": "ZPUe3zv9snleUyycvG4Nr8UdlySz0iYD", "name": "os", "value": "Android 6.0.1", "ov": "Android 4.4.4"} ##
     field = dict.values()[2]
     field_value = dict.values()[3]
-    oldvalue = dict['ov']
+    oldvalue = dict.get('ov')
 
     # target = getattr(ld, field)
     # target = field_value
@@ -221,8 +221,8 @@ def labdevice_editor(request):
 def device_allocate(request):
     dict = request.POST.copy()
     # try:
-    pk = dict['pk']
-    status = dict['status']
+    pk = dict.get('pk')
+    status = dict.get('status')
     rd = RequestedDevice.objects.get(pk=pk)
     event_msg = {}
     allocate_date = timezone.now()
@@ -281,8 +281,8 @@ def device_allocate(request):
 def details(request):
     q = request.GET.copy()
     data = json.dumps(q)
-    pk = q['pk']
-    tp = q['t']
+    pk = q.get('pk')
+    tp = q.get('t')
     # did = q['did']
     if tp == 'd': # query device
         ld = LabDevice.objects.get(pk=pk)
@@ -308,8 +308,8 @@ def details(request):
 def device_replacement(request):
     p = request.POST.copy()
     data = json.dumps(p)
-    pk = p['pk']
-    repk = p['replacement_pk']
+    pk = p.get('pk')
+    repk = p.get('replacement_pk')
     ld_hold = LabDevice.objects.get(pk=pk)
     ld_attack = LabDevice.objects.get(pk=repk)
     replace_date = timezone.now()
