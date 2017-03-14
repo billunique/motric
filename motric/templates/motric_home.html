@@ -49,7 +49,8 @@
 		  <!-- <td>{{ device.model.requester.ldap }}</td> -->
 		  {# with last_target=device.respond_to.all|dictsort:"resolved_date"|last first_target=device.respond_to.all|dictsort:"resolved_date"|first #}
 		  {# with last_target=device.respond_to.all.last first_target=device.respond_to.all.0 #}
-		  {% with last_target=device.responserelationship_set.all.last.request first_target=device.respond_to.all.0 %}
+		  {# with last_target=device.responserelationship_set.all.last.request first_target=device.respond_to.all.0 #} <!--This one has same effect with the following one, just to make consistence, comment this -->
+		  {% with last_target=device.responserelationship_set.all.last.request first_target=device.responserelationship_set.all.first.request %}
 		  <td>{{ last_target.requester.ldap }}</td>
 		  <td>{{ last_target.requester.cost_center }}</td>
 		  <td>{{ first_target.po_number }}</td>

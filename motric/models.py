@@ -75,6 +75,9 @@ class LabDevice(DeviceStatus):
 	label = models.CharField(max_length=50, blank=True)
 	project = models.CharField(max_length=50, blank=True)
 	lab_location = models.CharField(max_length=3, blank=True, null=True)
+	price_usd = models.DecimalField(max_digits=6, decimal_places=1, blank=True, null=True)
+	price_cny = models.DecimalField(max_digits=6, decimal_places=1, blank=True, null=True)
+	po_number = models.CharField(max_length=50, blank=True, null=True)
 	replaced_by = models.ManyToManyField('self', symmetrical=False)
 
 	def __unicode__(self):

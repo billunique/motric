@@ -147,6 +147,9 @@ def request_history(request):
 	count = request_list.count()
 	return render(request, 'motric_resolved_request.html', {'request_list':request_list, 'count':count})
 
+def device_register(request):
+	return render(request, 'motric_register.html')
+
 # def faq(request):
 # 	return render(request, 'motric_faq.html')
 

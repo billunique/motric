@@ -837,6 +837,86 @@ $(document).ready(function(){
 		});
 	});
 
+
+	$('#add-more').on('click', function(event) {
+
+		var tb = document.getElementById("deviceid_table")
+		var amount = $('#more-amount').val();
+
+		for (i = 0; i < amount; i++) {
+			var row = tb.insertRow(-1);
+			var td1 = row.insertCell(0);
+			var td2 = row.insertCell(1);
+
+			var idevid = document.createElement("INPUT");
+			idevid.setAttribute("type", "text");
+			idevid.setAttribute("class", "mtinput form-control");
+			idevid.setAttribute("name", "device_id");
+			td1.appendChild(idevid);
+
+			var idevid = document.createElement("INPUT");
+			idevid.setAttribute("type", "text");
+			idevid.setAttribute("class", "mtinput form-control");
+			idevid.setAttribute("name", "device_id");
+			td2.appendChild(idevid);
+		}
+
+		window.scrollTo(0,document.body.scrollHeight)  // Scroll automatically to the bottom of the page.
+
+	});
+
+	$('#device_register_form').on('submit', function(event) {
+
+		// var val = $(this).find('input, select').not('[value=""]').serialize();  // This doesn't work.
+
+		// var vals = $('#device_register_form input, #device_register_form select').map(function () {  // This assasinates those inputs that allows empty value.
+  //       	return $(this).val().trim() == "" ? null : this;
+  //   	}).serialize();
+
+  		// $(this).find(':input[name="device_id"][value=""]').attr("disabled", "disabled");
+
+  		// var vals = $('#device_register_form input, #device_register_form select').filter(function () {  // This assasinates those inputs that allows empty value.
+    //     	return $(this).val();
+    // 	}).serialize();
+
+    	$(this).find(':input[name="device_id"]').each(function (){
+    		if ($.trim($(this).val()) === '') {
+				$(this).prop("disabled", true);
+				// $(this).attr("disabled", "disabled");
+    		}
+
+    		return true;
+    	});
+
+    	vals = $(this).serialize();
+    	console.log(vals);
+
+  		$.ajax({
+            url: '/register/',
+            type: 'post',
+            // dataType: 'json',
+            data: vals,
+        })
+        .done(function(data) {
+    		toastr.success('Saved successfully!', {timeOut: 2000});
+        })
+        .fail(function() {
+        	alert("Error! You might input something illegal.")
+        })
+    //     .always(function () {
+    //     	$(this).find(':input[name="device_id"]').each(function (){
+				// console.log($(this));
+				// $(this).removeAttr("disabled");
+    // 	    });
+    //     });	
+        event.preventDefault();
+        $(this).find(':input[name="device_id"]').each(function (){  // This block doesn't work in .done and .always... don't know why.
+			$(this).removeAttr("disabled");
+			$(this).val('')
+	    });
+	});
+
+
 	$(window).on('load', function() {
 
 		setTimeout(function() {

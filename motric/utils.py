@@ -358,3 +358,24 @@ def device_replacement(request):
     evt.save()
 
     return HttpResponse(data)
+
+def device_register(request):
+    p = request.POST.copy()
+    data = json.dumps(p)
+    model = p.get('model')
+    project = p.get('project')
+    owner = p.get('owner')
+    label = p.get('label')
+    os = p.get('os')
+    po_number = p.get('po_number')
+    price_cn = p.get('price_cn')
+    price_us = p.get('price_us')
+    location = p.get('location')
+    status = p.get('status')
+    device_id = p.pop('device_id') # list
+
+    for i in range(len(device_id)):
+        ld = LabDevice(model=model, project=project, owner=owner, label=label, os=os, po_number=po_number, price_cny=price_cn, price_usd=price_us, lab_location=location, status=status, device_id=device_id[i])
+        ld.save()
+
+    return HttpResponse(data)

@@ -28,6 +28,8 @@ urlpatterns = [
     url(r'^device_request/', views.device_request, name='request'),
     url(r'^request_disposal/', views.request_disposal, name='req_disposal'),
     url(r'^request_history/*', views.request_history, name='req_history'),
+    url(r'^device_register/', views.device_register, name='dev_register'),
+
     # url(r'^faq/', views.faq, name='faq'),
     # url(r'^about/', views.about, name='about'),
 	url(r'^request/', utils.form_receiver, name='receiver'), # this is a pratical technic.
@@ -37,6 +39,7 @@ urlpatterns = [
 
     url(r'^details/', utils.details, name='details'),
     url(r'^device_replacement/', utils.device_replacement, name='replacement'),
+    url(r'^register/', utils.device_register, name='labd_register'),
 
     url(r'^who/', utils.who_are_you, name='who'),
     url(r'^admin/', admin.site.urls),
