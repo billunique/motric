@@ -45,10 +45,10 @@
 	  	  <td>{{ request.model_type }}</td>
 	  	  <td>{{ request.os_version }}
 	  	  <td>{{ request.quantity }}</td>
-	  	  <td>{{ request.po_number }}</td>
-	  	  <td>{{ request.po_date }}</td>
-	  	  <td>{{ request.price_usd }}</td>
-	  	  <td>{{ request.price_cny }}</td>
+	  	  <td>{{ request.po_number |default:"" }}</td>
+	  	  <td>{{ request.po_date |default:"" }}</td>
+	  	  <td>{{ request.price_usd |default:"" }}</td>
+	  	  <td>{{ request.price_cny |default:"" }}</td>
 	  	  <td>{{ request.get_status_display }}
 	  	</tr>
 	</table>	

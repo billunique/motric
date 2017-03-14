@@ -788,13 +788,13 @@ $(document).ready(function(){
 		// 	$(this).text('Show more');
 		// }
 
-		if($(this).text() == 'Show more') {
+		if($(this).text() == 'Show more columns') {
 			$('.l2_column').removeClass('hidden');
-			$(this).text('Show less')
+			$(this).text('Show less columns')
 		}
 		else {
 			$('.l2_column').addClass('hidden');
-			$(this).text('Show more');
+			$(this).text('Show more columns');
 		}
 		// $('.l2_column').toggle();
   	});
@@ -989,7 +989,7 @@ $(document).ready(function(){
 
 		}, 500);  // Set latency to make sure the login status is obtained after the page loaded completely.
 
-		if ( window.location.pathname == '/request_disposal/') {
+		if ( window.location.pathname == '/request_disposal/' || '/device_register/') {
 			$.ajax({
 				type: 'GET',
 				dataType: 'jsonp',

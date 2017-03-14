@@ -8,7 +8,8 @@
 	<table class="table table-bordered table-hover text-center font-compacted">
 	  {% csrf_token %}
 	  <!-- <p>URL of this page: {{ request.get_full_path }}</p> -->
-	  <h4 style="float:left">Totally <span class="noticeable">{{ count }}</span> devices</h4>
+	  <h4 style="float:left">Totally <span class="noticeable">{{ count }}</span> devices   
+	  <button class="btn btn-default"><a href="#" id="toggle-show">Show more columns</a></button></h4>
 	  <ul class="nav nav-tabs" style="float:right">
 		  <li><a href="{{ request.path }}">All</a></li>
 		  <li><a href="{{ request.path }}?loc=pek">PEK</a></li>
@@ -20,14 +21,14 @@
 	  	  <th>#</th>
 	  	  <th>Model</th>
 	  	  <th title="For Android, it's serial number; for iOS, it's unique identifier.">Device ID<img src='/static/img/question.png' style="width:21px;"></th>
-	  	  <!-- <th>OS</th> -->
+	  	  <th class="l2_column hidden">OS</th>
 	  	  <th title='Those who have the property ownership of the device.'>Owner<img src='/static/img/question.png' style="width:21px;"></th>
-	  	  <!-- <th title='Those who have the current usage access of the device. If empty, it is same as owner.'>User<img src='/static/img/question.png' style="width:21px;"></th> -->
-	  	  <!-- <th title='Info displayed on the MobileHarness client homepage.'>Label<img src='/static/img/question.png' style="width:21px;"></th> -->
+	  	  <th class="l2_column hidden" title='Those who have the current usage access of the device. If empty, it is same as owner.'>User<img src='/static/img/question.png' style="width:21px;"></th>
+	  	  <th class="l2_column hidden" title='Info displayed on the MobileHarness client homepage.'>Label<img src='/static/img/question.png' style="width:21px;"></th>
 	  	  <th>Project</th>
-	  	  <th class="btn-success">Requester</th>
-	  	  <th title='Cost Center' class="btn-success">Cost Center</th>
-	  	  <th title='Purchase Order ID on Pivt system' class="btn-success">PO#<img src='/static/img/question.png' style="width:21px;"></th>
+	  	  <!-- <th class="btn-success">Requester</th> -->
+	  	  <!-- <th class="btn-success" title='Cost Center'>Cost Center</th> -->
+	  	  <th class="btn-success" title='Purchase Order ID on Pivt system'>PO#<img src='/static/img/question.png' style="width:21px;"></th>
 	  	  <th class="btn-success">Price(USD)</th>
 	  	  <th class="btn-success">Price(CNY)</th>
 	  	  <th class="btn-danger">Status</th>
@@ -41,22 +42,24 @@
 		  <!-- <td>{{ device.model.all.last.model_type }}</td> {# Niubility! django's model and template #} -->
 		  <td>{{ device.model }}</td>
 		  <td class="one-line-sticker" ><a href="#" data-target="labd_editor" data-name="device_id" data-title="Change device id (Careful!)" data-pk="{{ device.id }}">{{ device.device_id }}</a><button data-pk="{{ device.id }}" title="use other device to replace this" class="btn btn-xs btn-hidden-replace" style="float:right">Replace</button></td>
-		  <!-- <td><a href="#" data-target="labd_editor" data-name="os" data-title="Edit os version" data-pk="{{ device.id }}">{{ device.os}}</a></td> -->
+		  <td class="l2_column hidden"><a href="#" data-target="labd_editor" data-name="os" data-title="Edit os version" data-pk="{{ device.id }}">{{ device.os}}</a></td>
 		  <td class="one-line"><a href="#" data-target="labd_editor" data-name="owner" data-title="Edit device owner" data-pk="{{ device.id }}">{{ device.owner }}</a></td>
-		  <!-- <td><a href="#" data-target="labd_editor" data-name="user" data-title="Edit device user" data-pk="{{ device.id }}">{{ device.user }}</a></td> -->
-		  <!-- <td><a href="#" data-target="labd_editor" data-name="label" data-title="Edit device label" data-pk="{{ device.id }}">{{ device.label }}</td> -->
+		  <td class="l2_column hidden"><a href="#" data-target="labd_editor" data-name="user" data-title="Edit device user" data-pk="{{ device.id }}">{{ device.user }}</a></td>
+		  <td class="l2_column hidden one-line-sticker"><a href="#" data-target="labd_editor" data-name="label" data-title="Edit device label" data-pk="{{ device.id }}">{{ device.label }}</td>
 		  <td><a href="#" data-target="labd_editor" data-name="project" data-title="Edit device project" data-pk="{{ device.id }}">{{ device.project }}</a></td>
-		  <!-- <td>{{ device.model.requester.ldap }}</td> -->
+		  <!-- <td>{{ last_target.requester.ldap }}</td> -->
+		  <!-- <td>{{ last_target.requester.cost_center }}</td> -->
 		  {# with last_target=device.respond_to.all|dictsort:"resolved_date"|last first_target=device.respond_to.all|dictsort:"resolved_date"|first #}
 		  {# with last_target=device.respond_to.all.last first_target=device.respond_to.all.0 #}
 		  {# with last_target=device.responserelationship_set.all.last.request first_target=device.respond_to.all.0 #} <!--This one has same effect with the following one, just to make consistence, comment this -->
-		  {% with last_target=device.responserelationship_set.all.last.request first_target=device.responserelationship_set.all.first.request %}
-		  <td>{{ last_target.requester.ldap }}</td>
-		  <td>{{ last_target.requester.cost_center }}</td>
-		  <td>{{ first_target.po_number }}</td>
+		  {# with last_target=device.responserelationship_set.all.last.request first_target=device.responserelationship_set.all.first.request #}
+		  <!-- <td>{{ first_target.po_number }}</td>
 		  <td>{{ first_target.price_usd }}</td>
-		  <td>{{ first_target.price_cny }}</td>
-		  {% endwith %}
+		  <td>{{ first_target.price_cny }}</td>	 -->	  
+		  <td>{{ device.po_number|default:"" }}</td>
+		  <td>{{ device.price_usd|default:"" }}</td>
+		  <td>{{ device.price_cny|default:"" }}</td>
+		  {# endwith #}
 		  
 		  <td><a href="#" data-target="labd_editor" data-name="status" data-type="select" data-title="Change Status" data-pk="{{ device.id }}">{{ device.get_status_display }}</td>  {# don't use it as display() #}
 		</tr>

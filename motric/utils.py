@@ -255,7 +255,8 @@ def device_allocate(request):
                 rd.requester.device_owner = 'mobileharness'
                 rd.requester.project = 'PUBLIC'
             for i in range(len(serial_no)):
-                ld = LabDevice(model=rd.model_type, device_id=serial_no[i], status=status, register_date=allocate_date, os=rd.os_version, owner=rd.requester.device_owner, label=rd.requester.device_label, project=rd.requester.project, lab_location=rd.lab_location) # LabDevice.model must be a RequestedDevice instance.
+                # ld = LabDevice(model=rd.model_type, device_id=serial_no[i], status=status, register_date=allocate_date, os=rd.os_version, owner=rd.requester.device_owner, label=rd.requester.device_label, project=rd.requester.project, lab_location=rd.lab_location) # LabDevice.model must be a RequestedDevice instance.
+                ld = LabDevice(model=rd.model_type, device_id=serial_no[i], status=status, register_date=allocate_date, os=rd.os_version, owner=rd.requester.device_owner, label=rd.requester.device_label, project=rd.requester.project, lab_location=rd.lab_location, po_number=rd.po_number, po_date=rd.po_date, price_cny=rd.price_cny, price_usd=rd.price_usd) # Modified at 03/14/2017, to support registering device directly.
                 ld.save()
                 # ld.respond_to.add(rd)
                 rr = ResponseRelationship.objects.create(device=ld, request=rd, response_date=allocate_date)
@@ -375,7 +376,7 @@ def device_register(request):
     device_id = p.pop('device_id') # list
 
     for i in range(len(device_id)):
-        ld = LabDevice(model=model, project=project, owner=owner, label=label, os=os, po_number=po_number, price_cny=price_cn, price_usd=price_us, lab_location=location, status=status, device_id=device_id[i])
+        ld = LabDevice(model=model, project=project, owner=owner, label=label, os=os, po_number=po_number, po_date=timezone.now(), price_cny=price_cn, price_usd=price_us, lab_location=location, status=status, device_id=device_id[i])
         ld.save()
 
     return HttpResponse(data)
