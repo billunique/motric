@@ -46,7 +46,7 @@
 		  <td class="one-line"><a href="#" data-target="labd_editor" data-name="owner" data-title="Edit device owner" data-pk="{{ device.id }}">{{ device.owner }}</a></td>
 		  <td class="l2_column hidden"><a href="#" data-target="labd_editor" data-name="user" data-title="Edit device user" data-pk="{{ device.id }}">{{ device.user }}</a></td>
 		  <td class="l2_column hidden one-line-sticker"><a href="#" data-target="labd_editor" data-name="label" data-title="Edit device label" data-pk="{{ device.id }}">{{ device.label }}</td>
-		  <td><a href="#" data-target="labd_editor" data-name="project" data-title="Edit device project" data-pk="{{ device.id }}">{{ device.project }}</a></td>
+		  <td class="one-line"><a href="#" data-target="labd_editor" data-name="project" data-title="Edit device project" data-pk="{{ device.id }}">{{ device.project }}</a></td>
 		  <!-- <td>{{ last_target.requester.ldap }}</td> -->
 		  <!-- <td>{{ last_target.requester.cost_center }}</td> -->
 		  {# with last_target=device.respond_to.all|dictsort:"resolved_date"|last first_target=device.respond_to.all|dictsort:"resolved_date"|first #}

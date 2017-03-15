@@ -219,7 +219,7 @@ $(document).ready(function(){
 
 	// $('body').css('zoom','80%');
 	var token = $('input[name="csrfmiddlewaretoken"]').prop('value');
-	var currency_rate = '6.6';
+	var currency_rate = '6.8';
 	$('a[data-target="req_editor"]').editable({
 		// type: 'text',
 		placement: 'left',
@@ -836,6 +836,20 @@ $(document).ready(function(){
 			}
 		});
 	});
+
+	$(':text[data-name="price"]').each(function() {
+		var elem = $(this);
+		elem.on("input", function (event) {  // Here "input" is better than "change", input gives quick feedback one letter by one letter.
+			if (elem.attr('name') == 'price_cn') {
+				var price_usd = (elem.val() / currency_rate).toFixed(2);
+				$('input[name="price_us"]').val(price_usd)
+			}
+			else {
+				var price_cny = (elem.val() * currency_rate).toFixed(2);
+				$('input[name="price_cn"]').val(price_cny)
+			}
+		})
+	})
 
 
 	$('#add-more').on('click', function(event) {

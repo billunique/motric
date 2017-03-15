@@ -376,7 +376,7 @@ def device_register(request):
     device_id = p.pop('device_id') # list
 
     for i in range(len(device_id)):
-        ld = LabDevice(model=model, project=project, owner=owner, label=label, os=os, po_number=po_number, po_date=timezone.now(), price_cny=price_cn, price_usd=price_us, lab_location=location, status=status, device_id=device_id[i])
+        ld = LabDevice(model=model, project=project, owner=owner, label=label, os=os, po_number=po_number, price_cny=price_cn, price_usd=price_us, lab_location=location, status=status, device_id=device_id[i])
         ld.save()
 
     return HttpResponse(data)
