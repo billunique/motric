@@ -291,17 +291,25 @@ $(document).ready(function(){
     			// }
 
     			if ($(this).attr('data-name') == 'po_number') {
-    				var td_status = $(this).parent().next().next().next().next();
-    				var oldValue = td_status.text();
 
-    				if ($(this).text() == 'Empty') {
-    					var pkid = $(this).attr('data-pk');
-	    				$.post('/edit_request/', {pk:pkid, target: 'status', target_value:'ORD', 'csrfmiddlewaretoken': token, ov:oldValue});
-	    				td_status.html('Ordered');
-	    				$("select[data-pk=" + pkid + "] option[value='REF']").remove();
-	    				$("select[data-pk=" + pkid + "] option[value='APP']").remove();
+    				var htitle = document.title;
+    				if ( htitle.startsWith("Pending") ) {
+	    				var td_status = $(this).parent().next().next().next().next();
+	    				var oldValue = td_status.text();
+
+	    				if ($(this).text() == 'Empty') {
+	    					var pkid = $(this).attr('data-pk');
+		    				$.post('/edit_request/', {pk:pkid, target: 'status', target_value:'ORD', 'csrfmiddlewaretoken': token, ov:oldValue});
+		    				td_status.html('Ordered');
+		    				$("select[data-pk=" + pkid + "] option[value='REF']").remove();
+		    				$("select[data-pk=" + pkid + "] option[value='APP']").remove();
+	    				}
     				}
 
+    				if ( htitle.startsWith("Resolved") ) {
+	    				var pkid = $(this).attr('data-pk');
+		    			$.post('/sync_info/', {pk:pkid, target: 'po', target_value:newValue, 'csrfmiddlewaretoken': token});    					
+    				}
     			}
 
     			if ($(this).attr('data-name') == 'price_cny') {

@@ -42,6 +42,7 @@ urlpatterns = [
     url(r'^register/', utils.device_register, name='labd_register'),
 
     url(r'^who/', utils.who_are_you, name='who'),
+    url(r'^sync_info/', utils.syncer, name='sync_info'),
     url(r'^admin/', admin.site.urls),
 ]
 

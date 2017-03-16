@@ -390,3 +390,23 @@ def device_register(request):
         ld.save()
 
     return HttpResponse(data)
+
+
+def syncer(request):
+    p = request.POST.copy()
+    data = json.dumps(p)
+    pk = p.get('pk')
+    tp = p.get('target')
+    sync_value = p.get('target_value')
+    ld_set = LabDevice.objects.filter(respond_to=pk)
+    if tp == 'po':
+        po_date = timezone.now()
+        rd = RequestedDevice.objects.get(pk=pk)
+        rd.po_date = po_date
+        rd.save()
+        for ld in ld_set:
+            ld.po_number = sync_value
+            ld.po_date = po_date
+            ld.save()
+
+    return HttpResponse(data)
