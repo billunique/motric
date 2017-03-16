@@ -230,9 +230,16 @@ def device_allocate(request):
         rd.lab_location = dict['location']
     else:
         if status == 'CUR':
+            price_cny_sum = 0
+            price_usd_sum = 0
+            po_number = []  
             ld_pk = dict.pop('pkid')
             for i in range(len(ld_pk)):
                 ld = LabDevice.objects.get(pk=ld_pk[i])
+                price_cny_sum += ld.price_cny
+                price_usd_sum += ld.price_usd
+                if ld.po_number not in po_number:
+                    po_number.append(ld.po_number)
                 ld.owner = rd.requester.device_owner
                 ld.label = rd.requester.device_label
                 ld.project = rd.requester.project
@@ -245,6 +252,9 @@ def device_allocate(request):
                 evt = Event(device=ld, event=event_msg)
                 evt.save()
             rd.status = 'ASS'
+            rd.price_cny = price_cny_sum / len(ld_pk)
+            rd.price_usd = price_usd_sum / len(ld_pk)
+            rd.po_number = ",".join(po_number)
             event_msg_rd = log_generator(allocate_date, 'Resolved by allocating current devices from public pool to fulfill.', operator)
             evt_rd = Event(request=rd, event=event_msg_rd)
             evt_rd.save()

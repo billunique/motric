@@ -57,6 +57,7 @@
 	    <caption>Devices responded to this request</caption>
 		{% for device in device_list %}
 		<tr>
+		  <td>#{{ device.id }}</td>
 	  	  <td><a href="/details/?t=d&pk={{ device.id }}" target="_blank">{{ device }}<span class="required"> ({{ device.get_status_display }})</span></a></td>
 	  	</tr>
 	  	{% empty %}
