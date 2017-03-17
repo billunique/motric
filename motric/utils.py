@@ -388,6 +388,8 @@ def device_register(request):
     for i in range(len(device_id)):
         ld = LabDevice(model=model, project=project, owner=owner, label=label, os=os, po_number=po_number, price_cny=price_cn, price_usd=price_us, lab_location=location, status=status, device_id=device_id[i])
         ld.save()
+        evt = Event(device=ld, event=log_generator(ld.register_date, 'Device registered directly.', operator))
+        evt.save()
 
     return HttpResponse(data)
 

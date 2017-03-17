@@ -390,17 +390,28 @@ $(document).ready(function(){
            dataType: 'json', 
         }, 
 
-        source: [
-		 	// {text: ''},
-		 	{value: 'AVA', text: 'Public'},
-		 	{value: 'ASS', text: 'Assigned'},
-			{value: 'BRO', text: 'Broken'},
-			// {value: 'SUB', text: 'Replaced'}
-			{value: 'REP', text: 'In Repair'},
-			{value: 'RET', text: 'Retrieved'},
-			{value: 'RTR', text: 'Retired'},
-        ],
-        // prepend: $(this).text(),
+        source: function() {
+        	var elem = $(this)
+        	if ( elem.attr('data-name') == 'lab_location' ){
+        		return [
+				{value: 'PEK', text: 'PEK'},
+			 	{value: 'MTV', text: 'MTV'},
+				{value: 'TWD', text: 'TWD'},
+        		]
+        	} else { // data-name == 'status'
+        		return [
+			 	// {text: ''},
+			 	{value: 'AVA', text: 'Public'},
+			 	{value: 'ASS', text: 'Assigned'},
+				{value: 'BRO', text: 'Broken'},
+				// {value: 'SUB', text: 'Replaced'}
+				{value: 'REP', text: 'In Repair'},
+				{value: 'RET', text: 'Retrieved'},
+				{value: 'RTR', text: 'Retired'},
+        		]
+        	}
+        	// prepend: $(this).text(),
+        },
 
         params: function(params) {
 		    //originally params contain pk, name and value

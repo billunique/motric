@@ -14,7 +14,7 @@
 		  <li><a href="{{ request.path }}">All</a></li>
 		  <li><a href="{{ request.path }}?loc=pek">PEK</a></li>
 		  <li><a href="{{ request.path }}?loc=mtv">MTV</a></li>
-		  <li><a href="{{ request.path }}?loc=twd">TW</a></li>
+		  <li><a href="{{ request.path }}?loc=twd">TWD</a></li>
 	  </ul>
 	  <thead>
 	  	<tr class="btn-primary">
@@ -26,6 +26,7 @@
 	  	  <th class="l2_column hidden" title='Those who have the current usage access of the device. If empty, it is same as owner.'>User<img src='/static/img/question.png' style="width:21px;"></th>
 	  	  <th class="l2_column hidden" title='Info displayed on the MobileHarness client homepage.'>Label<img src='/static/img/question.png' style="width:21px;"></th>
 	  	  <th>Project</th>
+	  	  <th>Location</th>
 	  	  <!-- <th class="btn-success">Requester</th> -->
 	  	  <!-- <th class="btn-success" title='Cost Center'>Cost Center</th> -->
 	  	  <th class="btn-success" title='Purchase Order ID on Pivt system'>PO#<img src='/static/img/question.png' style="width:21px;"></th>
@@ -38,7 +39,7 @@
 		{% for device in device_list %}
 		<tr>
 		  <!-- <td><a href="/details/?did={{ device.device_id }}&pk={{ device.id }}" target="_blank">{{ device.id }}</a></td> -->
-		  <td><a href="/details/?t=d&pk={{ device.id }}" target="_blank">{{ device.id }}</a></td>
+		  <td class="one-line"><a href="/details/?t=d&pk={{ device.id }}" target="_blank">{{ device.id }}</a></td>
 		  <!-- <td>{{ device.model.all.last.model_type }}</td> {# Niubility! django's model and template #} -->
 		  <td>{{ device.model }}</td>
 		  <td class="one-line-sticker" ><a href="#" data-target="labd_editor" data-name="device_id" data-title="Change device id (Careful!)" data-pk="{{ device.id }}">{{ device.device_id }}</a><button data-pk="{{ device.id }}" title="use other device to replace this" class="btn btn-xs btn-hidden-replace" style="float:right">Replace</button></td>
@@ -47,6 +48,7 @@
 		  <td class="l2_column hidden"><a href="#" data-target="labd_editor" data-name="user" data-title="Edit device user" data-pk="{{ device.id }}">{{ device.user }}</a></td>
 		  <td class="l2_column hidden one-line-sticker"><a href="#" data-target="labd_editor" data-name="label" data-title="Edit device label" data-pk="{{ device.id }}">{{ device.label }}</td>
 		  <td class="one-line"><a href="#" data-target="labd_editor" data-name="project" data-title="Edit device project" data-pk="{{ device.id }}">{{ device.project }}</a></td>
+		  <td><a href="#" data-target="labd_editor" data-name="lab_location" data-type="select" data-title="Change location" data-pk="{{ device.id }}">{{ device.lab_location }}</a></td>
 		  <!-- <td>{{ last_target.requester.ldap }}</td> -->
 		  <!-- <td>{{ last_target.requester.cost_center }}</td> -->
 		  {# with last_target=device.respond_to.all|dictsort:"resolved_date"|last first_target=device.respond_to.all|dictsort:"resolved_date"|first #}

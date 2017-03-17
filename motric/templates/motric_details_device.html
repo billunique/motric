@@ -46,7 +46,7 @@
 		{# with last_target=device.respond_to.all.distinct|dictsort:"responserelationship.response_date"|last first_target=device.respond_to.all.0 #}
 		{# with index=device.respond_to.all.distinct|length|add:"-1" last_target=device.respond_to.all.index first_target=device.respond_to.all.0 #}
 	  	  <td>{{ last_target.requester.ldap }}</td>
-	  	  <td>{{ last_target.request_date }}
+	  	  <td>{{ last_target.request_date |default:"" }}
 	  	  <td>{{ last_target.requester.cost_center }}</td>
 	  	  <!-- <td>{{ first_target.po_number }}</td>
 	  	  <td>{{ first_target.po_date }}</td>
@@ -67,6 +67,8 @@
 	  	  <td>#{{ request.id }}</td>
 	  	  <td><a href="/details?t=r&pk={{ request.id }}" target="_blank">{{ request }}</a></td>
 	  	</tr>
+	  	{% empty %}
+	  	<tr><td>None yet.</td></tr>
 	  	{% endfor %}
 	</table>
 
@@ -110,7 +112,7 @@
 	  	  <td><a href="/details/?t=d&pk={{ rep.id }}" target="_blank">{{ rep }}</a></td>
 	  	</tr>
 	  	{% empty %}
-	  	<tr><td>None.</td></tr>
+	  	<tr><td>None yet.</td></tr>
 	  	{% endfor %}
 	</table>
 
