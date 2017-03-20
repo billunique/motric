@@ -294,7 +294,8 @@ $(document).ready(function(){
 
     				var htitle = document.title;
     				if ( htitle.startsWith("Pending") ) {
-	    				var td_status = $(this).parent().next().next().next().next();
+	    				// var td_status = $(this).parent().next().next().next().next();
+	    				var td_status = $(this).parent().nextAll(".td_status")
 	    				var oldValue = td_status.text();
 
 	    				if ($(this).text() == 'Empty') {
