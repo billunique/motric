@@ -87,7 +87,7 @@
 		  <td><a href="#" data-target="req_editor" data-name="price_usd" data-title="Enter Price(USD)" data-pk="{{ request.id }}">{{ request.price_usd |default:"" }}</a></td>
 		  <td><a href="http://b/{{ request.bug_id }}" target="_blank">{{ request.bug_id |default:"" }}</a><button class="btn btn-xs btn-hidden-attach_bug" data-pk="{{ request.id }}" style="float:right"> {% if not request.bug_id %}Attach Bug{% endif %}{% if request.bug_id %}Modify ID{% endif %}</button></td>
 		  <td><a href="#" data-target="req_editor" data-name="lab_location" data-type="select" data-title="Set lab location" data-pk="{{ request.id }}">{{ request.lab_location |default:"" }}</a></td>
-		  <td class="td_status" {% if request.charged == 1 %} class="bold_green" {% endif %}>{{ request.get_status_display }}
+		  <td class ="td_status {% if request.charged == 1 %}bold_green{% endif %}" >{{ request.get_status_display }}
 		  {% if request.get_status_display == 'Ordered' %}<button data-pk="{{ request.id }}" title="Mark the device as Received" class="btn btn-xs btn-hidden-receive" style="float:right">Received</button>{% endif %}
 		  {% if request.get_status_display == 'Assigned' and not request.charged == 1 %}<button data-pk="{{ request.id }}" title="Mark the request as Charged" class="btn btn-xs btn-hidden-charge" style="float:right">Charged</button>{% endif %}
 		  </td>
