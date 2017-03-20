@@ -422,20 +422,14 @@ $(document).ready(function(){
 		    return params;
 		},
 
-		success: function(response, newValue) {
-			console.log('-------------In success block----------------');
-			console.log(response);
+		validate: function(newValue) {
 			// var oldValue = $(this).editable('getValue', true);  // by this way, oldValue could be empty.
-			// console.log(oldValue);
 			var oldText = ($(this).text());
 			var valuedict = {'Public':'AVA', 'Assigned':'ASS', 'Broken':'BRO', 'REP':'In Repair', 'RET':'Retrieved', 'RTR':'Retired'};
 			var oldValue = valuedict[oldText];
-
-			$(this).editable('setValue', newValue, false); 
-			$(this).editable('hide');
-
 			var htitle = document.title;
-			if (newValue == 'AVA' || 'ASS') { // newValue is much better than $(this).text(), it reflects the change.
+
+			if (newValue == 'AVA' || newValue == 'ASS') { // newValue is much better than $(this).text(), it reflects the change.
 				var td_owner = $(this).parent().prevAll().find('a[data-name="owner"]');
 				var td_project = $(this).parent().prevAll().find('a[data-name="project"]');
 				if (newValue == 'AVA') {
@@ -464,19 +458,18 @@ $(document).ready(function(){
 					if ( htitle.startsWith("Dedicated") || htitle.startsWith("Broken") ) {
 						$(this).parent().parent().fadeOut(1500);
 					}
-				} else if ( newValue == 'ASS' ) {  // to avoid the case newValue is empty, explicitly state the else if.
-					if ( td_owner.text() == 'mobileharness' ) {
-						setTimeout(function() {
+				} else {  // newValue == 'ASS'
+					if ( td_owner.text() == 'mobileharness' || td_project.text() == 'PUBLIC' ) {
+						alert("Please modify owner and project to proper target first!")
+						if ( td_owner.text() == 'mobileharness') {
 							td_owner.editable('show');
-						}, 200);
-						$(this).editable('setValue', oldValue, true);
-					} else { // owner is other than mobileharness, it's probably modified ahead.
-						if ( td_project.text() == 'PUBLIC' ) {
-							setTimeout(function() {
-								td_project.editable('show');
-							}, 200);
-							$(this).editable('setValue', oldValue, false);
-						} else if ( htitle.startsWith("Public") || htitle.startsWith("Broken") ) {
+						} else {
+							td_project.editable('show');
+						}
+						return  newValue = oldValue;
+
+					} else { // owner is other than mobileharness and project isn't 'PUBLIC', it's probably modified ahead.
+						if ( htitle.startsWith("Public") || htitle.startsWith("Broken") ) {
 							$(this).parent().parent().fadeOut(1500);
 						}
 					}
@@ -485,6 +478,13 @@ $(document).ready(function(){
 			if ( (['BRO', 'REP', 'RTR'].indexOf(newValue) > -1) && !htitle.startsWith("Broken") ) {
 				$(this).parent().parent().fadeOut(1500);
 			}
+
+		},
+
+		success: function(response, newValue) {
+			console.log('-------------In success block----------------');
+			// console.log(response);
+			// Validation is supposed to be done on the validate block.
 		},
 
 		error: function(response, newValue) {
