@@ -224,63 +224,80 @@ def device_allocate(request):
     pk = dict.get('pk')
     status = dict.get('status')
     rd = RequestedDevice.objects.get(pk=pk)
+    response_qty = rd.responserelationship_set.all().count()
+    required_qty = rd.quantity - response_qty
     event_msg = {}
     allocate_date = timezone.now()
-    if status == 'LOC':
-        rd.lab_location = dict['location']
-    else:
-        if status == 'CUR':
-            price_cny_sum = 0
-            price_usd_sum = 0
-            po_number = []  
-            ld_pk = dict.pop('pkid')
-            for i in range(len(ld_pk)):
-                ld = LabDevice.objects.get(pk=ld_pk[i])
-                price_cny_sum += ld.price_cny
-                price_usd_sum += ld.price_usd
-                if ld.po_number not in po_number:
-                    po_number.append(ld.po_number)
-                ld.owner = rd.requester.device_owner
-                ld.label = rd.requester.device_label
-                ld.project = rd.requester.project
-                ld.status = 'ASS'
-                # ld.respond_to.add(rd)
-                rr = ResponseRelationship.objects.create(device=ld, request=rd, response_date=allocate_date)
-                rr.save()
-                ld.save()
-                event_msg = log_generator(allocate_date, 'Made <span class="bold">' + ld.get_status_display() + '</span>, from public pool.', operator)
-                evt = Event(device=ld, event=event_msg)
-                evt.save()
+    # if status == 'LOC':
+    #     rd.lab_location = dict['location']
+    # else:
+    if status == 'CUR':
+        price_cny_sum = 0
+        price_usd_sum = 0
+        po_number = []
+        ld_dict = {}
+        ld_pk = dict.pop('pkid')
+        for i in range(len(ld_pk)):
+            ld = LabDevice.objects.get(pk=ld_pk[i])
+            ld_dict[ld_pk[i]]=ld.device_id
+            price_cny_sum += ld.price_cny
+            price_usd_sum += ld.price_usd
+            if ld.po_number not in po_number:
+                po_number.append(ld.po_number)
+            ld.owner = rd.requester.device_owner
+            ld.label = rd.requester.device_label
+            ld.project = rd.requester.project
+            ld.status = 'ASS'
+            # ld.respond_to.add(rd)
+            rr = ResponseRelationship.objects.create(device=ld, request=rd, response_date=allocate_date)
+            rr.save()
+            ld.save()
+            event_msg = log_generator(allocate_date, 'Made <span class="bold">' + ld.get_status_display() + '</span>, from public pool.', operator)
+            evt = Event(device=ld, event=event_msg)
+            evt.save()
+
+        event_msg_rd = log_generator(allocate_date, 'Allocate current devices from public pool: <br/>' \
+            + json.dumps(ld_dict), operator)
+        if len(ld_pk) == required_qty:
             rd.status = 'ASS'
+            rd.resolved = True
+            rd.resolved_date = allocate_date
             rd.price_cny = price_cny_sum / len(ld_pk)
             rd.price_usd = price_usd_sum / len(ld_pk)
             rd.po_number = ",".join(po_number)
-            event_msg_rd = log_generator(allocate_date, 'Resolved by allocating current devices from public pool to fulfill.', operator)
-            evt_rd = Event(request=rd, event=event_msg_rd)
-            evt_rd.save()
-        else: # status is 'ASS' or 'AVA'
-            # register_date = time.ctime()
-            serial_no = dict.pop('did') # got a list of serial number;
-            if status == 'AVA':
-                rd.requester.device_owner = 'mobileharness'
-                rd.requester.project = 'PUBLIC'
-            for i in range(len(serial_no)):
-                # ld = LabDevice(model=rd.model_type, device_id=serial_no[i], status=status, register_date=allocate_date, os=rd.os_version, owner=rd.requester.device_owner, label=rd.requester.device_label, project=rd.requester.project, lab_location=rd.lab_location) # LabDevice.model must be a RequestedDevice instance.
-                ld = LabDevice(model=rd.model_type, device_id=serial_no[i], status=status, register_date=allocate_date, os=rd.os_version, owner=rd.requester.device_owner, label=rd.requester.device_label, project=rd.requester.project, lab_location=rd.lab_location, po_number=rd.po_number, po_date=rd.po_date, price_cny=rd.price_cny, price_usd=rd.price_usd) # Modified at 03/14/2017, to support registering device directly.
-                ld.save()
-                # ld.respond_to.add(rd)
-                rr = ResponseRelationship.objects.create(device=ld, request=rd, response_date=allocate_date)
-                rr.save()
-                ld.save()
-                event_msg = log_generator(allocate_date, 'Made <span class="bold">' + ld.get_status_display() + '</span>, from new purchase.', operator)
-                evt = Event(device=ld, event=event_msg)
-                evt.save()
+            event_msg_rd = log_generator(allocate_date, 'Resolved by allocating current devices from public pool to fulfill: <br/>' \
+            + json.dumps(ld_dict), operator)
+        evt_rd = Event(request=rd, event=event_msg_rd)
+        evt_rd.save()
+    else: # status is 'ASS' or 'AVA'
+        ld_list = []
+        serial_no = dict.pop('did') # got a list of serial number;
+        if status == 'AVA':
+            rd.requester.device_owner = 'mobileharness'
+            rd.requester.project = 'PUBLIC'
+        for i in range(len(serial_no)):
+            ld_list.append(serial_no[i])
+            # ld = LabDevice(model=rd.model_type, device_id=serial_no[i], status=status, register_date=allocate_date, os=rd.os_version, owner=rd.requester.device_owner, label=rd.requester.device_label, project=rd.requester.project, lab_location=rd.lab_location) # LabDevice.model must be a RequestedDevice instance.
+            ld = LabDevice(model=rd.model_type, device_id=serial_no[i], status=status, register_date=allocate_date, os=rd.os_version, owner=rd.requester.device_owner, label=rd.requester.device_label, project=rd.requester.project, lab_location=rd.lab_location, po_number=rd.po_number, po_date=rd.po_date, price_cny=rd.price_cny, price_usd=rd.price_usd) # Modified at 03/14/2017, to support registering device directly.
+            ld.save()
+            # ld.respond_to.add(rd)
+            rr = ResponseRelationship.objects.create(device=ld, request=rd, response_date=allocate_date)
+            rr.save()
+            ld.save()
+            event_msg = log_generator(allocate_date, 'Made <span class="bold">' + ld.get_status_display() + '</span>, from new purchase.', operator)
+            evt = Event(device=ld, event=event_msg)
+            evt.save()
+
+        event_msg_rd = log_generator(allocate_date, 'Allocate newly purchased device: <br/>' \
+            + json.dumps(ld_list), operator)
+        if len(serial_no) == required_qty:
             rd.status = status
-            event_msg_rd = log_generator(allocate_date, 'Resolved by allocating newly purchased device to fulfill.', operator)
-            evt_rd = Event(request=rd, event=event_msg_rd)
-            evt_rd.save()
-        rd.resolved = True
-        rd.resolved_date = allocate_date
+            rd.resolved = True
+            rd.resolved_date = allocate_date
+            event_msg_rd = log_generator(allocate_date, 'Resolved by allocating newly purchased device to fulfill: <br/>' \
+            + json.dumps(ld_list), operator)
+        evt_rd = Event(request=rd, event=event_msg_rd)
+        evt_rd.save()
     rd.save()
 
     # except:
@@ -339,7 +356,7 @@ def device_replacement(request):
     # rdl = RequestedDevice.objects.filter(labdevice=pk).order_by('resolved_date') # get the QuerySet of requesteddevice of the be_replaced device.  ## Bad criteria!
     # rdl = ld.respond_to.all().order_by('resolved_date')
     rrl = ResponseRelationship.objects.filter(device=pk).order_by('response_date')  ## actually the order_by section can be omitted.
-    rd_last = rrl[len(rrl)-1].request # get the last object of the QuerySet, it's just the current requesteddevice that the be_replaced device are responding to. 
+    rd_last = rrl[len(rrl)-1].request # get the last object of the QuerySet, it's just the request that the be_replaced device are responding to lately. 
     # ld_attack.respond_to.add(rd_last)
     rr = ResponseRelationship.objects.create(device=ld_attack, request=rd_last, response_date=replace_date)
     rr.save()
@@ -412,3 +429,13 @@ def syncer(request):
             ld.save()
 
     return HttpResponse(data)
+
+def response_checker(request):
+    p = request.POST.copy()
+    pk = p.get('pk')
+    ld_set = LabDevice.objects.filter(respond_to=pk)
+    did_list = []
+    for ld in ld_set:
+        did_list.append(ld.device_id)
+    response_data = json.dumps(did_list)
+    return HttpResponse(response_data)

@@ -40,33 +40,6 @@ function addDevice() {
 // mo_request.controller('requestCtrl', function($scope) {
 // });
 
-/* My raw javascript handler for the options selected. */
-// function action_handler(value) {
-// 	try {
-// 		switch (value) {
-// 			case 'REF': confirm("You're refusing the request from our adorable user, you sure?"); break;
-// 			// case 'REF': pop_warning(); break;
-// 			case 'APP': popup_po(); break;
-// 			case 'AVA': popup_add_sn(); break;
-// 			case 'ASS': popup_add_sn(); break;
-// 			default: 
-// 		}
-// 	}
-// 	catch(err) {
-// 		alert(err.message);
-// 	}
-// }
-
-function popup_po() {
-	document.getElementById("translayer").style.display="block";
-	document.getElementById("popupwindow").style.display="block";
-}
-
-function popdown() {
-	document.getElementById("popupwindow").style.display="none";
-    document.getElementById("translayer").style.display="none";
-}
-
 
 function getFormData() {
 	try {
@@ -160,45 +133,20 @@ function getLdap() {
 	return ldap;
 }
 
-// Create the XHR object.
-function createCORSRequest(method, url) {
-  var xhr = new XMLHttpRequest();
-  if ("withCredentials" in xhr) {
-    // XHR for Chrome/Firefox/Opera/Safari.
-    xhr.open(method, url, true); // true for asynchronous.
-  } else if (typeof XDomainRequest != "undefined") {
-    // XDomainRequest for IE.
-    xhr = new XDomainRequest();
-    xhr.open(method, url);
-  } else {
-    // CORS not supported.
-    xhr = null;
-  }
-  return xhr;
+function getResponseStatus(primary_key, handleResult) {
+	var token = $('input[name="csrfmiddlewaretoken"]').prop('value');
+	var array = []
+    $.ajax({
+      type: 'POST',
+      url: '/response_status/',
+      data: {pk: primary_key, 'csrfmiddlewaretoken': token},
+    })
+    .done(function(result) {
+    	// alert(result);
+    	handleResult(result);
+    });
 }
 
-
-// Make the actual CORS request.
-function makeCorsRequest(url) {
-
-  var xhr = createCORSRequest('GET', url);
-  if (!xhr) {
-    alert('CORS not supported');
-    return;
-  }
-
-  // Response handlers.
-  xhr.onload = function() {
-    var text = xhr.responseText;
-    return text;
-  };
-
-  // xhr.onerror = function() {
-  //   alert('Woops, there was an error making the request.');
-  // };
-
-  xhr.send();
-}
 
 // toastr.options.progressBar = true;
 toastr.options.closeButton = true;
@@ -209,8 +157,7 @@ toastr.options.timeOut = '2000';
 
 /* jQury functions start from here. */
 $(document).ready(function(){
-	// alert(window.location.href);
-	// alert(window.location.pathname);
+
 	// $("th, td").each (function(index) {
 	// 	console.log(index + ": " + $(this).text());
 	// });
@@ -255,10 +202,9 @@ $(document).ready(function(){
     			// 	var rate = newValue;
     			// 	var preMatching = $(this).parent().prev().find('a');
     			// 	var nextMatching = $(this).parent().next().find('a');
-    			// 	// var price_c = $(this).parent().prev().text();
     			// 	var price_c = preMatching.editable('getValue', true);  // Boolean: wheter to return just value of single element.
     			// 	var price_u = nextMatching.editable('getValue', true);
-    			// 	console.log(price_c + price_u)
+
     			// 	// if ( price_c != 'Empty') {  // for the text() method inside editable, will identify the empty value as string 'Empty'.
     			// 	if ( price_c ) {
     			// 		price_u = (price_c / rate).toFixed(2);
@@ -538,8 +484,6 @@ $(document).ready(function(){
     $('select[data-name="req_action"]').on('change', 
     	// { pk: $(this).attr('data-pk') },
     	function(event) {
-    		console.log(this);
-    		console.log($(this));
     		var data =  { pk: $(this).attr('data-pk'), };
     		primary_key = data.pk;
     		status = $(this).val();
@@ -639,8 +583,6 @@ $(document).ready(function(){
 /* When user clicks Cancel on the confirm modal or allocation modal. */
 	$('#no, #cancel').on('click', {pk:primary_key}, function(event) {
 		var target = $('select[data-pk=' + primary_key + ']')
-		// console.log(target);
-		// console.log($(target));
 		$(target).val('');
 		// console.log($(target).prop('value'));
 		$('#allocation_table').children().remove();
@@ -649,50 +591,64 @@ $(document).ready(function(){
 
 	});
 
-
+	var required_qty = 0;
 /* Dynamically create the input box based on the devices' quantity user requested. */
 	$('#allocation_modal').on('show.bs.modal', {pk:primary_key, st:status}, function(event) {  /* Note show is way better than shown in latency */
 		var td_quantity = $('a[data-pk=' + primary_key + ']').first().parent().prev()
-		console.log($(td_quantity));
 		var quantity = td_quantity.text();
 		// console.log('User requested ' + quantity + ' devices.');
 		var td_model = $(td_quantity).prev().prev();
 		var model = td_model.text();
-		switch ( status ) {
-			case 'ASS':
-				$('#inst').html('You can now allocate device to users from newly purchased devices. Input <b><span style="color:red">device id</b>(for Android, it is serial number, for iOS, it is unique identifier) please.');
-				$('#title').html('Allocate Newly Purchased Devices');
-				for (i = 0; i < quantity; i++) {
-					$('#allocation_table').append('<tr><td style="padding:10px">' + model + '</td><td><input type="text" class="form-control" placeholder="input device id" name="did" required></td></tr>');
-				}
-				break;		
-			case 'CUR':
-				$('#inst').html('You can now allocate device to users from public pool. Input <b><span style="color:red">first #</span></b> on the public devices page please.');
-				$('#title').html('Allocate Public Devices');
-				for (i = 0; i < quantity; i++) {
-					$('#allocation_table').append('<tr><td style="padding:10px">' + model + '</td><td><input type="text" class="form-control" placeholder="input first #" name="pkid" required></td></tr>');
-				}
-				break;
-			case 'AVA':
-				$('#inst').html('Register the newly purchased devices and put them into PUBLIC pool of our lab.');
-				$('#title').html('Make Device Public');
-				for (i = 0; i < quantity; i++) {
-					$('#allocation_table').append('<tr><td style="padding:10px">' + model + '</td><td><input type="text" class="form-control" placeholder="input device id" name="did" required></td></tr>');
-				}
-				break;
-			case 'LOC':
-				$('#inst').html('Choose location of the central lab for the devices.');
-				$('#title').html('Set location');
-				$('#allocation_table').append('<tr><td style="padding:10px"><input type="radio" name="location" value="PEK">Beijing</td> \
-					<td style="padding:10px"><input type="radio" name="location" value="MTV">Mountain View</td> \
-					<td style="padding:10px"><input type="radio" name="location" value="TWD">Taiwan DataCenter</td></tr> \
-					<tr><td style="padding:10px;color:red">Current: ' + $('input[data-pk=' + primary_key + '][data-name="lab_location"]').val() + '</td></tr>' );
-				break;
-			default:
-		}
+		getResponseStatus(primary_key, function(device_list_string) {
+			var device_array = JSON.parse(device_list_string);
+			var response_qty = device_array.length;
+			required_qty = quantity - response_qty
+			// alert("required shots:" + required_qty)
+			switch ( status ) {
+				case 'ASS':
+					$('#inst').html('You can now allocate device to users from newly purchased devices. Input <b><span style="color:red">device id</b>(for Android, it is serial number, for iOS, it is unique identifier) please.');
+					$('#title').html('Allocate Newly Purchased Devices');
+					for (n = 0; n < response_qty; n++) {
+						$('#allocation_table').append('<tr><td style="padding:10px">' + model + '</td><td><input type="text" class="form-control" value=' + device_array[n] + ' name="did" disabled></td></tr>');
+					}
+					for (i = 0; i < required_qty; i++) {
+						$('#allocation_table').append('<tr><td style="padding:10px">' + model + '</td><td><input type="text" class="form-control" placeholder="input device id" name="did" ></td></tr>');
+					}
+					break;		
+				case 'CUR':
+					$('#inst').html('You can now allocate device to users from public pool. Input <b><span style="color:red">first #</span></b> on the public devices page please.');
+					$('#title').html('Allocate Public Devices');
+					for (n = 0; n < response_qty; n++) {
+						$('#allocation_table').append('<tr><td style="padding:10px">' + model + '</td><td><input type="text" class="form-control" value=' + device_array[n] + ' name="pkid" disabled></td></tr>');
+					}
+					for (i = 0; i < required_qty; i++) {
+						$('#allocation_table').append('<tr><td style="padding:10px">' + model + '</td><td><input type="text" class="form-control" placeholder="input first #" name="pkid" ></td></tr>');
+					}
+					break;
+				case 'AVA':
+					$('#inst').html('Register the newly purchased devices and put them into PUBLIC pool of our lab.');
+					$('#title').html('Make Device Public');
+					for (n = 0; n < response_qty; n++) {
+						$('#allocation_table').append('<tr><td style="padding:10px">' + model + '</td><td><input type="text" class="form-control" value=' + device_array[n] + ' name="did" disabled></td></tr>');
+					}
+					for (i = 0; i < required_qty; i++) {
+						$('#allocation_table').append('<tr><td style="padding:10px">' + model + '</td><td><input type="text" class="form-control" placeholder="input device id" name="did" ></td></tr>');
+					}
+					break;
+				case 'LOC':
+					$('#inst').html('Choose location of the central lab for the devices.');
+					$('#title').html('Set location');
+					$('#allocation_table').append('<tr><td style="padding:10px"><input type="radio" name="location" value="PEK">Beijing</td> \
+						<td style="padding:10px"><input type="radio" name="location" value="MTV">Mountain View</td> \
+						<td style="padding:10px"><input type="radio" name="location" value="TWD">Taiwan DataCenter</td></tr> \
+						<tr><td style="padding:10px;color:red">Current: ' + $('input[data-pk=' + primary_key + '][data-name="lab_location"]').val() + '</td></tr>' );
+					break;
+				default:
+			}
 
-		$('#allocation_table').append('<tr><td><input type="hidden" name="pk" value=' + primary_key + '></td></tr>');
-		$('#allocation_table').append('<tr><td><input type="hidden" name="status" value=' + status + '></td></tr>');
+			$('#allocation_table').append('<tr><td><input type="hidden" name="pk" value=' + primary_key + '></td></tr>');
+			$('#allocation_table').append('<tr><td><input type="hidden" name="status" value=' + status + '></td></tr>');
+		});
 
  	});
 
@@ -700,9 +656,24 @@ $(document).ready(function(){
 /* When user clicks Submit on the allocation modal and the submit is successfully done. */
 	$('#allocation_form').on('submit', function(event) {
 		// var val =  $(this).find('input');
+		var shots = 0
+    	$(this).find('input[name="pkid"], input[name="did"]').each(function (){
+    		if ($.trim($(this).val()) === '') {
+				$(this).prop("disabled", true);
+				// $(this).attr("disabled", "disabled");
+    		} else if (!$(this).prop("disabled")) { // DO NOT calculate the partly allocated devices.
+    			shots +=1;
+    		}
+    		return true;
+    	});
+    	// alert("shots:" + shots)
 		var val = $(this).serialize();
-		console.log(val);
-		var new_location = val.split('&')[1].substr(-3);
+
+		// console.log($(this).serializeArray());
+		// console.log(JSON.stringify($(this).serializeArray()));
+
+		// var new_location = val.split('&')[1].substr(-3);
+
 		// ## The post shorthand method just doesn't work in this case.
 		// $.post('/device_allocate/', {data: val, 'csrfmiddlewaretoken': token, dataType:'json'})
   			// .done( function(response) {
@@ -712,7 +683,6 @@ $(document).ready(function(){
   		$.ajax({
             url: '/device_allocate/',
             type: 'post',
-            // dataType: 'json',
             data: val,
         })
         // ## .done(), .fail(), .always() are alternative constructs to the callback options of success(), error(), complete(), the latter will be deprecated as of jQuery 3.0.
@@ -720,10 +690,10 @@ $(document).ready(function(){
             toastr.success('Saved successfully!', {timeOut: 2000});
             $('#allocation_modal').modal('hide');
             $('#allocation_table').children().remove();
-            if (!val.includes('LOC')){ // status is 'ASS' or 'AVA'
+            if ( shots == required_qty ){
             	$('a[data-pk=' + primary_key + ']').parent().parent().fadeOut(1000);
             } else {
-            	$('input[data-pk=' + primary_key + '][data-name="lab_location"]').val(new_location);
+            	// $('input[data-pk=' + primary_key + '][data-name="lab_location"]').val(new_location);
             }
         })
         .fail(function() {
@@ -763,7 +733,6 @@ $(document).ready(function(){
   		$.post('/edit_request/', {pk: primary_key, target: 'status', target_value:'REC', 'csrfmiddlewaretoken': token, ov:'Ordered'})
   			.done( function(response) {
   				td_status.html('Received');
-  				// console.log($(this));
   			});
   	});
 
@@ -774,7 +743,6 @@ $(document).ready(function(){
   		$.post('/edit_request/', {pk: primary_key, target: 'charged', target_value:'1', 'csrfmiddlewaretoken': token, ov:'0'})
   			.done( function(response) {
   				td_status.addClass("bold_green");
-  				// console.log($(this));
   			});
   	}); 
 
@@ -792,7 +760,6 @@ $(document).ready(function(){
 				toastr.success('Saved successfully!', {timeOut: 2000});
 				$('#bugid_input').val('');
 				td_bug.html('<a href="http://b/' + bugid + '" target="_blank">' + bugid +'</a>');
-				// console.log($(this));
 			});
   	});
 
