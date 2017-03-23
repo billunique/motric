@@ -356,12 +356,13 @@ def device_replacement(request):
     # rdl = RequestedDevice.objects.filter(labdevice=pk).order_by('resolved_date') # get the QuerySet of requesteddevice of the be_replaced device.  ## Bad criteria!
     # rdl = ld.respond_to.all().order_by('resolved_date')
     rrl = ResponseRelationship.objects.filter(device=pk).order_by('response_date')  ## actually the order_by section can be omitted.
-    rd_last = rrl[len(rrl)-1].request # get the last object of the QuerySet, it's just the request that the be_replaced device are responding to lately. 
-    # ld_attack.respond_to.add(rd_last)
-    rr = ResponseRelationship.objects.create(device=ld_attack, request=rd_last, response_date=replace_date)
-    rr.save()
-    evt = Event(device=ld_attack, event=log_generator(replace_date, 'Request target added: <a href="/details/?t=r&pk=' + str(rd_last.id) + '" target="_blank">' + str(rd_last) + '</a>', operator))
-    evt.save()
+    if rrl:
+        rd_last = rrl[len(rrl)-1].request # get the last object of the QuerySet, it's just the latest request that the be_replaced device are responding to.
+        # ld_attack.respond_to.add(rd_last)
+        rr = ResponseRelationship.objects.create(device=ld_attack, request=rd_last, response_date=replace_date)
+        rr.save()
+        evt = Event(device=ld_attack, event=log_generator(replace_date, 'Request target added: <a href="/details/?t=r&pk=' + str(rd_last.id) + '" target="_blank">' + str(rd_last) + '</a>', operator))
+        evt.save()
 
     owner_old = ld_attack.owner
     user_old = ld_attack.user
