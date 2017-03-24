@@ -54,8 +54,8 @@
 	  	  <td>{{ first_target.price_cny }}</td> -->
 	  	  <td>{{ device.po_number |default:"" }}</td>
 	  	  <td>{{ device.po_date |default:"" }}</td>
-	  	  <td>{{ device.price_usd }}</td>
-	  	  <td>{{ device.price_cny }}</td>
+	  	  <td>{{ device.price_usd default:"" }}</td>
+	  	  <td>{{ device.price_cny default:"" }}</td>
 	  	{# endwith #}
 	  	</tr>
 	</table>	
