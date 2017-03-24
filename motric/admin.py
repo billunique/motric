@@ -30,7 +30,7 @@ class LabDeviceAdmin(admin.ModelAdmin):
     list_display = ['id', 'model', 'device_id', 'os', 'project', 'owner', 'status', 'lab_location']
     ordering = ['-register_date']
     actions = [make_public, make_dedicated]
-    fields = ('model', 'device_id', 'status', 'os', 'owner', 'user', 'label', 'project', 'lab_location')
+    # fields = ('model', 'device_id', 'status', 'os', 'owner', 'user', 'label', 'project', 'lab_location')
 
 admin.site.register(Requester, RequesterAdmin)
 admin.site.register(RequestedDevice, RequestedDeviceAdmin)
