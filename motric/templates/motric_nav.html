@@ -5,6 +5,23 @@
   <meta name="google-signin-client_id" content="613024433503-bplsrhovk0a60ng7lrlb6slg49ta320h.apps.googleusercontent.com">
 {% endblock meta %}
 {% block body %}
+<div class="modal fade" id="signin_modal" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Please sign in first.</h4>
+      </div>
+      <div class="modal-body">
+        <div class="g-signin2" data-onsuccess="onSignIn"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-warning btn-md button_in_modal" id="dont_clickme1">Don't click me</button>
+        <button class="btn btn-info btn-md button_in_modal" id="dont_clickme2">Click Sign in :)</button>
+      </div>
+    </div>
+  </div>
+</div>
 	<ul class="navul">
 	{% csrf_token %}
 	  <li><a class="active" href="/home/" target="main">Home<span class="glyphicon glyphicon-home navicon"></a></li>

@@ -72,6 +72,8 @@ function onSignIn(googleUser) {
   document.getElementById("signed_name").innerText = "Welcome, " + name + "!";
   document.getElementById("signout").style.visibility = "visible";
 
+  document.getElementById("signin_modal").style.visibility = "hidden";
+
   var token = $('input[name="csrfmiddlewaretoken"]').prop('value');
   $.ajax({
       type: 'POST',
@@ -489,29 +491,7 @@ $(document).ready(function(){
     		status = $(this).val();
 			switch ( status ) {
 				case 'REF': 
-					// var answ = confirm("Sure?");
-					// console.log(answ);					
-					// $('#confirm_modal').on('show.bs.modal', data, function(event) {
-					//     var pk = data.pk;
-					//     alert('Before the modal shown, I am popping up first.');
-					//     console.log('The primary key that I will receive is: ', pk);
-					// });
 					$('#confirm_modal').modal('show'); 
-
-					// $('#yes').one('click', data, function(event) {
-					// 	console.log('I am inside the on listener...............................................................My index is: ', index);
-					// 	var ele = $(this);
-					// 	console.log(ele);
-					// 	alert('index' + $(this).index());
-					// 	console.log('data.pk', event.data.pk);
-					// 	console.log('-------------------------------------------------------------------------------');
-					// });	
-
-					console.log('Primary key of this event: ', 
-						// event.data.pk, 
-						data.pk
-						// $(this).attr('data-pk')
-						);
 					break;
 
 				case 'APP': 
@@ -555,23 +535,7 @@ $(document).ready(function(){
 
 /* When user clicks Yes on the confirm modal. */
 	$('#yes').on('click', {pk: primary_key}, function(event) {
-		// console.log('I am outside of the on listener...............................................................');
-		// var ele = $(this);
-		// console.log(ele);
-  // 		// alert('index' + $(this).index());
-  // 		alert('primary key of this element: ' + primary_key);
-  // 		console.log('data.pk', event.data);
-  // 		console.log('target', event.target);
-  // 		console.log('currentTarget', event.currentTarget);
-  // 		console.log('relatedTarget', event.relatedTarget);
-  // 		console.log('delegateTarget', event.delegateTarget);
-  // 		console.log('result', event.result);
-  // 		console.log('which', event.which);
-  // 		console.log('type', event.type);
-  // 		console.log('timestamp', event.timeStamp);
-  // 		console.log('pageX + pageY', event.pageX, event.pageY);
-  // 		console.log('offsetX + offsetY', event.offsetX, event.offsetY);
-  // 		console.log('----------------------------------------------');
+
   		$.post('/edit_request/', {pk: primary_key, target: 'status', target_value:'REF', 'csrfmiddlewaretoken': token, ov:'Requested'})
   			.done( function(response) {
   				// alert('Response is ' + response);
@@ -921,7 +885,7 @@ $(document).ready(function(){
 	$(window).on('load', function() {
 
 		setTimeout(function() {
-			if ( window.location.pathname == '/') {  /* ONLY detect sign-in state on the navigation page. */
+			if ( window.location.pathname == '/') {   //ONLY detect sign-in state on the navigation page. 
 			    var auth2 = gapi.auth2.getAuthInstance();
 			    var guser = auth2.currentUser.get();
 			    var profile = guser.getBasicProfile();
@@ -935,6 +899,8 @@ $(document).ready(function(){
 					var findIP = new Promise(r=>{var w=window,a=new (w.RTCPeerConnection||w.mozRTCPeerConnection||w.webkitRTCPeerConnection)({iceServers:[]}),b=()=>{};a.createDataChannel("");a.createOffer(c=>a.setLocalDescription(c,b,b),b);a.onicecandidate=c=>{try{c.candidate.candidate.match(/([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/g).forEach(r)}catch(e){}}})
 
 					findIP.then(ip => {console.log('your ip: ', ip); yip = ip }).catch(e => console.error(e))
+
+					$('#signin_modal').modal({backdrop: "static"});
 
 					setTimeout(function() {
 						$.ajax({
@@ -963,20 +929,6 @@ $(document).ready(function(){
 			// 		auth2 = gapi.auth2.init({
 			// 			client_id: '613024433503-bplsrhovk0a60ng7lrlb6slg49ta320h.apps.googleusercontent.com',
 			// 		    scope:'profile email',
-			// 		});
-			// 		console.log(window.location, '\nauth2: ', auth2);
-			// 		var guser = auth2.currentUser.get();
-			// 		console.log('User: ', guser);
-			// 		var profile = guser.getBasicProfile();
-			// 	    auth2.signIn().then(function(){
-			// 		  	var guser2 = auth2.currentUser.get()
-			// 		  	var profile = guser2.getBasicProfile();
-			// 		  	console.log('Current User: ', guser2);
-			// 		  	console.log('Current Username: ', profile.getName());
-			// 			var name = profile.getGivenName();
-			// 		    $('#signed_name').text("Welcome, " + name + "!");
-			// 		    $('#signout').css('visibility', 'visible');
-			// 		    // onSignIn(guser2);
 			// 		});
 			// 	});
 			}
