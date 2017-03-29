@@ -69,10 +69,13 @@ function onSignIn(googleUser) {
   console.log('Ldap: ' + ldap);
 
   var name = profile.getGivenName();
-  document.getElementById("signed_name").innerText = "Welcome, " + name + "!";
-  document.getElementById("signout").style.visibility = "visible";
+  // document.getElementById("signed_name").innerText = "Welcome, " + name + "!";
+  // document.getElementById("signout").style.visibility = "visible";
 
-  document.getElementById("signin_modal").style.visibility = "hidden";
+  document.getElementById("user_name").innerText = "Welcome, " + name + "!"
+  document.getElementById("signin_close").classList.remove('hidden');
+  document.getElementById("dont_clickme1").classList.add('hidden');
+  document.getElementById("dont_clickme2").classList.add('hidden');
 
   var token = $('input[name="csrfmiddlewaretoken"]').prop('value');
   $.ajax({
@@ -885,7 +888,7 @@ $(document).ready(function(){
 	$(window).on('load', function() {
 
 		setTimeout(function() {
-			if ( window.location.pathname == '/') {   //ONLY detect sign-in state on the navigation page. 
+			if ( location.pathname != '/' && location.pathname != '/device_request/') {   //Force to signin except nav and device request page.
 			    var auth2 = gapi.auth2.getAuthInstance();
 			    var guser = auth2.currentUser.get();
 			    var profile = guser.getBasicProfile();
@@ -913,7 +916,7 @@ $(document).ready(function(){
 						});
 					}, 500);
 
-			  //   	auth2.signIn().then(function(){
+			  //   	auth2.signIn().then(function(){  // This pop-up will be blocked by browser by default.
 					//   	var guser2 = auth2.currentUser.get();
 					//   	var profile = guser2.getBasicProfile();
 					//   	console.log('Current User: ', guser2);

@@ -343,7 +343,7 @@ def device_replacement(request):
     replace_date = timezone.now()
 
     ld_hold.replaced_by.add(ld_attack)
-    ld.replaced = 1
+    ld_hold.replaced = 1
     ld_hold.save()
     # rd = RequestedDevice.objects.filter(labdevice=repk)
     # event_hold = {'timestamp':replace_date, 'operation':'be replaced by device ' + rd[len(rd)-1].model_type +' (' + ld_attack.device_id +')', 'operator':operator}

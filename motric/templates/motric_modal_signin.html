@@ -1,0 +1,19 @@
+<div class="modal fade" id="signin_modal" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Please sign in first.</h4>
+      </div>
+      <div class="modal-body">
+        <div class="g-signin2" data-onsuccess="onSignIn" style="display:inline-flex"></div>
+        <div style="margin-left:30;display:inline-flex" id="user_name"></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-warning btn-md button_in_modal" id="dont_clickme1">Don't click me</button>
+        <button class="btn btn-info btn-md button_in_modal" id="dont_clickme2">Click Sign in :)</button>
+        <button class="btn btn-success btn-md button_in_modal hidden" id="signin_close" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
