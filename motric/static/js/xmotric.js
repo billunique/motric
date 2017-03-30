@@ -893,7 +893,7 @@ $(document).ready(function(){
 			    var guser = auth2.currentUser.get();
 			    var profile = guser.getBasicProfile();
 			    console.log(window.location);
-			    console.log('Current User: ', guser);
+			    // console.log('Current User: ', guser);
 			    console.log('User profile: ', profile);
 			    if (profile === undefined) {
 			    	var token = $('input[name="csrfmiddlewaretoken"]').prop('value');
@@ -936,7 +936,7 @@ $(document).ready(function(){
 			// 	});
 			}
 
-		}, 500);  // Set latency to make sure the login status is obtained after the page loaded completely.
+		}, 2000);  // Set latency to make sure the login status is obtained after the page loaded completely.
 
 		if ( location.pathname == '/request_disposal/' || location.pathname == '/device_register/') {
 			$.ajax({
