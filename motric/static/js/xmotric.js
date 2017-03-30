@@ -59,6 +59,7 @@ function getFormData() {
 	}
 }
 
+var operator = '';
 function onSignIn(googleUser) {
   var profile = googleUser.getBasicProfile();
   console.log(profile.getName() + ' is signed in! -------------------------')
@@ -67,6 +68,7 @@ function onSignIn(googleUser) {
   console.log('Email: ' + profile.getEmail());
   var ldap = profile.getEmail().split('@')[0];
   console.log('Ldap: ' + ldap);
+  operator = ldap;
 
   var name = profile.getGivenName();
   // document.getElementById("signed_name").innerText = "Welcome, " + name + "!";
@@ -134,7 +136,7 @@ function getLdap() {
 	var profile = getProfile();
 	var email = profile.getEmail();
 	var ldap = email.split('@')[0];
-	console.log('Ldap: ' + ldap);
+	// console.log('Ldap: ' + ldap);
 	return ldap;
 }
 
@@ -172,6 +174,7 @@ $(document).ready(function(){
 	// $('body').css('zoom','80%');
 	var token = $('input[name="csrfmiddlewaretoken"]').prop('value');
 	var currency_rate = '6.8';
+
 	$('a[data-target="req_editor"]').editable({
 		// type: 'text',
 		placement: 'left',
@@ -195,6 +198,7 @@ $(document).ready(function(){
 		    params.csrfmiddlewaretoken = token;
 		    // params.operator = getLdap();
 		    params.ov = $(this).text();  // ov stands for OldValue, this will be recorded by default.
+		    params.opt = operator;
 		    return params;
 		},
         // emptytext:'Input',
@@ -251,7 +255,7 @@ $(document).ready(function(){
 
 	    				if ($(this).text() == 'Empty') {
 	    					var pkid = $(this).attr('data-pk');
-		    				$.post('/edit_request/', {pk:pkid, target: 'status', target_value:'ORD', 'csrfmiddlewaretoken': token, ov:oldValue});
+		    				$.post('/edit_request/', {pk:pkid, name: 'status', value:'ORD', 'csrfmiddlewaretoken':token, ov:oldValue, 'opt':operator});
 		    				td_status.html('Ordered');
 		    				$("select[data-pk=" + pkid + "] option[value='REF']").remove();
 		    				$("select[data-pk=" + pkid + "] option[value='APP']").remove();
@@ -260,7 +264,7 @@ $(document).ready(function(){
 
     				if ( htitle.startsWith("Resolved") ) {
 	    				var pkid = $(this).attr('data-pk');
-		    			$.post('/sync_info/', {pk:pkid, target: 'po', target_value:newValue, 'csrfmiddlewaretoken': token});    					
+		    			$.post('/sync_info/', {pk:pkid, name: 'po', value:newValue, 'csrfmiddlewaretoken':token, 'opt':operator});    					
     				}
     			}
 
@@ -283,7 +287,7 @@ $(document).ready(function(){
 	    	// 					'value': price_u,
 	    	// 				}
     		// 			});
-    					$.post('/edit_request/', {pk:pkid, name: 'price_usd', value: price_u, 'csrfmiddlewaretoken': token, ov:oldValue});
+    					$.post('/edit_request/', {pk:pkid, name: 'price_usd', value: price_u, 'csrfmiddlewaretoken': token, ov:oldValue, 'opt':operator});
     					$(td_price_u).editable('setValue', price_u, false);
 					}, 200);
 
@@ -309,7 +313,7 @@ $(document).ready(function(){
 	    	// 					'value': price_c,
 	    	// 				}
     		// 			});
-    					$.post('/edit_request/', {pk:pkid, name: 'price_cny', value: price_c, 'csrfmiddlewaretoken': token, ov:oldValue});
+    					$.post('/edit_request/', {pk:pkid, name: 'price_cny', value: price_c, 'csrfmiddlewaretoken': token, ov:oldValue, 'opt':operator});
     					$(td_price_c).editable('setValue', price_c, false);
 					}, 200);
 
@@ -370,6 +374,7 @@ $(document).ready(function(){
 		    params.csrfmiddlewaretoken = token;
 		    // params.operator = getLdap();
 		    params.ov = $(this).text();
+		    params.opt = operator;
 		    return params;
 		},
 
@@ -500,7 +505,7 @@ $(document).ready(function(){
 				case 'APP': 
     				var td_status = $(this).parent().prev();
     				var oldValue = td_status.text();
-					$.post('/edit_request/', {pk: primary_key, target: 'status', target_value:'APP', 'csrfmiddlewaretoken': token, ov:oldValue});
+					$.post('/edit_request/', {pk: primary_key, name: 'status', value:'APP', 'csrfmiddlewaretoken': token, ov:oldValue, 'opt':operator});
 					td_status.html('Approved');
 					$("select[data-pk=" + primary_key + "] option[value='REF']").remove();
     				$("select[data-pk=" + primary_key + "] option[value='APP']").remove();
@@ -539,7 +544,7 @@ $(document).ready(function(){
 /* When user clicks Yes on the confirm modal. */
 	$('#yes').on('click', {pk: primary_key}, function(event) {
 
-  		$.post('/edit_request/', {pk: primary_key, target: 'status', target_value:'REF', 'csrfmiddlewaretoken': token, ov:'Requested'})
+  		$.post('/edit_request/', {pk: primary_key, name: 'status', value:'REF', 'csrfmiddlewaretoken': token, ov:'Requested', 'opt':operator})
   			.done( function(response) {
   				// alert('Response is ' + response);
   				$('a[data-pk=' + primary_key + ']').parent().parent().fadeOut(1000);
@@ -568,14 +573,14 @@ $(document).ready(function(){
 		var model = td_model.text();
 		getResponseStatus(primary_key, function(device_list_string) {
 			var device_array = JSON.parse(device_list_string);
-			var response_qty = device_array.length;
-			required_qty = quantity - response_qty
+			var responsed_qty = device_array.length;
+			required_qty = quantity - responsed_qty
 			// alert("required shots:" + required_qty)
 			switch ( status ) {
 				case 'ASS':
 					$('#inst').html('You can now allocate device to users from newly purchased devices. Input <b><span style="color:red">device id</b>(for Android, it is serial number, for iOS, it is unique identifier) please.');
 					$('#title').html('Allocate Newly Purchased Devices');
-					for (n = 0; n < response_qty; n++) {
+					for (n = 0; n < responsed_qty; n++) {
 						$('#allocation_table').append('<tr><td style="padding:10px">' + model + '</td><td><input type="text" class="form-control" value=' + device_array[n] + ' name="did" disabled></td></tr>');
 					}
 					for (i = 0; i < required_qty; i++) {
@@ -585,7 +590,7 @@ $(document).ready(function(){
 				case 'CUR':
 					$('#inst').html('You can now allocate device to users from public pool. Input <b><span style="color:red">first #</span></b> on the public devices page please.');
 					$('#title').html('Allocate Public Devices');
-					for (n = 0; n < response_qty; n++) {
+					for (n = 0; n < responsed_qty; n++) {
 						$('#allocation_table').append('<tr><td style="padding:10px">' + model + '</td><td><input type="text" class="form-control" value=' + device_array[n] + ' name="pkid" disabled></td></tr>');
 					}
 					for (i = 0; i < required_qty; i++) {
@@ -595,7 +600,7 @@ $(document).ready(function(){
 				case 'AVA':
 					$('#inst').html('Register the newly purchased devices and put them into PUBLIC pool of our lab.');
 					$('#title').html('Make Device Public');
-					for (n = 0; n < response_qty; n++) {
+					for (n = 0; n < responsed_qty; n++) {
 						$('#allocation_table').append('<tr><td style="padding:10px">' + model + '</td><td><input type="text" class="form-control" value=' + device_array[n] + ' name="did" disabled></td></tr>');
 					}
 					for (i = 0; i < required_qty; i++) {
@@ -634,7 +639,7 @@ $(document).ready(function(){
     		return true;
     	});
     	// alert("shots:" + shots)
-		var val = $(this).serialize();
+		var val = $(this).serialize() + '&opt=' + operator;
 
 		// console.log($(this).serializeArray());
 		// console.log(JSON.stringify($(this).serializeArray()));
@@ -677,7 +682,7 @@ $(document).ready(function(){
 	});
 
 	$('#submit_rep').on('click', {pk:primary_key}, function(event) {
-  		$.post('/device_replacement/', {pk: primary_key, replacement_pk:$('#replacement_pk').val(), 'csrfmiddlewaretoken': token})
+  		$.post('/device_replacement/', {pk: primary_key, replacement_pk:$('#replacement_pk').val(), 'csrfmiddlewaretoken':token, 'opt':operator})
 			.done( function(response) {
 				toastr.success('Saved successfully!', {timeOut: 2000});
 				$('#replacement_modal').modal('hide');
@@ -697,7 +702,7 @@ $(document).ready(function(){
 	$('.btn-hidden-receive').on('click', function(event) {
 		primary_key = $(this).attr('data-pk');
 		td_status = $(this).parent()
-  		$.post('/edit_request/', {pk: primary_key, target: 'status', target_value:'REC', 'csrfmiddlewaretoken': token, ov:'Ordered'})
+  		$.post('/edit_request/', {pk: primary_key, name: 'status', value:'REC', 'csrfmiddlewaretoken':token, ov:'Ordered', 'opt':operator })
   			.done( function(response) {
   				td_status.html('Received');
   			});
@@ -707,7 +712,7 @@ $(document).ready(function(){
 	$('.btn-hidden-charge').on('click', function(event) {
 		primary_key = $(this).attr('data-pk');
 		td_status = $(this).parent()
-  		$.post('/edit_request/', {pk: primary_key, target: 'charged', target_value:'1', 'csrfmiddlewaretoken': token, ov:'0'})
+  		$.post('/edit_request/', {pk: primary_key, name: 'charged', value:'1', 'csrfmiddlewaretoken':token, ov:'0', 'opt':operator})
   			.done( function(response) {
   				td_status.addClass("bold_green");
   			});
@@ -722,7 +727,7 @@ $(document).ready(function(){
 
   	$('#submit_bugid').on('click', function(event) {
   		bugid = $('#bugid_input').val()
-  		$.post('/edit_request/', {pk: primary_key, target: 'bug_id', target_value: bugid, 'csrfmiddlewaretoken': token, ov:'Empty'})
+  		$.post('/edit_request/', {pk: primary_key, name: 'bug_id', value: bugid, 'csrfmiddlewaretoken':token, ov:'Empty', 'opt':operator})
 			.done( function(response) {
 				toastr.success('Saved successfully!', {timeOut: 2000});
 				$('#bugid_input').val('');
@@ -791,6 +796,7 @@ $(document).ready(function(){
 		});
 	});
 
+	// Dynamically bind the price_cny and price_usd on the Device Register page.
 	$(':text[data-name="price"]').each(function() {
 		var elem = $(this);
 		elem.on("input", function (event) {  // Here "input" is better than "change", input gives quick feedback one letter by one letter.
@@ -856,7 +862,7 @@ $(document).ready(function(){
     		return true;
     	});
 
-    	vals = $(this).serialize();
+    	vals = $(this).serialize() + '&opt=' + operator;
     	console.log(vals);
 
   		$.ajax({
@@ -903,8 +909,6 @@ $(document).ready(function(){
 
 					findIP.then(ip => {console.log('your ip: ', ip); yip = ip }).catch(e => console.error(e))
 
-					$('#signin_modal').modal({backdrop: "static"});
-
 					setTimeout(function() {
 						$.ajax({
 						  type: 'POST',
@@ -915,6 +919,8 @@ $(document).ready(function(){
 						  },
 						});
 					}, 500);
+
+					$('#signin_modal').modal({backdrop: "static"});
 
 			  //   	auth2.signIn().then(function(){  // This pop-up will be blocked by browser by default.
 					//   	var guser2 = auth2.currentUser.get();

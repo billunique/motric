@@ -6,8 +6,6 @@ from django.core import serializers
 from models import *
 import time, json, threading, getpass
 
-operator = ''
-
 def expection_carrier():
     import sys
     dict = {}
@@ -20,8 +18,6 @@ def who_are_you(request):
     p = request.POST.copy()
     data = json.dumps(p)
     who = p['operator']
-    global operator
-    operator = who
     return HttpResponse(data)
 
 
@@ -112,22 +108,17 @@ def log_generator(timestamp, operation, operator):
 
 
 def request_editor(request):
-    message = ''
-    if request.method == 'POST':
-        message += 'request method is post\n'
-        if request.is_ajax():
-            message += 'this is indeed ajax!\n'
 
-    dict = request.POST.copy()
-    data = json.dumps(dict)
-    message += data
+    p = request.POST.copy()
+    data = json.dumps(p)
 
     # try:
-    pk = dict.get('pk')
+    pk = p.get('pk')
     rd = RequestedDevice.objects.get(pk=pk)
-    column = dict.values()[2]
-    column_value = dict.values()[3]
-    oldvalue = dict.get('ov')
+    column = p.get('name')
+    column_value = p.get('value')
+    oldvalue = p.get('ov')
+    operator = p.get('opt')
 
     requester = rd.requester.ldap
     subject = "[Motric]Updates of your device request for mobile-harness"
@@ -186,23 +177,22 @@ def request_editor(request):
     #     return HttpResponse(expection_carrier())
 
 
-    return HttpResponse(response)
+    return HttpResponse(data)
 
 
 
 def labdevice_editor(request):
-    message = ''
-    dict = request.POST.copy()
-    data = json.dumps(dict)
-    message += data
+    p = request.POST.copy()
+    data = json.dumps(p)
 
-    pk = dict.get('pk')
+    pk = p.get('pk')
     ld = LabDevice.objects.get(pk=pk)
 
     ## data is like this: {"pk": "191", "csrfmiddlewaretoken": "ZPUe3zv9snleUyycvG4Nr8UdlySz0iYD", "name": "os", "value": "Android 6.0.1", "ov": "Android 4.4.4"} ##
-    field = dict.values()[2]
-    field_value = dict.values()[3]
-    oldvalue = dict.get('ov')
+    field = p.get('name')
+    field_value = p.get('value')
+    oldvalue = p.get('ov')
+    operator = p.get('opt')
 
     # target = getattr(ld, field)
     # target = field_value
@@ -214,8 +204,7 @@ def labdevice_editor(request):
     event_msg = log_generator(timezone.now(), '<span class="">' + field + '</span> was changed from <span class="required">' + oldvalue + '</span> --> <span class="bold">' + field_value + '</span>', operator)
     evt = Event(device=ld, event=event_msg)
     evt.save()
-    message += "\n" + field + " " + field_value + " saved successfully."
-    return HttpResponse(data, status=200, charset='utf8')
+    return HttpResponse(data)
 
 
 def device_allocate(request):
@@ -223,6 +212,7 @@ def device_allocate(request):
     # try:
     pk = dict.get('pk')
     status = dict.get('status')
+    operator = dict.get('opt')
     rd = RequestedDevice.objects.get(pk=pk)
     response_qty = rd.responserelationship_set.all().count()
     required_qty = rd.quantity - response_qty
@@ -338,6 +328,7 @@ def device_replacement(request):
     data = json.dumps(p)
     pk = p.get('pk')
     repk = p.get('replacement_pk')
+    operator = p.get('opt')
     ld_hold = LabDevice.objects.get(pk=pk)
     ld_attack = LabDevice.objects.get(pk=repk)
     replace_date = timezone.now()
@@ -403,6 +394,7 @@ def device_register(request):
     location = p.get('location')
     status = p.get('status')
     device_id = p.pop('device_id') # list
+    operator = p.get('opt')
 
     lds = LabDevice.objects.all()
     id_list = [e.device_id for e in lds]
@@ -422,18 +414,22 @@ def syncer(request):
     p = request.POST.copy()
     data = json.dumps(p)
     pk = p.get('pk')
-    tp = p.get('target')
-    sync_value = p.get('target_value')
+    target = p.get('name')
+    sync_value = p.get('value')
+    operator = p.get('opt')
     ld_set = LabDevice.objects.filter(respond_to=pk)
-    if tp == 'po':
+    if target == 'po':
         po_date = timezone.now()
         rd = RequestedDevice.objects.get(pk=pk)
         rd.po_date = po_date
         rd.save()
         for ld in ld_set:
+            old_po = ld.po_number
             ld.po_number = sync_value
             ld.po_date = po_date
             ld.save()
+            evt = Event(device=ld, event=log_generator(timezone.now(), 'PO number synced from <span class="required">' + old_po + '</span> to <b>' + sync_value +'</b>.', operator))
+            evt.save()
 
     return HttpResponse(data)
 
