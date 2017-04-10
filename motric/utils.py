@@ -428,7 +428,7 @@ def syncer(request):
             ld.po_number = sync_value
             ld.po_date = po_date
             ld.save()
-            evt = Event(device=ld, event=log_generator(timezone.now(), 'PO number synced from <span class="required">' + old_po + '</span> to <b>' + sync_value +'</b>.', operator))
+            evt = Event(device=ld, event=log_generator(timezone.now(), 'PO number synced from <span class="required">' + old_po + '</span> --> <b>' + sync_value +'</b>.', operator))
             evt.save()
 
     return HttpResponse(data)

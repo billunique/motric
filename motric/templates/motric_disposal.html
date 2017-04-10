@@ -68,7 +68,7 @@
 		  <td><a href="/details?t=r&pk={{ request.id }}" target="_blank">{{ request.id }}</a></td>
 		  <td>{{ request.requester.ldap }}</td>
 		  <td class="l2_column hidden">{{ request.requester.cost_center }}</td>
-		  <td class="one-line">{{ request.requester.project }}</td>
+		  <td class="one-line" data-name="project" data-pk="{{ request.id }}">{{ request.requester.project }}</td>
 		  <td class="one-line">{{ request.requester.device_owner }}</td>
 		  <!-- <td class="l2_column hidden" title="{{ request.requester.device_label }}">{{ request.requester.device_label }}</td> -->
 		  <td class="l2_column hidden one-line-sticker">{{ request.requester.device_label }}</td>

@@ -497,6 +497,14 @@ $(document).ready(function(){
     		var data =  { pk: $(this).attr('data-pk'), };
     		primary_key = data.pk;
     		status = $(this).val();
+    		var td_project = $('td[data-pk=' + primary_key + '][data-name="project"]')
+    		var td_price_c = $('a[data-pk=' + primary_key + '][data-name="price_cny"]')
+    		var td_price_u = $('a[data-pk=' + primary_key + '][data-name="price_usd"]')
+    		if ( status != 'REF' && status != 'APP' && (td_price_c.text() == 'Empty' || td_price_u.text() == 'Empty') ){
+    			alert("Please input complete price info first!");
+    			$(this).val('');
+    			return;
+    		}
 			switch ( status ) {
 				case 'REF': 
 					$('#confirm_modal').modal('show'); 
@@ -520,17 +528,25 @@ $(document).ready(function(){
 					break;
 
 				case 'ASS':
-				case 'AVA':
-    				var td_price_c = $('a[data-pk=' + primary_key + '][data-name="price_cny"]')
-					var td_price_u = $('a[data-pk=' + primary_key + '][data-name="price_usd"]')
-					if (td_price_c.text() == 'Empty' || td_price_u.text() == 'Empty'){
-						alert("Please input complete price info first!");
+				case 'CUR':
+					if (td_project.text().toUpperCase() == 'PUBLIC'){
+						alert("Guess you're adding PUBLIC devices,\nplease use the menu option \"Make Public\".")
 						$(this).val('');
 						break;
 					}
-				case 'CUR':
-				case 'LOC':
 					$('#allocation_modal').modal({backdrop: "static"}); // This option is to make the click outside of modal unable to close the dialog window.
+					$(this).val('');
+					break;
+				case 'AVA':
+					if (td_project.text().toUpperCase() != 'PUBLIC'){
+						aw = confirm("Guess you're allocating devices to user,\nplease use the menu option \"Allocate New\" or \"Allocate Current\".\n\nIf you'are indeed adding PUBLIC devices, please click OK to confirm it, else click Cancel.")
+						$(this).val('');
+						if (aw == true) {
+							$('#allocation_modal').modal({backdrop: "static"});
+						}
+						break;
+					}
+					$('#allocation_modal').modal({backdrop: "static"});
 					$(this).val('');
 					break;
 
