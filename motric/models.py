@@ -67,13 +67,13 @@ class LabDevice(DeviceStatus):
 	model = models.CharField(max_length=30)
 	# respond_to = models.ManyToManyField(RequestedDevice)  # Many labdevices could respond to one requesteddevice; meanwhile many requesteddevice could be responded by one labdevice (such as firstly public then assigned, or as result of device replacement.)
 	respond_to = models.ManyToManyField(RequestedDevice, through='ResponseRelationship') 
-	device_id = models.CharField(max_length=100)
+	device_id = models.CharField(max_length=100, unique=True)
 	register_date = models.DateTimeField('date device_id recorded', auto_now_add=True) # The register date is basically fixed. While other status could be mutable. 
-	os = models.CharField(max_length=50, blank=True)
-	owner = models.CharField(max_length=100, blank=True)
-	user = models.CharField(max_length=100, blank=True)  # Those who have the device usage access.
-	label = models.CharField(max_length=50, blank=True)
-	project = models.CharField(max_length=50, blank=True)
+	os = models.CharField(max_length=50, blank=True, null=True)
+	owner = models.CharField(max_length=5120, blank=True, null=True)
+	user = models.CharField(max_length=100, blank=True, null=True)  # Those who have the device usage access.
+	label = models.CharField(max_length=50, blank=True, null=True)
+	project = models.CharField(max_length=50, blank=True, null=True)
 	lab_location = models.CharField(max_length=3, blank=True, null=True)
 	price_usd = models.DecimalField(max_digits=6, decimal_places=1, blank=True, null=True)
 	price_cny = models.DecimalField(max_digits=6, decimal_places=1, blank=True, null=True)

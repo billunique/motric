@@ -27,7 +27,7 @@ class RequestedDeviceAdmin(admin.ModelAdmin):
     actions = [make_public, make_dedicated, make_requested]
 
 class LabDeviceAdmin(admin.ModelAdmin):
-    list_display = ['id', 'model', 'device_id', 'os', 'project', 'owner', 'status', 'lab_location']
+    list_display = ['id', 'model', 'device_id', 'os', 'owner', 'project', 'lab_location', 'status']
     ordering = ['-register_date']
     actions = [make_public, make_dedicated]
     readonly_fields = ('replaced_by',)

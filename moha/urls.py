@@ -44,6 +44,7 @@ urlpatterns = [
     url(r'^who/', utils.who_are_you, name='who'),
     url(r'^sync_info/', utils.syncer, name='sync_info'),
     url(r'^response_status/', utils.response_checker, name='response_checker'),
+    url(r'^import_data/', utils.import_sheet, name='data_importor'),
     url(r'^admin/', admin.site.urls),
 ]
 

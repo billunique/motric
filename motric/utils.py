@@ -1,8 +1,9 @@
-from django.http import HttpResponse, HttpRequest
+from django.http import HttpResponse, HttpRequest, HttpResponseBadRequest
 from django.shortcuts import render
 from django.core.mail import send_mail, EmailMessage
 from django.utils import timezone
 from django.core import serializers
+from django import forms
 from models import *
 import time, json, threading, getpass
 
@@ -442,3 +443,26 @@ def response_checker(request):
         did_list.append(ld.device_id)
     response_data = json.dumps(did_list)
     return HttpResponse(response_data)
+
+
+
+class UploadFileForm(forms.Form):
+    file = forms.FileField()
+
+def import_sheet(request):
+    if request.method == "POST":
+        form = UploadFileForm(request.POST,
+                              request.FILES)
+        # if form.is_valid():
+        request.FILES.get('file').save_to_database(
+            model=LabDevice,
+            mapdict=['model', 'device_id', 'os', 'owner', 'label', 'project', 'lab_location', 'status'])
+        return HttpResponse("OK")
+        # else:
+        #     return HttpResponseBadRequest()
+    else:
+        form = UploadFileForm()
+    return render(
+        request,
+        'motric_upload_form.html',
+        {'form': form})
