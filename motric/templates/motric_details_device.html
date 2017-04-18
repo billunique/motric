@@ -21,9 +21,9 @@
 	  	  <td>{{ device.model }}</td>
 	  	  <td>{{ device.os }}</td>
 	  	  <td>{{ device.owner }}</td>
-	  	  <td>{{ device.user }}</td>
-	  	  <td>{{ device.label }}</td>
-	  	  <td>{{ device.project }}</td>
+	  	  <td>{{ device.user |default:""}}</td>
+	  	  <td>{{ device.label |default:""}}</td>
+	  	  <td>{{ device.project |default:""}}</td>
 	  	  <td>{{ device.lab_location }}</td>
 	  	  <td>{{ device.get_status_display }}</td>
 	  	</tr>

@@ -64,7 +64,7 @@ class RequestedDevice(DeviceStatus):
 class LabDevice(DeviceStatus):
 	# model = models.OneToOneField(RequestedDevice)  # OneToOne is smilar to ForeignKey but unique=true, this is not the case.
 	# model = models.ForeignKey(RequestedDevice)
-	model = models.CharField(max_length=30)
+	model = models.CharField(max_length=100)
 	# respond_to = models.ManyToManyField(RequestedDevice)  # Many labdevices could respond to one requesteddevice; meanwhile many requesteddevice could be responded by one labdevice (such as firstly public then assigned, or as result of device replacement.)
 	respond_to = models.ManyToManyField(RequestedDevice, through='ResponseRelationship') 
 	device_id = models.CharField(max_length=100, unique=True)

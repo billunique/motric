@@ -453,9 +453,17 @@ def import_sheet(request):
     if request.method == "POST":
         form = UploadFileForm(request.POST,
                               request.FILES)
+        def filtrate_dupe(row):
+            # row[1] represents device id.
+            if LabDevice.objects.filter(device_id=row[1]).first() == None:
+                return row
+            else:
+                return None
+
         # if form.is_valid():
         request.FILES.get('file').save_to_database(
             model=LabDevice,
+            initializer=filtrate_dupe,
             mapdict=['model', 'device_id', 'os', 'owner', 'label', 'project', 'lab_location', 'status'])
         return HttpResponse("OK")
         # else:
