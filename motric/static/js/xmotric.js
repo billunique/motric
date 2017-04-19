@@ -604,7 +604,7 @@ $(document).ready(function(){
 					}
 					break;		
 				case 'CUR':
-					$('#inst').html('You can now allocate device to users from public pool. Input <b><span style="color:red">first #</span></b> on the public devices page please.');
+					$('#inst').html('You can now allocate device to users from public pool. Input <b><span style="color:red">first #</span></b> on the <a href="/public_device/" target="_blank">public devices</a> page please.');
 					$('#title').html('Allocate Public Devices');
 					for (n = 0; n < responsed_qty; n++) {
 						$('#allocation_table').append('<tr><td style="padding:10px">' + model + '</td><td><input type="text" class="form-control" value=' + device_array[n] + ' name="pkid" disabled></td></tr>');

@@ -33,7 +33,7 @@ class EmailThread(threading.Thread):
 
     def run (self):
         msg = EmailMessage(self.subject, self.body, self.sender, self.recipient, self.cc_rcpt, headers={'Cc': ','.join(self.cc_rcpt)})
-        # msg.content_subtype = "html"
+        msg.content_subtype = "html"
         msg.send(fail_silently=False)
 
 def motric_send_mail(subject, body, sender, recipient, cc_rcpt):
@@ -66,31 +66,34 @@ def form_receiver(request):
 
         server = form_dict.get('svr')
 
-        combo = ''
+        combo = '<table cellpadding="3">'
+        motric_host = "motric"
+        subject = '[Motric]Somebody raised device request!'
+        sender = 'mobileharness.motric@gmail.com'
+        recipient = ['mobileharness-ops@google.com', 'mobileharness-ops-mtv@google.com']
+        # recipient = ['xiawang@google.com', 'yanyanl@google.com', 'ligang@google.com', 'jinrui@google.com', 'derekchen@google.com', 'joyl@google.com', 'nanz@google.com', 'magicpig@google.com', 'xmhu@google.com', 'dschlaak@google.com', 'ansalgado@google.com']
+        # recipient = ['xiawang@google.com', 'yanyanl@google.com']
+        cc_rcpt = ['magicpig@google.com', 'xmhu@google.com', 'dschlaak@google.com', 'ansalgado@google.com', 'ffeng@google.com']
+        if server: # value is 't' (for test)
+            motric_host = "xiawang.bej:8080"
+            recipient = ['xiawang@google.com']
+            # recipient = ['xiawang@google.com', 'yanyanl@google.com', 'ligang@google.com', 'jinrui@google.com', 'joyl@google.com']
+            cc_rcpt = []
         for i in range(len(model_type)):
             rd = RequestedDevice(model_type=model_type[i], os_version=os_version[i], quantity=quantity[i], requester=usr, request_date=timezone.now(), comment=comment, status=status)
             rd.save()
-            combo += ' * ' + model_type[i] + ' x ' + quantity[i] +'\n'
+            # combo += ' * ' + model_type[i] + ' x ' + quantity[i] +'\t<span style="float:right">http://' + motric_host + '/details/?t=r&pk=' + str(rd.pk) + '</span><br/>'
+            combo += '<tr><td>' + model_type[i] + ' * ' + quantity[i] + '</td><td>http://' + motric_host + '/details/?t=r&pk=' + str(rd.pk) + '</td></tr>'
+        combo += '</table>'
 
     except KeyError:
         return HttpResponse("No corresponding key found!")
     except ValueError: # invalid literal for int() with base 10: '' if only one line of device request submitted.
         pass
-    except:
-        return HttpResponse(expection_carrier())
+    # except:
+    #     return HttpResponse(expection_carrier())
 
-
-    motric_host = "motric"
-    subject = '[Motric]Somebody raised device request!'
-    sender = 'mobileharness.motric@gmail.com'
-    recipient = ['xiawang@google.com', 'yanyanl@google.com', 'ligang@google.com', 'jinrui@google.com', 'derekchen@google.com', 'joyl@google.com', 'nanz@google.com', 'magicpig@google.com', 'xmhu@google.com', 'dschlaak@google.com', 'ansalgado@google.com']
-    # recipient = ['xiawang@google.com', 'yanyanl@google.com']
-    cc_rcpt = ['mobileharness-ops@google.com']
-    if server: # value is 't' (for test)
-        motric_host = "xiawang.bej:8080"
-        recipient = ['xiawang@google.com', 'yanyanl@google.com', 'ligang@google.com', 'jinrui@google.com', 'joyl@google.com']
-
-    message = ldap + ' raised device request for:\n\n' + combo + '\n\nPlease go to http://' + motric_host + '/request_disposal/?f=req for details.'
+    message = ldap + ' raised device request for:<br/><br/>' + combo + '<br/>You can also go to http://' + motric_host + '/request_disposal/?f=req for overviews.'
     motric_send_mail(
         subject,
         message,
@@ -125,7 +128,8 @@ def request_editor(request):
     subject = "[Motric]Updates of your device request for mobile-harness"
     sender = 'mobileharness.motric@gmail.com'
     recipient = [requester + '@google.com']
-    cc_rcpt = ['mobileharness-ops@google.com']
+    cc_rcpt = []
+    # cc_rcpt = ['mobileharness-ops@google.com']
 
     # if column == 'po_number':
     #     rd.po_number = column_value
@@ -142,23 +146,23 @@ def request_editor(request):
     if column == 'status':
         if column_value == 'REF': # status'value could be REF-refuse, ORD-ordered, etc.
             rd.resolved = True
-            body = "Dear " + requester + ",\n\nWe're sorry that your device request for " + rd.model_type + " (quantity: " + str(rd.quantity) + ") is temporarily refused for some reason.\n" + "Please contact mobileharness-ops@goole.com for details."
+            body = "Dear " + requester + ",<br/><br/>We're sorry that your device request for " + rd.model_type + " (quantity: " + str(rd.quantity) + ") is temporarily refused for some reason.<br/>" + "Please contact mobileharness-ops@goole.com for details."
 
         if column_value == 'APP':
             rd.approve_date = timezone.now();
-            body = "Dear " + requester + ",\n\nThis is to inform you that your device request for " + rd.model_type + " (quantity: " + str(rd.quantity) + ") is approved.\n" + "We will start your purchase order shortly. Please stay tuned."
+            body = "Dear " + requester + ",<br/><br/>This is to inform you that your device request for " + rd.model_type + " (quantity: " + str(rd.quantity) + ") is approved.<br/>" + "We will start your purchase order shortly. Please stay tuned."
 
         if column_value == 'ORD': # this request is autoly submit after the po_number is inputted, so rd.po_number has gotten value.
             rd.po_date = timezone.now()
             # url = "https://pivt.googleplex.com/viewPo?poid=" + rd.po_number
-            # body = "Dear " + requester + ",\n\nThis is to inform you that your device request for " + rd.model_type + " (quantity: " + str(rd.quantity) + ") is approved.\n" + "We have started your purchase order: " + url + " Please stay tuned."
-            # body = "Dear " + requester + ",\n\nThis is to inform you that the purchase order for your request is raised.\n" + "You can check it here: " + url + " Looking forward to seeing you get and run these devices."
-            body = "Dear " + requester + ",\n\nThis is to inform you that the purchase order for your request is raised.\nLooking forward to seeing you get and run these devices."
+            # body = "Dear " + requester + ",<br/><br/>This is to inform you that your device request for " + rd.model_type + " (quantity: " + str(rd.quantity) + ") is approved.<br/>" + "We have started your purchase order: " + url + " Please stay tuned."
+            # body = "Dear " + requester + ",<br/><br/>This is to inform you that the purchase order for your request is raised.<br/>" + "You can check it here: " + url + " Looking forward to seeing you get and run these devices."
+            body = "Dear " + requester + ",<br/><br/>This is to inform you that the purchase order for your request is raised.<br/>Looking forward to seeing you get and run these devices on Mobile Harness."
 
         if column_value == 'REC':
             rd.receive_date = timezone.now();
             url = "https://motric/details/?t=r&pk=" + pk
-            body = "Hi Gang,\n\nThis is to inform you that the devices of request " + url + " already arrived.\n" + "Yanyan will hand them to you, please be ready to register them and make them online."
+            body = "Hi Gang,<br/><br/>This is to inform you that the devices of request " + url + " already arrived.<br/>" + "Yanyan will hand them to you, please be ready to register them and make them online."
             recipient = ['ligang@google.com', 'yanyanl@google.com']
             cc_rcpt = ['xiawang@google.com', 'jinrui@google.com', 'derekchen@google.com', 'joyl@google.com', 'nanz@google.com']
 
@@ -455,7 +459,7 @@ def import_sheet(request):
                               request.FILES)
         def filtrate_dupe(row):
             # row[1] represents device id.
-            if LabDevice.objects.filter(device_id=row[1]).first() == None:
+            if LabDevice.objects.filter(device_id=row[1]).first() == None:  #filter().first() won't return DoesNotExist Error, while get() will.
                 return row
             else:
                 return None
