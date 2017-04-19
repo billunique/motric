@@ -403,7 +403,7 @@ def device_register(request):
 
     lds = LabDevice.objects.all()
     id_list = [e.device_id for e in lds]
-    duplicate = []
+    duplicates = []
     for i in range(len(device_id)):
         if device_id[i] not in id_list:  # Looks like it's not a performance-killer.
             ld = LabDevice(model=model, project=project, owner=owner, label=label, os=os, po_number=po_number, price_cny=price_cn, price_usd=price_us, lab_location=location, status=status, device_id=device_id[i])
@@ -411,8 +411,8 @@ def device_register(request):
             evt = Event(device=ld, event=log_generator(ld.register_date, 'Device registered directly.', operator))
             evt.save()
         else:
-            duplicate.append(device_id[i])
-    return HttpResponse(duplicate) # Meaningless, only useful for debug.
+            duplicates.append(device_id[i])
+    return HttpResponse(json.dumps(duplicates)) # Meaningless, only useful for debug.
 
 
 def syncer(request):

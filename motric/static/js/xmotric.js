@@ -684,8 +684,19 @@ $(document).ready(function(){
             	// $('input[data-pk=' + primary_key + '][data-name="lab_location"]').val(new_location);
             }
         })
-        .fail(function() {
-        	alert("Error! You might input something illegal.")
+        .fail(function(xhr) {
+        	exceptionType = 'IntegrityError'
+        	var xtext = xhr.responseText
+        	if ( xtext.indexOf(exceptionType) > -1 ) {
+        		var start = xtext.indexOf("Duplicate entry")
+        		substring = xtext.substr(start, 200)  // 200 is long enough to get the subtring that contains the device id.
+        		did = substring.split("\'")[1]
+
+        		alert("Error! you input device that already exists: " + did +".\n\nServer only tell me one duplicate entry at one time, so please exclude devices one by one :)")
+        	}
+        	else {
+        		alert("Error! You might input something illegal.")
+        	}
         });	
         event.preventDefault();
 	});
@@ -888,7 +899,12 @@ $(document).ready(function(){
             data: vals,
         })
         .done(function(data) {
-    		toastr.success('Saved successfully!', {timeOut: 2000});
+        	if (data != "[]") { // If the device isn't a duplicate, server only return a empty list [], else return the list of duplicates.
+        		alert("Devices already exists:\n\n" + data)
+        	}
+        	else {
+        		toastr.success('Saved successfully!', {timeOut: 2000});
+        	}
         })
         .fail(function() {
         	alert("Error! You might input something illegal.")
