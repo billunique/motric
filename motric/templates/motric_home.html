@@ -9,7 +9,11 @@
 	  {% csrf_token %}
 	  <!-- <p>URL of this page: {{ request.get_full_path }}</p> -->
 	  <h4 style="float:left">Totally <span class="noticeable">{{ count }}</span> devices   
-	  <button class="btn btn-default"><a href="#" id="toggle-show">Show more columns</a></button></h4>
+	  <a class="btn btn-success bold" href="/public_device/" id="btn_public_device">Public Devices</a>
+	  <a class="btn btn-warning bold" href="/dedicated_device/" id="btn_dedicated_device">Dedicated Devices</a>
+	  <a class="btn btn-link" style="margin-right:20;font-size:14" href="#" id="toggle-show">Show more columns</a>
+	  </h4>
+
 	  <ul class="nav nav-tabs" style="float:right">
 		  <li><a href="{{ request.path }}">All</a></li>
 		  <li><a href="{{ request.path }}?loc=pek">PEK</a></li>
@@ -29,9 +33,9 @@
 	  	  <th>Location</th>
 	  	  <!-- <th class="btn-success">Requester</th> -->
 	  	  <!-- <th class="btn-success" title='Cost Center'>Cost Center</th> -->
-	  	  <th class="btn-success" title='Purchase Order ID on Pivt system'>PO#<img src='/static/img/question.png' style="width:21px;"></th>
+<!-- 	  	  <th class="btn-success" title='Purchase Order ID on Pivt system'>PO#<img src='/static/img/question.png' style="width:21px;"></th>
 	  	  <th class="btn-success">Price(USD)</th>
-	  	  <th class="btn-success">Price(CNY)</th>
+	  	  <th class="btn-success">Price(CNY)</th> -->
 	  	  <th class="btn-danger">Status</th>
 	  	</tr>
 	  </thead>
@@ -58,9 +62,9 @@
 		  <!-- <td>{{ first_target.po_number }}</td>
 		  <td>{{ first_target.price_usd }}</td>
 		  <td>{{ first_target.price_cny }}</td>	 -->	  
-		  <td>{{ device.po_number|default:"" }}</td>
+<!-- 		  <td>{{ device.po_number|default:"" }}</td>
 		  <td>{{ device.price_usd|default:"" }}</td>
-		  <td>{{ device.price_cny|default:"" }}</td>
+		  <td>{{ device.price_cny|default:"" }}</td> -->
 		  {# endwith #}
 		  
 		  <td><a href="#" data-target="labd_editor" data-name="status" data-type="select" data-title="Change Status" data-pk="{{ device.id }}">{{ device.get_status_display }}</td>  {# don't use it as display() #}
@@ -69,4 +73,38 @@
 		{% endfor %}
 	  </tbody>
 	</table>
+<!-- 	<div class="pagination" style="float:right">
+	    <span class="step-links">
+	        {% if device_list.has_previous %}
+	            <a href="?page={{ device_list.previous_page_number }}"><<</a>
+	        {% endif %}
+
+	        <span class="current btn btn-default">
+	            Page {{ device_list.number }} of {{ device_list.paginator.num_pages }}
+	        </span>
+
+	        {% if device_list.has_next %}
+	            <a href="?page={{ device_list.next_page_number }}">>></a>
+	        {% endif %}
+	    </span>
+	</div> -->
+	<ul class="pagination" style="float:right">
+	  {% if device_list.has_previous %}
+	    <li><a href="?page={{ device_list.previous_page_number }}">&laquo;</a></li>
+	  {% else %}
+	    <li class="disabled"><span>&laquo;</span></li>
+	  {% endif %}
+	  {% for page_number in device_list.paginator.page_range %}
+	    {% ifequal page_number  device_list.number %}
+	      <li class="active"><a>{{ page_number }}</a></li>
+	    {% else %}
+	      <li><a href="?page={{ page_number }}">{{ page_number }}</a></li>
+	    {% endifequal %}
+	  {% endfor %}
+	  {% if device_list.has_next %}
+	    <li><a href="?page={{ device_list.next_page_number }}">&raquo;</a></li>
+	  {% else %}
+	    <li class="disabled"><span>&raquo;</span></li>
+	  {% endif %}
+	</ul>
 {% endblock %}

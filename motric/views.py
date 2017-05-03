@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.http import HttpResponse
 import datetime
 from models import *
@@ -8,17 +9,30 @@ def index(request):
 	return render(request, 'motric_nav.html')
 
 def home(request):
-	device_list = LabDevice.objects.filter(status__in=['AVA', 'ASS']).order_by('-id')
+	device_list_all = LabDevice.objects.filter(status__in=['AVA', 'ASS']).order_by('-id')
 	q = request.GET.copy()
 	loc = q.get('loc')
+	page = q.get('page')
+
+	device_list = device_list_all
 	if loc:
 		if loc == 'pek':
-			device_list = LabDevice.objects.filter(status__in=['AVA', 'ASS'], lab_location='PEK').order_by('-id')
+			device_list = device_list_all.filter(lab_location='PEK').order_by('-id')
 		if loc == 'mtv':
-			device_list = LabDevice.objects.filter(status__in=['AVA', 'ASS'], lab_location='mtv').order_by('-id')
+			device_list = device_list_all.filter(lab_location='MTV').order_by('-id')
 		if loc == 'twd':
-			device_list = LabDevice.objects.filter(status__in=['AVA', 'ASS'], lab_location='TWD').order_by('-id')
+			device_list = device_list_all.filter(lab_location='TWD').order_by('-id')
+
 	count = device_list.count()
+	paginator = Paginator(device_list, 100) # Show 100 devices per page.
+	try:
+	    device_list = paginator.page(page)
+	except PageNotAnInteger:
+	    # If page is not an integer, deliver first page.
+	    device_list = paginator.page(1)
+	except EmptyPage:
+	    # If page is out of range (e.g. 9999), deliver last page of results.
+	    device_list = paginator.page(paginator.num_pages)
 	return render(request, 'motric_home.html', {'device_list':device_list, 'count':count})
 
 def public_device(request):
@@ -29,7 +43,7 @@ def public_device(request):
 		if loc == 'pek':
 			device_list = LabDevice.objects.filter(status='AVA', lab_location='PEK').order_by('-id')
 		if loc == 'mtv':
-			device_list = LabDevice.objects.filter(status='AVA', lab_location='mtv').order_by('-id')
+			device_list = LabDevice.objects.filter(status='AVA', lab_location='MTV').order_by('-id')
 		if loc == 'twd':
 			device_list = LabDevice.objects.filter(status='AVA', lab_location='TWD').order_by('-id')
 	count = device_list.count()
@@ -43,7 +57,7 @@ def dedicated_device(request):
 		if loc == 'pek':
 			device_list = LabDevice.objects.filter(status='ASS', lab_location='PEK').order_by('-id')
 		if loc == 'mtv':
-			device_list = LabDevice.objects.filter(status='ASS', lab_location='mtv').order_by('-id')
+			device_list = LabDevice.objects.filter(status='ASS', lab_location='MTV').order_by('-id')
 		if loc == 'twd':
 			device_list = LabDevice.objects.filter(status='ASS', lab_location='TWD').order_by('-id')
 	count = device_list.count()
@@ -57,7 +71,7 @@ def broken_device(request):
 		if loc == 'pek':
 			device_list = LabDevice.objects.filter(status__in=['BRO', 'REP', 'RET', 'RTR'], lab_location='PEK').order_by('-id')
 		if loc == 'mtv':
-			device_list = LabDevice.objects.filter(status__in=['BRO', 'REP', 'RET', 'RTR'], lab_location='mtv').order_by('-id')
+			device_list = LabDevice.objects.filter(status__in=['BRO', 'REP', 'RET', 'RTR'], lab_location='MTV').order_by('-id')
 		if loc == 'twd':
 			device_list = LabDevice.objects.filter(status__in=['BRO', 'REP', 'RET', 'RTR'], lab_location='TWD').order_by('-id')
 	count = device_list.count()
