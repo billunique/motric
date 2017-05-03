@@ -72,19 +72,21 @@ li a {
     display: block;
     color: #000;
     padding: 20px 0 20px 16px;
-    text-decoration: none;
+    /*text-decoration: none;*/
 }
 
 /* Change the link color on hover */
 li a.active {
     background-color: #4CAF50;
     color: white;
+    text-decoration: none;
 }
 
 
 li a:hover:not(.active) {
     background-color: #555;
     color: white;
+    text-decoration: none;
 }
 
 .xframe {

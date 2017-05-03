@@ -172,6 +172,13 @@ $(document).ready(function(){
 	// toastr.success('Saved successfully!', 'IAmTitle', {timeOut: 1000}); // Must override the title before the timeOut override takes effect.
 
 	// $('body').css('zoom','80%');
+
+	$(".navul a").on("click", function(){
+	   $(".navul").find(".active").removeClass("active");
+	   $(this).addClass("active");
+	});
+
+
 	var token = $('input[name="csrfmiddlewaretoken"]').prop('value');
 	var currency_rate = '6.8';
 
