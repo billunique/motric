@@ -3,14 +3,14 @@
 {% block body %}
 	<ul class="navul">
 	{% csrf_token %}
-	  <li><a class="active" href="/home/" target="main">Home<span class="glyphicon glyphicon-home navicon"></a></li>
-	  <li><a href="/public_device/" target="main">Public Devices<span class="glyphicon glyphicon-eye-open navicon"></a></li>
-	  <li><a href="/dedicated_device/" target="main">Dedicated Devices<span class="glyphicon glyphicon-eye-close navicon"></a></li>
+	  <li><a class="active" href="/home/" target="main">Online Devices<span class="glyphicon glyphicon-home navicon"></a></li>
+	  <!-- <li><a href="/public_device/" target="main">Public Devices<span class="glyphicon glyphicon-eye-open navicon"></a></li> -->
+	  <!-- <li><a href="/dedicated_device/" target="main">Dedicated Devices<span class="glyphicon glyphicon-eye-close navicon"></a></li> -->
 	  <li><a href="/broken_device/" target="main">Broken Devices<span class="glyphicon glyphicon-wrench navicon"></a></li>
-	  <li><a href="/device_request/" target="main">Device Request<span class="glyphicon glyphicon-phone navicon"></a></li>
-	  <li><a href="/request_disposal/" target="main">Pending Request<span class="glyphicon glyphicon-bell navicon"></a></li>
-	  <li><a href="/request_history/?ao=all" target="main">Resolved Request<span class="glyphicon glyphicon-record navicon"></a></li>
-	  <li><a href="/device_register/" target="main">Add Device<span class="glyphicon glyphicon-floppy-save navicon"></a></li>
+	  <li><a href="/device_register/" target="main">Add Devices<span class="glyphicon glyphicon-floppy-save navicon"></a></li>
+	  <li><a href="/device_request/" target="main">Request Devices<span class="glyphicon glyphicon-phone navicon"></a></li>
+	  <li><a href="/request_disposal/" target="main">Pending Requests<span class="glyphicon glyphicon-bell navicon"></a></li>
+	  <li><a href="/request_history/?ao=all" target="main">Resolved Requests<span class="glyphicon glyphicon-record navicon"></a></li>
 	  <li><a href="http://mobileharness/" target="_blank">MH Frontend<span class="glyphicon glyphicon-new-window navicon"></a></li>
 	  <!-- <li><a href="http://go/mobileharness" target="_blank">MH UserGuide<span class="glyphicon glyphicon-leaf navicon"></a></li> -->
 	  <!-- <li><a href="http://go/ezreq" target="_blank">Pivt<span class="glyphicon glyphicon-usd navicon"></a></li> -->

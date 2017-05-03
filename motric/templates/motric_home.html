@@ -8,9 +8,11 @@
 	<table class="table table-bordered table-hover text-center font-compacted">
 	  {% csrf_token %}
 	  <!-- <p>URL of this page: {{ request.get_full_path }}</p> -->
-	  <h4 style="float:left">Totally <span class="noticeable">{{ count }}</span> devices   
+	  <h4 style="float:left;margin-left:10">Totally <span class="noticeable">{{ count }}</span> devices   
+	  {% if request.path != "/broken_device/" %}
 	  <a class="btn btn-success bold" href="/public_device/" id="btn_public_device">Public Devices</a>
 	  <a class="btn btn-warning bold" href="/dedicated_device/" id="btn_dedicated_device">Dedicated Devices</a>
+	  {% endif %}
 	  <a class="btn btn-link" style="margin-right:20;font-size:14" href="#" id="toggle-show">Show more columns</a>
 	  </h4>
 
@@ -46,7 +48,7 @@
 		  <td><a href="/details/?t=d&pk={{ device.id }}" target="_blank">{{ device.id }}</a></td>
 		  <!-- <td>{{ device.model.all.last.model_type }}</td> {# Niubility! django's model and template #} -->
 		  <td class="one-line">{{ device.model }}{% if request.path == "/broken_device/" and device.replaced == 1 %}<span class="label label-warning" style="float:right">replaced</span>{% endif %}{% if 'qos' in device.label|lower %}<span class="label label-success" style="float:right">QoS</span>{% endif %}</td>
-		  <td class="one-line-sticker" ><a href="#" data-target="labd_editor" data-name="device_id" data-title="Change device id (Careful!)" data-pk="{{ device.id }}">{{ device.device_id }}</a><button data-pk="{{ device.id }}" title="use other device to replace this" class="btn btn-xs btn-hidden-replace" style="float:right">Replace</button></td>
+		  <td class="one-line-sticker" ><a href="#" data-target="labd_editor" data-name="device_id" data-title="Change device id (Careful!)" data-pk="{{ device.id }}">{{ device.device_id }}</a>{% if request.path == "/broken_device/" %}<button data-pk="{{ device.id }}" title="use other device to replace this" class="btn btn-xs btn-hidden-replace" style="float:right">Replace</button>{% endif %}</td>
 		  <td class="l2_column hidden one-line"><a href="#" data-target="labd_editor" data-name="os" data-title="Edit os version" data-pk="{{ device.id }}">{{ device.os |default:"" }}</a></td>
 		  <td class="one-line"><a href="#" data-target="labd_editor" data-name="owner" data-title="Edit device owner" data-pk="{{ device.id }}">{{ device.owner |default:"" }}</a></td>
 		  <td class="l2_column hidden"><a href="#" data-target="labd_editor" data-name="user" data-title="Edit device user" data-pk="{{ device.id }}">{{ device.user |default:"" }}</a></td>

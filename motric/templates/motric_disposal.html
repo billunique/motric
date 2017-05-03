@@ -18,7 +18,11 @@
 	</div> -->
     <!-- <div><span><a href="#" id="ex_rate" data-name="exchange_rate" data-type="text" data-placement="right" data-title="Enter exchange rate" data-value="">Click here to input exchage rate</a></span></div> -->
 
-	  <h4 style="float:left">Totally <span class="noticeable">{{ count }}</span> requests   <button class='btn btn-default'><a href="http://{{ request.get_host }}" target="_parent">Go Home</a></button>   <button class="btn btn-default"><a href="#" id="toggle-show">Show more columns</a></button></h4>
+	  <h4 style="float:left;margin-left:10">Totally <span class="noticeable">{{ count }}</span> requests   
+	  {% if request.path == "/request_disposal/" %}
+	  <a class="btn btn-default" href="/public_device/" target="_blank">See public pool</a>   
+	  {% endif %}
+	  <a class="btn btn-link" href="#" id="toggle-show">Show more columns</a></h4>
 	  {% block date_filter %}{% endblock %}
 
 	<table id="disposal" class="table table-bordered table-hover table-condensed text-center font-compacted">
@@ -35,7 +39,7 @@
 	  	  <th>Model</th>
 	  	  <th class="l2_column hidden">OS</th>
 	  	  <th>Quantity</th>
-	  	  <th class="l2_column hidden">Comment</th>
+	  	  <th>Comment</th>
 	  	  <!-- <th class="btn-danger">Status</th> -->
 	  	  <th class="btn-success">PO#</th>
 	  	  <th class="btn-success">Price(CNY)</th>
@@ -73,14 +77,14 @@
 		  <!-- <td class="l2_column hidden" title="{{ request.requester.device_label }}">{{ request.requester.device_label }}</td> -->
 		  <td class="l2_column hidden one-line-sticker">{{ request.requester.device_label }}</td>
 		  <td class="l2_column hidden">{{ request.requester.pref_location |default:"" }}</td>
-		  <td>{{ request.model_type }}</td>
+		  <td class="one-line">{{ request.model_type }}</td>
 		  <td class="l2_column hidden">{{ request.os_version }}</td>
 		  <td>{{ request.quantity }}</td>
 		  <!-- <td>{{ device.get_status_display }}</td>  {# don't use it as display() #} -->
 		  <!-- <td><input type="text" name="po_number" size="10"></td> -->
 		  <!-- <td><input type="text" name="price_cny" maxlength="5" size="5"></td> -->
 		  <!-- <td><input type="text" name="price_usd" maxlength="5" size="5"></td> -->
-		  <td class="l2_column hidden one-line"><a href="#" data-target="req_editor" data-name="comment" data-title="What do you say" data-pk="{{ request.id }}">{{ request.comment }}</a></td>
+		  <td class="one-line"><a href="#" data-target="req_editor" data-name="comment" data-title="What do you say" data-pk="{{ request.id }}">{{ request.comment }}</a></td>
 		  <td><a href="#" data-target="req_editor" data-name="po_number" data-title="Enter PO ID" data-pk="{{ request.id }}">{{ request.po_number |default:"" }}</a></td>
 		  <td><a href="#" data-target="req_editor" data-name="price_cny" title="Enter unit price (cny)" data-pk="{{ request.id }}">{{ request.price_cny |default:"" }}</a></td>
 		  <td class="l2_column hidden"><a href="#" data-target="req_editor" data-name="ex_rate" data-title="Enter exchange rate" data-pk="{{ request.id }}">{{ request.ex_rate |default:"" }}</a></td>
