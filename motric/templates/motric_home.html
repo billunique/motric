@@ -89,8 +89,9 @@
 	    </span>
 	</div> -->
 	<ul class="pagination" style="float:right">
+	  {% with current_location=request.GET.loc %}
 	  {% if device_list.has_previous %}
-	    <li><a href="?page={{ device_list.previous_page_number }}">&laquo;</a></li>
+	    <li><a href="?loc={{ current_location }}&page={{ device_list.previous_page_number }}">&laquo;</a></li>
 	  {% else %}
 	    <li class="disabled"><span>&laquo;</span></li>
 	  {% endif %}
@@ -98,13 +99,14 @@
 	    {% ifequal page_number  device_list.number %}
 	      <li class="active"><a>{{ page_number }}</a></li>
 	    {% else %}
-	      <li><a href="?page={{ page_number }}">{{ page_number }}</a></li>
+	      <li><a href="?loc={{ current_location }}&page={{ page_number }}">{{ page_number }}</a></li>
 	    {% endifequal %}
 	  {% endfor %}
 	  {% if device_list.has_next %}
-	    <li><a href="?page={{ device_list.next_page_number }}">&raquo;</a></li>
+	    <li><a href="?loc={{ current_location }}&page={{ device_list.next_page_number }}">&raquo;</a></li>
 	  {% else %}
 	    <li class="disabled"><span>&raquo;</span></li>
 	  {% endif %}
+	  {% endwith %}
 	</ul>
 {% endblock %}
