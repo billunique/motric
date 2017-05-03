@@ -500,7 +500,7 @@ $(document).ready(function(){
     		var td_project = $('td[data-pk=' + primary_key + '][data-name="project"]')
     		var td_price_c = $('a[data-pk=' + primary_key + '][data-name="price_cny"]')
     		var td_price_u = $('a[data-pk=' + primary_key + '][data-name="price_usd"]')
-    		if ( status != 'REF' && status != 'APP' && (td_price_c.text() == 'Empty' || td_price_u.text() == 'Empty') ){
+    		if ( (status == 'ASS' || status == 'AVA') && (td_price_c.text() == 'Empty' || td_price_u.text() == 'Empty') ){
     			alert("Please input complete price info first!");
     			$(this).val('');
     			return;

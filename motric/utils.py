@@ -236,10 +236,11 @@ def device_allocate(request):
         for i in range(len(ld_pk)):
             ld = LabDevice.objects.get(pk=ld_pk[i])
             ld_dict[ld_pk[i]]=ld.device_id
-            price_cny_sum += ld.price_cny
-            price_usd_sum += ld.price_usd
-            if ld.po_number not in po_number:
-                po_number.append(ld.po_number)
+            price_cny_sum += int(ld.price_cny or 0)
+            price_usd_sum += int(ld.price_usd or 0)
+            ld_po_number = str(ld.po_number or '')
+            if ld_po_number not in po_number:
+                po_number.append(ld_po_number)
             ld.owner = rd.requester.device_owner
             ld.label = rd.requester.device_label
             ld.project = rd.requester.project
