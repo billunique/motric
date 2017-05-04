@@ -243,3 +243,39 @@ tr td:hover button{
    /*width:auto;*/
    max-width: 500px;
 }
+
+.Gg, .o1, .o2, .l1, .e1  {
+    font-weight:bold;
+    font-size: 66px;
+}
+
+.Gg {
+    color:#4285F4;
+}
+
+.o1, .e1 {
+    color:#EA4335;
+}
+
+.o2 {
+    color:#FBBC05;
+}
+
+.l1 {
+    color:#34A853;
+}
+
+.centered_logo {
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  /* bring your own prefixes */
+  transform: translate(-50%, -50%);
+}
+
+.centered_searchbox {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}

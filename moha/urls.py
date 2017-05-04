@@ -22,6 +22,7 @@ urlpatterns = [
     url(r'^$', views.index, name='index'),
 	# url(r'^$', include('motric.urls')),
     url(r'^home/', views.home, name='home'),
+    url(r'^labdevice/', views.labdevice, name='labdevice'),
     url(r'^public_device/', views.public_device, name='public'),
     url(r'^dedicated_device/', views.dedicated_device, name='dedicated'),
     url(r'^broken_device/', views.broken_device, name='broken'),

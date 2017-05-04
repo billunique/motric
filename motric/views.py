@@ -9,6 +9,9 @@ def index(request):
 	return render(request, 'motric_nav.html')
 
 def home(request):
+	return render(request, 'motric_home.html')
+
+def labdevice(request):
 	device_list_all = LabDevice.objects.filter(status__in=['AVA', 'ASS']).order_by('-id')
 	q = request.GET.copy()
 	loc = q.get('loc')
@@ -33,7 +36,7 @@ def home(request):
 	except EmptyPage:
 	    # If page is out of range (e.g. 9999), deliver last page of results.
 	    device_list = paginator.page(paginator.num_pages)
-	return render(request, 'motric_home.html', {'device_list':device_list, 'count':count})
+	return render(request, 'motric_labdevice.html', {'device_list':device_list, 'count':count})
 
 def public_device(request):
 	device_list_all = LabDevice.objects.filter(status='AVA').order_by('-id')

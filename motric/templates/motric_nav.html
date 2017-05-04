@@ -3,7 +3,8 @@
 {% block body %}
 	<ul class="navul">
 	{% csrf_token %}
-	  <li><a class="active" href="/home/" target="main">Online Devices<span class="glyphicon glyphicon-home navicon"></a></li>
+	  <li><a class="active" href="/home/" target="main">Home<span class="glyphicon glyphicon-home navicon"></a></li>
+	  <li><a href="/labdevice/" target="main">Online Devices<span class="glyphicon glyphicon-cloud navicon"></a></li>
 	  <!-- <li><a href="/public_device/" target="main">Public Devices<span class="glyphicon glyphicon-eye-open navicon"></a></li> -->
 	  <!-- <li><a href="/dedicated_device/" target="main">Dedicated Devices<span class="glyphicon glyphicon-eye-close navicon"></a></li> -->
 	  <li><a href="/broken_device/" target="main">Broken Devices<span class="glyphicon glyphicon-wrench navicon"></a></li>
@@ -11,7 +12,7 @@
 	  <li><a href="/device_request/" target="main">Request Devices<span class="glyphicon glyphicon-phone navicon"></a></li>
 	  <li><a href="/request_disposal/" target="main">Pending Requests<span class="glyphicon glyphicon-bell navicon"></a></li>
 	  <li><a href="/request_history/?ao=all" target="main">Resolved Requests<span class="glyphicon glyphicon-record navicon"></a></li>
-	  <li><a href="http://mobileharness/" target="_blank">MH Frontend<span class="glyphicon glyphicon-new-window navicon"></a></li>
+	  <!-- <li><a href="http://mobileharness/" target="_blank">MH Frontend<span class="glyphicon glyphicon-new-window navicon"></a></li> -->
 	  <!-- <li><a href="http://go/mobileharness" target="_blank">MH UserGuide<span class="glyphicon glyphicon-leaf navicon"></a></li> -->
 	  <!-- <li><a href="http://go/ezreq" target="_blank">Pivt<span class="glyphicon glyphicon-usd navicon"></a></li> -->
 	  <!-- <li><a href="http://go/mh-labops-request" target="_blank">File Bug<span class="glyphicon glyphicon-send navicon"></a></li> -->
@@ -19,7 +20,7 @@
 	  <div style="margin:10 0 0 30;display:inline-block" id="signed_name"></div>
 	  <div style="margin:15 30 0 0;display:inline-block; font-size:12px; visibility:hidden" id="signout"><a href="#" onclick="SignOut()">(Sign out)</a></div>
 	  <li style="margin-top:120px;"><img src="{% static 'img/motric-logo_m.png' alt='motric-logo' %}"></li>
-	  <li style="margin:0 0 10 10;">Powerd by <span style="color:red">Mobile Harness Team</span> ©2017 </li>
+	  <li style="margin:0 0 10 10;">Powerd by <span style="color:red">Mobile Harness Team</span> ©2016-2017 </li>
 	</ul>
 	<iframe class="xframe" src="/home" name="main" ></iframe>
 {% endblock %}
