@@ -10,8 +10,10 @@
 	  <!-- <p>URL of this page: {{ request.get_full_path }}</p> -->
 	  <h4 style="float:left;margin-left:10">Totally <span class="noticeable">{{ count }}</span> devices   
 	  {% if request.path != "/broken_device/" %}
-	  <a class="btn btn-success bold" href="/public_device/" id="btn_public_device">Public Devices</a>
-	  <a class="btn btn-warning bold" href="/dedicated_device/" id="btn_dedicated_device">Dedicated Devices</a>
+		  
+		  <a class="btn btn-success bold {% if request.path == '/public_device/' %} disabled {% endif %}" href="/public_device/" id="btn_public_device">Public Devices</a>
+		  <a class="btn btn-warning bold {% if request.path == '/dedicated_device/' %} disabled {% endif %}" href="/dedicated_device/" id="btn_dedicated_device">Dedicated Devices</a>
+
 	  {% endif %}
 	  <a class="btn btn-link" style="margin-right:20;font-size:14" href="#" id="toggle-show">Show more columns</a>
 	  </h4>
