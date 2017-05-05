@@ -5,18 +5,27 @@
   <div class="container">
     <div class="centered_logo"><h1 style="display: inline-block;"><span class="Gg">M</span><span class="o1"> O</span><span class="o2"> T</span><span class="Gg"> R</span><span class="l1"> I</span><span class="e1"> C</span></h1><h4 style="display: inline-block;margin-left: 10px;vertical-align: %20;">of Mobile Harness<img src="/static/img/moha-48-mdpi.png" style="vertical-align: text-bottom;"></h4></div>
 
-    <form class="navbar-form" role="search">
-    {% csrf_token %} 
+    <form class="navbar-form" role="search" action="/search/">
+    <!-- {% csrf_token %} -->
     <div class="input-group centered_searchbox">
-      <input type="text" class="form-control mtinput" placeholder="Search by device id, model type, project, owner, etc." name="srch-term" id="srch-term" size="100">
+      <!-- <input type="hidden" name="by" value="id" /> -->
+      <input type="text" class="form-control mtinput" placeholder="Search by device id, model, project, owner, etc." name="q" id="srch-term" size="100" />
       <div class="input-group-btn">
         <button class="btn btn-primary glyphicon glyphicon-search mtinput" type="submit" id="search_submit"></button>
       </div>
     </div>
     </form>
 
-
-
+    <div class="centered_tips hidden">
+      <p><a href="#" id="tips-toggle">Search Syntax (basically it's quite similar to Mobile Harness FE)</a></p>
+      <div class="hidden" id="search-tips">
+      The syntax of the search query is like:
+      'id: 12345ABCDE'
+      'model: "nexus 5"'
+      'owner: xiawang'
+      It also supports multiple fields query.  seperate them by spaces, such as:
+      'model: "nexus 5" owner:mobileharness'.
+      </div>
   </div>
 
 {% endblock %}

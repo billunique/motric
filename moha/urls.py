@@ -39,6 +39,7 @@ urlpatterns = [
     url(r'^edit_labdevice/', utils.labdevice_editor, name='labd_editor'),
 
     url(r'^details/', utils.details, name='details'),
+    url(r'^search/', utils.search, name='search'),
     url(r'^device_replacement/', utils.device_replacement, name='replacement'),
     url(r'^register/', utils.device_register, name='labd_register'),
 

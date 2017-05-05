@@ -1,6 +1,6 @@
 {% extends 'motric_moresrc.html' %}
 
-{% block title %}All devices running on Mobile Harness{% endblock %}
+{% block title %}Online devices running on Mobile Harness{% endblock %}
 
 {% block body %}
 
@@ -9,7 +9,7 @@
 	  {% csrf_token %}
 	  <!-- <p>URL of this page: {{ request.get_full_path }}</p> -->
 	  <h4 style="float:left;margin-left:10">Totally <span class="noticeable">{{ count }}</span> devices   
-	  {% if request.path != "/broken_device/" %}
+	  {% if request.path != "/broken_device/" and request.path != "/search/" %}
 		  
 		  <a class="btn btn-success bold {% if request.path == '/public_device/' %} disabled {% endif %}" href="/public_device/" id="btn_public_device">Public Devices</a>
 		  <a class="btn btn-warning bold {% if request.path == '/dedicated_device/' %} disabled {% endif %}" href="/dedicated_device/" id="btn_dedicated_device">Dedicated Devices</a>
@@ -18,12 +18,14 @@
 	  <a class="btn btn-link" style="margin-right:20;font-size:14" href="#" id="toggle-show">Show more columns</a>
 	  </h4>
 
+	  {% if request.path != "/search/" %}
 	  <ul class="nav nav-tabs" style="float:right">
 		  <li><a href="{{ request.path }}">All</a></li>
 		  <li><a href="{{ request.path }}?loc=pek">PEK</a></li>
 		  <li><a href="{{ request.path }}?loc=mtv">MTV</a></li>
 		  <li><a href="{{ request.path }}?loc=twd">TWD</a></li>
 	  </ul>
+	  {% endif %}
 	  <thead>
 	  	<tr class="btn-primary">
 	  	  <th>#</th>
@@ -93,9 +95,9 @@
 	    </span>
 	</div> -->
 	<ul class="pagination" style="float:right">
-	  {% with current_location=request.GET.loc %}
+
 	  {% if device_list.has_previous %}
-	    <li><a href="?loc={{ current_location }}&page={{ device_list.previous_page_number }}">&laquo;</a></li>
+	    <li><a href="{{ first_param }}&page={{ device_list.previous_page_number }}">&laquo;</a></li>
 	  {% else %}
 	    <li class="disabled"><span>&laquo;</span></li>
 	  {% endif %}
@@ -103,14 +105,14 @@
 	    {% ifequal page_number  device_list.number %}
 	      <li class="active"><a>{{ page_number }}</a></li>
 	    {% else %}
-	      <li><a href="?loc={{ current_location }}&page={{ page_number }}">{{ page_number }}</a></li>
+	      <li><a href="{{ first_param }}&page={{ page_number }}">{{ page_number }}</a></li>
 	    {% endifequal %}
 	  {% endfor %}
 	  {% if device_list.has_next %}
-	    <li><a href="?loc={{ current_location }}&page={{ device_list.next_page_number }}">&raquo;</a></li>
+	    <li><a href="{{ first_param }}&page={{ device_list.next_page_number }}">&raquo;</a></li>
 	  {% else %}
 	    <li class="disabled"><span>&raquo;</span></li>
 	  {% endif %}
-	  {% endwith %}
+
 	</ul>
 {% endblock %}

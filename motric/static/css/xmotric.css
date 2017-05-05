@@ -279,3 +279,12 @@ tr td:hover button{
   left: 50%;
   transform: translate(-50%, -50%);
 }
+
+.centered_tips {
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size:14px;
+  text-decoration: none;
+}

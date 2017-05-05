@@ -178,6 +178,14 @@ $(document).ready(function(){
 	   $(this).addClass("active");
 	});
 
+	$("#tips-toggle").on("click", function() {
+		if($("#search-tips").attr('display') == 'none' ) {
+			$("#search-tips").removeClass('hidden');
+		}
+		else {
+			$("#search-tips").addClass('hidden');
+		}
+	});
 
 	var token = $('input[name="csrfmiddlewaretoken"]').prop('value');
 	var currency_rate = '6.8';

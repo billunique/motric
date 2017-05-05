@@ -36,7 +36,9 @@ def labdevice(request):
 	except EmptyPage:
 	    # If page is out of range (e.g. 9999), deliver last page of results.
 	    device_list = paginator.page(paginator.num_pages)
-	return render(request, 'motric_labdevice.html', {'device_list':device_list, 'count':count})
+
+	first_param = "?loc=" + str(loc or "")
+	return render(request, 'motric_labdevice.html', {'device_list':device_list, 'count':count, 'first_param':first_param})
 
 def public_device(request):
 	device_list_all = LabDevice.objects.filter(status='AVA').order_by('-id')
@@ -62,7 +64,9 @@ def public_device(request):
 	except EmptyPage:
 	    # If page is out of range (e.g. 9999), deliver last page of results.
 	    device_list = paginator.page(paginator.num_pages)
-	return render(request, 'motric_public.html', {'device_list':device_list, 'count':count})
+
+	first_param = "?loc=" + str(loc or "")
+	return render(request, 'motric_public.html', {'device_list':device_list, 'count':count, 'first_param':first_param})
 
 def dedicated_device(request):
 	device_list_all = LabDevice.objects.filter(status='ASS').order_by('-id')
@@ -88,7 +92,9 @@ def dedicated_device(request):
 	except EmptyPage:
 	    # If page is out of range (e.g. 9999), deliver last page of results.
 	    device_list = paginator.page(paginator.num_pages)
-	return render(request, 'motric_dedicated.html', {'device_list':device_list, 'count':count})
+
+	first_param = "?loc=" + str(loc or "")
+	return render(request, 'motric_dedicated.html', {'device_list':device_list, 'count':count, 'first_param':first_param})
 
 def broken_device(request):
 	device_list_all = LabDevice.objects.filter(status__in=['BRO', 'REP', 'RET', 'RTR']).order_by('-id')
@@ -114,7 +120,9 @@ def broken_device(request):
 	except EmptyPage:
 	    # If page is out of range (e.g. 9999), deliver last page of results.
 	    device_list = paginator.page(paginator.num_pages)
-	return render(request, 'motric_broken.html', {'device_list':device_list, 'count':count})
+
+	first_param = "?loc=" + str(loc or "")
+	return render(request, 'motric_broken.html', {'device_list':device_list, 'count':count, 'first_param':first_param})
 
 def device_request(request):
 	return render(request, 'motric_request.html')

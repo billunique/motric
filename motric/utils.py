@@ -3,9 +3,10 @@ from django.shortcuts import render
 from django.core.mail import send_mail, EmailMessage
 from django.utils import timezone
 from django.core import serializers
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django import forms
 from models import *
-import time, json, threading, getpass
+import time, json, threading, getpass, shlex
 
 def expection_carrier():
     import sys
@@ -267,13 +268,13 @@ def device_allocate(request):
         evt_rd = Event(request=rd, event=event_msg_rd)
         evt_rd.save()
     else: # status is 'ASS' or 'AVA'
-        ld_list = []
+        device_list = []
         serial_no = dict.pop('did') # got a list of serial number;
         if status == 'AVA':
             rd.requester.device_owner = 'mobileharness'
             rd.requester.project = 'PUBLIC'
         for i in range(len(serial_no)):
-            ld_list.append(serial_no[i])
+            device_list.append(serial_no[i])
             # ld = LabDevice(model=rd.model_type, device_id=serial_no[i], status=status, register_date=allocate_date, os=rd.os_version, owner=rd.requester.device_owner, label=rd.requester.device_label, project=rd.requester.project, lab_location=rd.lab_location) # LabDevice.model must be a RequestedDevice instance.
             ld = LabDevice(model=rd.model_type, device_id=serial_no[i], status=status, register_date=allocate_date, os=rd.os_version, owner=rd.requester.device_owner, label=rd.requester.device_label, project=rd.requester.project, lab_location=rd.lab_location, po_number=rd.po_number, po_date=rd.po_date, price_cny=rd.price_cny, price_usd=rd.price_usd) # Modified at 03/14/2017, to support registering device directly.
             ld.save()
@@ -286,13 +287,13 @@ def device_allocate(request):
             evt.save()
 
         event_msg_rd = log_generator(allocate_date, 'Allocate newly purchased device: <br/>' \
-            + json.dumps(ld_list), operator)
+            + json.dumps(device_list), operator)
         if len(serial_no) == required_qty:
             rd.status = status
             rd.resolved = True
             rd.resolved_date = allocate_date
             event_msg_rd = log_generator(allocate_date, 'Resolved by allocating newly purchased device to fulfill: <br/>' \
-            + json.dumps(ld_list), operator)
+            + json.dumps(device_list), operator)
         evt_rd = Event(request=rd, event=event_msg_rd)
         evt_rd.save()
     rd.save()
@@ -480,3 +481,58 @@ def import_sheet(request):
         request,
         'motric_upload_form.html',
         {'form': form})
+
+
+def search(request):
+    q = request.GET.copy()
+    data = json.dumps(q)
+    keyword = q.get('q')
+    page = q.get('page')
+    # by = q.get('by') # default by id.
+
+    list_kw = shlex.split(keyword)
+    # return HttpResponse(json.dumps(list_kw))
+
+    query = {}
+    for k in list_kw:
+        query[k.split(":")[0]] = k.split(":")[1]
+
+    # return HttpResponse(json.dumps(query))
+
+    device_id = query.get('id')
+    model = query.get('model')
+    project = query.get('project')
+    owner = query.get('owner')
+    lab_location = query.get('location')
+
+    device_list = LabDevice.objects.all()
+
+    if device_id:
+        device_list = device_list.filter(device_id=device_id)
+
+    if model:
+        device_list = device_list.filter(model=model)
+
+    if project:
+        device_list = device_list.filter(project=project)
+
+    if owner:
+        device_list = device_list.filter(owner=owner)
+
+    if lab_location:
+        device_list = device_list.filter(lab_location=lab_location)
+
+    count = device_list.count()
+    paginator = Paginator(device_list, 100) # Show 100 devices per page.
+    try:
+        device_list = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        device_list = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        device_list = paginator.page(paginator.num_pages)
+
+    full_path = request.get_full_path()
+    current_path = full_path.split("&")[0]
+    return render(request, 'motric_searchresult.html', {'device_list':device_list, 'count':count, 'first_param':current_path})
