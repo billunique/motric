@@ -490,39 +490,77 @@ def search(request):
     page = q.get('page')
     # by = q.get('by') # default by id.
 
+    # strin= shlex.shlex(keyword)
+    # strin.whitespace += ":"
+    # # strin.whitespace += "|"
+    # strin.whitespce_split = True
+    # strin.quotes += '|'
+    # list_kw = list(strin)
+
     list_kw = shlex.split(keyword)
     # return HttpResponse(json.dumps(list_kw))
 
-    query = {}
-    for k in list_kw:
-        query[k.split(":")[0]] = k.split(":")[1]
+    try:
+        query = {}
+        for k in list_kw:
+            query[k.split(":")[0]] = k.split(":")[1]
 
-    # return HttpResponse(json.dumps(query))
+        # return HttpResponse(json.dumps(query))
 
-    device_id = query.get('id')
-    model = query.get('model')
-    project = query.get('project')
-    owner = query.get('owner')
-    lab_location = query.get('location')
+        device_id = query.get('id')
+        model = query.get('model')
+        project = query.get('project')
+        owner = query.get('owner')
+        lab_location = query.get('location')
+        status = query.get('status')
+        label = query.get('label')
+        os = query.get('os')
 
-    device_list = LabDevice.objects.all()
+        status_dict = {'public':'AVA', 'assigned':'ASS', 
+        'requested':'REQ', 'approved':'APP', 'refused':'REF',
+        'ordered':'ORD', 'received':'REC', 'broken':'BRO',
+        'in repair':'REP', 'retrieved':'RET', 'retired':'RTR'}
 
-    if device_id:
-        device_list = device_list.filter(device_id=device_id)
+        device_list = LabDevice.objects.all()
 
-    if model:
-        device_list = device_list.filter(model=model)
+        if device_id:
+            ftr = device_id.split("|")
+            device_list = device_list.filter(device_id__in=ftr)
 
-    if project:
-        device_list = device_list.filter(project=project)
+        if model:
+            ftr = model.split("|")
+            device_list = device_list.filter(model__in=ftr)
 
-    if owner:
-        device_list = device_list.filter(owner=owner)
+        if project:
+            ftr = project.split("|")
+            device_list = device_list.filter(project__in=ftr)
 
-    if lab_location:
-        device_list = device_list.filter(lab_location=lab_location)
+        if owner:
+            ftr = owner.split("|")
+            device_list = device_list.filter(owner__in=ftr)
+
+        if lab_location:
+            ftr = lab_location.split("|")
+            device_list = device_list.filter(lab_location__in=ftr)
+
+        if label:
+            ftr = label.split("|")
+            device_list = device_list.filter(label__in=ftr)
+
+        if os:
+            ftr = os.split("|")
+            device_list = device_list.filter(os__in=ftr)
+
+        if status:
+            status_list = status.lower().split("|")
+            ftr = [ status_dict.get(x) for x in status_list]
+            device_list = device_list.filter(status__in=ftr)
+
+    except IndexError:
+        return HttpResponse("Please follow the search syntax and try again :)  --Click the question mark after the search box for quick help.")
 
     count = device_list.count()
+
     paginator = Paginator(device_list, 100) # Show 100 devices per page.
     try:
         device_list = paginator.page(page)

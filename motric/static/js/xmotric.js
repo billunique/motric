@@ -179,12 +179,22 @@ $(document).ready(function(){
 	});
 
 	$("#tips-toggle").on("click", function() {
-		if($("#search-tips").attr('display') == 'none' ) {
+		if($("#search-tips").css('display') == 'none' ) {
 			$("#search-tips").removeClass('hidden');
 		}
 		else {
 			$("#search-tips").addClass('hidden');
 		}
+	});
+
+	$("#search_submit").on("click", function() {
+		var dest = $("#search-box");
+		// alert(dest.val())
+		// dest.val(dest.val().split(" ").join(""))
+		dest.val(dest.val().replace(/\s*\|\s*/g, '|'))
+		dest.val(dest.val().replace(/\s*\:\s*/g, ':'))
+		// dest.val(dest.val().replace(/(\s*)\|(\s*)/, '|'))
+		// alert(dest.val())
 	});
 
 	var token = $('input[name="csrfmiddlewaretoken"]').prop('value');

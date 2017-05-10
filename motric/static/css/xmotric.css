@@ -267,7 +267,7 @@ tr td:hover button{
 
 .centered_logo {
   position: absolute;
-  top: 30%;
+  top: 22%;
   left: 50%;
   /* bring your own prefixes */
   transform: translate(-50%, -50%);
@@ -275,16 +275,18 @@ tr td:hover button{
 
 .centered_searchbox {
   position: absolute;
-  top: 40%;
+  top: 32%;
   left: 50%;
   transform: translate(-50%, -50%);
 }
 
 .centered_tips {
   position: absolute;
-  top: 45%;
-  left: 50%;
+  top: 52%;
+  left: 46%;
   transform: translate(-50%, -50%);
   font-size:14px;
+  color:white;
+  background-color:#666666;
   text-decoration: none;
 }
