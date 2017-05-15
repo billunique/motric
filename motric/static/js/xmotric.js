@@ -188,13 +188,17 @@ $(document).ready(function(){
 	});
 
 	$("#search_submit").on("click", function() {
-		var dest = $("#search-box");
-		// alert(dest.val())
+		var dest = $("#search_box");
 		// dest.val(dest.val().split(" ").join(""))
 		dest.val(dest.val().replace(/\s*\|\s*/g, '|'))
 		dest.val(dest.val().replace(/\s*\:\s*/g, ':'))
 		// dest.val(dest.val().replace(/(\s*)\|(\s*)/, '|'))
-		// alert(dest.val())
+	});
+
+	$("#mini_search_submit").on("click", function() {
+		var dest = $("#mini_search_bar");
+		dest.val(dest.val().replace(/\s*\|\s*/g, '|'))
+		dest.val(dest.val().replace(/\s*\:\s*/g, ':'))
 	});
 
 	var token = $('input[name="csrfmiddlewaretoken"]').prop('value');

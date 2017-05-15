@@ -557,7 +557,7 @@ def search(request):
             device_list = device_list.filter(status__in=ftr)
 
     except IndexError:
-        return HttpResponse("Please follow the search syntax and try again :)  --Click the question mark after the search box for quick help.")
+        return HttpResponse("Please follow the search syntax and try again :)  Click the question mark after the search box for quick help.")
 
     count = device_list.count()
 
