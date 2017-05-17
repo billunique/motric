@@ -160,7 +160,7 @@ def request_disposal(request):
 
 def request_history(request):
 	# request_list = RequestedDevice.objects.filter(status__in=['ASS', 'AVA', 'REF']).order_by('-id') # return a list with the lastest request shown first.
-	request_list = RequestedDevice.objects.filter(resolved=1).order_by('-id') # return a list with the lastest request shown first.
+	request_list = RequestedDevice.objects.filter(resolved=1).order_by('-resolved_date') # return a list with the lastest request shown first.
 	q = request.GET.copy()
 	# f = q['f']
 	s = q.get('s')

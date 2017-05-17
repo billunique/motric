@@ -68,6 +68,7 @@ function onSignIn(googleUser) {
   console.log('Email: ' + profile.getEmail());
   var ldap = profile.getEmail().split('@')[0];
   console.log('Ldap: ' + ldap);
+  console.log(window.location.href)
   operator = ldap;
 
   var name = profile.getGivenName();
@@ -78,16 +79,6 @@ function onSignIn(googleUser) {
   document.getElementById("signin_close").classList.remove('hidden');
   document.getElementById("dont_clickme1").classList.add('hidden');
   document.getElementById("dont_clickme2").classList.add('hidden');
-
-  var token = $('input[name="csrfmiddlewaretoken"]').prop('value');
-  $.ajax({
-      type: 'POST',
-      url: '/who/',
-      data: {operator: ldap, 'csrfmiddlewaretoken': token},
-      success: function(result) {
-        // Handle or verify the server response.
-      },
-    });
 }
 
 function SignIn() {
@@ -961,7 +952,7 @@ $(document).ready(function(){
 			    var profile = guser.getBasicProfile();
 			    console.log(window.location);
 			    // console.log('Current User: ', guser);
-			    console.log('User profile: ', profile);
+			    // console.log('User profile: ', profile);
 			    if (profile === undefined) {
 			    	var token = $('input[name="csrfmiddlewaretoken"]').prop('value');
 			    	var yip;
