@@ -268,32 +268,44 @@ def device_allocate(request):
         evt_rd = Event(request=rd, event=event_msg_rd)
         evt_rd.save()
     else: # status is 'ASS' or 'AVA'
+        lds = LabDevice.objects.all()
+        id_list = [e.device_id for e in lds]
+        duplicates = []
         device_list = []
         serial_no = dict.pop('did') # got a list of serial number;
         if status == 'AVA':
             rd.requester.device_owner = 'mobileharness'
             rd.requester.project = 'PUBLIC'
-        for i in range(len(serial_no)):
-            device_list.append(serial_no[i])
-            # ld = LabDevice(model=rd.model_type, device_id=serial_no[i], status=status, register_date=allocate_date, os=rd.os_version, owner=rd.requester.device_owner, label=rd.requester.device_label, project=rd.requester.project, lab_location=rd.lab_location) # LabDevice.model must be a RequestedDevice instance.
-            ld = LabDevice(model=rd.model_type, device_id=serial_no[i], status=status, register_date=allocate_date, os=rd.os_version, owner=rd.requester.device_owner, label=rd.requester.device_label, project=rd.requester.project, lab_location=rd.lab_location, po_number=rd.po_number, po_date=rd.po_date, price_cny=rd.price_cny, price_usd=rd.price_usd) # Modified at 03/14/2017, to support registering device directly.
-            ld.save()
-            # ld.respond_to.add(rd)
-            rr = ResponseRelationship.objects.create(device=ld, request=rd, response_date=allocate_date)
-            rr.save()
-            ld.save()
-            event_msg = log_generator(allocate_date, 'Made <span class="bold">' + ld.get_status_display() + '</span>, from new purchase.', operator)
-            evt = Event(device=ld, event=event_msg)
-            evt.save()
+        for i in range(len(serial_no)):  ##------------------------------ This section learns from function device_register().
+            if serial_no[i] not in id_list:
+                device_list.append(serial_no[i])
+                # ld = LabDevice(model=rd.model_type, device_id=serial_no[i], status=status, register_date=allocate_date, os=rd.os_version, owner=rd.requester.device_owner, label=rd.requester.device_label, project=rd.requester.project, lab_location=rd.lab_location) # LabDevice.model must be a RequestedDevice instance.
+                ld = LabDevice(model=rd.model_type, device_id=serial_no[i], status=status, register_date=allocate_date, os=rd.os_version, owner=rd.requester.device_owner, label=rd.requester.device_label, project=rd.requester.project, lab_location=rd.lab_location, po_number=rd.po_number, po_date=rd.po_date, price_cny=rd.price_cny, price_usd=rd.price_usd) # Modified at 03/14/2017, to support registering device directly.
+                ld.save()
+                # ld.respond_to.add(rd)
+                rr = ResponseRelationship.objects.create(device=ld, request=rd, response_date=allocate_date)
+                rr.save()
+                ld.save()
+                event_msg = log_generator(allocate_date, 'Made <span class="bold">' + ld.get_status_display() + '</span>, from new purchase.', operator)
+                evt = Event(device=ld, event=event_msg)
+                evt.save()
+            else:
+                register_id = lds.get(device_id=serial_no[i]).id
+                duplicates.append(serial_no[i] + ' (#' + str(register_id) + ')')
 
-        event_msg_rd = log_generator(allocate_date, 'Allocate newly purchased device: <br/>' \
-            + json.dumps(device_list), operator)
-        if len(serial_no) == required_qty:
-            rd.status = status
-            rd.resolved = True
-            rd.resolved_date = allocate_date
-            event_msg_rd = log_generator(allocate_date, 'Resolved by allocating newly purchased device to fulfill: <br/>' \
-            + json.dumps(device_list), operator)
+        if device_list != []:
+            event_msg_rd = log_generator(allocate_date, 'Allocate newly purchased device: <br/>' \
+                + json.dumps(device_list), operator)
+        else:
+            event_msg_rd = log_generator(allocate_date, 'Allocating duplications, allocation failed.', operator)
+
+        if duplicates == []:
+            if len(serial_no) == required_qty:
+                rd.status = status
+                rd.resolved = True
+                rd.resolved_date = allocate_date
+                event_msg_rd = log_generator(allocate_date, 'Resolved by allocating newly purchased device to fulfill: <br/>' \
+                + json.dumps(device_list), operator)
         evt_rd = Event(request=rd, event=event_msg_rd)
         evt_rd.save()
     rd.save()
@@ -301,7 +313,7 @@ def device_allocate(request):
     # except:
         # return HttpResponse(expection_carrier())
 
-    return HttpResponse('Saved successfully!')
+    return HttpResponse(json.dumps(duplicates))
     # return HttpResponseRedirect('/request_disposal/')
 
 def details(request):
@@ -415,7 +427,7 @@ def device_register(request):
             evt.save()
         else:
             register_id = lds.get(device_id=device_id[i]).id
-            duplicates.append(device_id[i] + '(#' + str(register_id) + ')')
+            duplicates.append(device_id[i] + ' (#' + str(register_id) + ')')
     return HttpResponse(json.dumps(duplicates))
 
 

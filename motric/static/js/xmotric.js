@@ -681,29 +681,39 @@ $(document).ready(function(){
         })
         // ## .done(), .fail(), .always() are alternative constructs to the callback options of success(), error(), complete(), the latter will be deprecated as of jQuery 3.0.
         .done(function(data) {
-            toastr.success('Saved successfully!', {timeOut: 2000});
-            $('#allocation_modal').modal('hide');
-            $('#allocation_table').children().remove();
-            if ( shots == required_qty ){
-            	$('a[data-pk=' + primary_key + ']').parent().parent().fadeOut(1000);
-            } else {
-            	// $('input[data-pk=' + primary_key + '][data-name="lab_location"]').val(new_location);
-            }
-        })
-        .fail(function(xhr) {
-        	exceptionType = 'IntegrityError'
-        	var xtext = xhr.responseText
-        	if ( xtext.indexOf(exceptionType) > -1 ) {
-        		var start = xtext.indexOf("Duplicate entry")
-        		substring = xtext.substr(start, 200)  // 200 is long enough to get the subtring that contains the device id.
-        		did = substring.split("\'")[1]
-
-        		alert("Error! you input device that already exists: " + did +".\n\nServer only tell me one duplicate entry at one time, so please exclude devices one by one :)")
+        	if (data != "[]") { // If no duplication, server only return a empty list [], else return the list of duplicates.
+        		alert("Devices already exist:\n\n" + data)
         	}
         	else {
-        		alert("Error! You might input something illegal.")
+        		toastr.success('Saved successfully!', {timeOut: 2000});
+        		$('#allocation_modal').modal('hide');
+        		$('#allocation_table').children().remove();
+        		if ( shots == required_qty ){
+        			$('a[data-pk=' + primary_key + ']').parent().parent().fadeOut(1000);
+        		} else {
+        			// $('input[data-pk=' + primary_key + '][data-name="lab_location"]').val(new_location);
+        		}
         	}
-        });	
+
+        })
+        /* ---------- (UPDATED 170518) Duplication elimination is better to be done on server side before trying to write data to database. --------*/
+        // .fail(function(xhr) {
+        // 	exceptionType = 'IntegrityError'
+        // 	var xtext = xhr.responseText
+        // 	if ( xtext.indexOf(exceptionType) > -1 ) {
+        // 		var start = xtext.indexOf("Duplicate entry")
+        // 		substring = xtext.substr(start, 200)  // 200 is long enough to get the subtring that contains the device id.
+        // 		did = substring.split("\'")[1]
+
+        // 		alert("Error! you input device that already exists: " + did +".\n\nServer only tell me one duplicate entry at one time, so please exclude devices one by one :)")
+        // 	}
+        // 	else {
+        // 		alert("Error! You might input something illegal.")
+        // 	}
+        // });
+        .fail(function(xhr) {
+        	alert("Error! You might input something illegal.")
+        })
         event.preventDefault();
 	});
 
@@ -982,7 +992,7 @@ $(document).ready(function(){
 
 		}, 2000);  // Set latency to make sure the login status is obtained after the page loaded completely.
 
-		if ( location.pathname == '/request_disposal/' || location.pathname == '/device_register/') {
+		if ( location.pathname == '/request_disposal/' || location.pathname == '/device_register/' || location.pathname == '/request_history/' ) {
 			$.ajax({
 				type: 'GET',
 				dataType: 'jsonp',
@@ -993,7 +1003,7 @@ $(document).ready(function(){
 				crossDomain: true,
 				success: function(data) {
 					// var jsonobj = JSON.parse(data);
-					console.log('Newest currency(USD -> CNY): ', data.rates.CNY);
+					console.warn('Newest currency(USD -> CNY): ', data.rates.CNY);
 					currency_rate = data.rates.CNY;
 				}
 			});
