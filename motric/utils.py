@@ -447,7 +447,8 @@ def response_checker(request):
     ld_set = LabDevice.objects.filter(respond_to=pk)
     did_list = []
     for ld in ld_set:
-        did_list.append(ld.device_id)
+        device_item = ld.device_id + ' (#' + str(ld.id) + ')'
+        did_list.append(device_item)
     response_data = json.dumps(did_list)
     return HttpResponse(response_data)
 

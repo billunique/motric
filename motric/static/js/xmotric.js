@@ -131,6 +131,7 @@ function getLdap() {
 	return ldap;
 }
 
+/* Retreive responsed device list from server, pass it to handleResult to handle */
 function getResponseStatus(primary_key, handleResult) {
 	var token = $('input[name="csrfmiddlewaretoken"]').prop('value');
 	var array = []
@@ -476,21 +477,6 @@ $(document).ready(function(){
 	});
 
 
-
-
-	// $('a[data-type="select"]').editable({
-	// 	placement: 'left',
- //        value: '',    
- //        source: [
- //        	{value: '', text: 'not selected'},
- //            {value: 'REF', text: 'Decline'},
- //            {value: 'APP', text: 'Approve'},
- //            {value: 'AVA', text: 'Make public'},
- //            {value: 'ASS', text: 'Allocate'}
- //        ]
- //    });
-
-
 	// $('#rate').tooltip({title:"Click me to edit the exchage rate in one place!!!", placement:"bottom"});  //Weired behavior: cause the table column auto-grow.
 
 
@@ -617,7 +603,7 @@ $(document).ready(function(){
 					$('#inst').html('You can now allocate device to users from newly purchased devices. Input <b><span style="color:red">device id</b>(for Android, it is serial number, for iOS, it is unique identifier) please.');
 					$('#title').html('Allocate Newly Purchased Devices');
 					for (n = 0; n < responsed_qty; n++) {
-						$('#allocation_table').append('<tr><td style="padding:10px">' + model + '</td><td><input type="text" class="form-control" value=' + device_array[n] + ' name="did" disabled></td></tr>');
+						$('#allocation_table').append('<tr><td style="padding:10px">' + model + '</td><td><input type="text" class="form-control" value="' + device_array[n] + '" name="did" disabled></td></tr>');
 					}
 					for (i = 0; i < required_qty; i++) {
 						$('#allocation_table').append('<tr><td style="padding:10px">' + model + '</td><td><input type="text" class="form-control" placeholder="input device id" name="did" ></td></tr>');
@@ -627,7 +613,7 @@ $(document).ready(function(){
 					$('#inst').html('You can now allocate device to users from public pool. Input <b><span style="color:red">first #</span></b> on the <a href="/public_device/" target="_blank">public devices</a> page please.');
 					$('#title').html('Allocate Public Devices');
 					for (n = 0; n < responsed_qty; n++) {
-						$('#allocation_table').append('<tr><td style="padding:10px">' + model + '</td><td><input type="text" class="form-control" value=' + device_array[n] + ' name="pkid" disabled></td></tr>');
+						$('#allocation_table').append('<tr><td style="padding:10px">' + model + '</td><td><input type="text" class="form-control" value="' + device_array[n] + '" name="pkid" disabled></td></tr>');
 					}
 					for (i = 0; i < required_qty; i++) {
 						$('#allocation_table').append('<tr><td style="padding:10px">' + model + '</td><td><input type="text" class="form-control" placeholder="input first #" name="pkid" ></td></tr>');
@@ -637,7 +623,7 @@ $(document).ready(function(){
 					$('#inst').html('Register the newly purchased devices and put them into PUBLIC pool of our lab.');
 					$('#title').html('Make Device Public');
 					for (n = 0; n < responsed_qty; n++) {
-						$('#allocation_table').append('<tr><td style="padding:10px">' + model + '</td><td><input type="text" class="form-control" value=' + device_array[n] + ' name="did" disabled></td></tr>');
+						$('#allocation_table').append('<tr><td style="padding:10px">' + model + '</td><td><input type="text" class="form-control" value="' + device_array[n] + '" name="did" disabled></td></tr>');
 					}
 					for (i = 0; i < required_qty; i++) {
 						$('#allocation_table').append('<tr><td style="padding:10px">' + model + '</td><td><input type="text" class="form-control" placeholder="input device id" name="did" ></td></tr>');
