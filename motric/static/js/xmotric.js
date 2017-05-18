@@ -906,7 +906,7 @@ $(document).ready(function(){
         })
         .done(function(data) {
         	if (data != "[]") { // If the device isn't a duplicate, server only return a empty list [], else return the list of duplicates.
-        		alert("Devices already exists:\n\n" + data)
+        		alert("Devices already exist:\n\n" + data)
         	}
         	else {
         		toastr.success('Saved successfully!', {timeOut: 2000});

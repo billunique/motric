@@ -414,8 +414,9 @@ def device_register(request):
             evt = Event(device=ld, event=log_generator(ld.register_date, 'Device registered directly.', operator))
             evt.save()
         else:
-            duplicates.append(device_id[i])
-    return HttpResponse(json.dumps(duplicates)) # Meaningless, only useful for debug.
+            register_id = lds.get(device_id=device_id[i]).id
+            duplicates.append(device_id[i] + '(#' + str(register_id) + ')')
+    return HttpResponse(json.dumps(duplicates))
 
 
 def syncer(request):
@@ -516,6 +517,7 @@ def search(request):
         status = query.get('status')
         label = query.get('label')
         os = query.get('os')
+        register_id = query.get('#')
 
         status_dict = {'public':'AVA', 'assigned':'ASS', 
         'requested':'REQ', 'approved':'APP', 'refused':'REF',
@@ -556,6 +558,10 @@ def search(request):
             status_list = status.lower().split("|")
             ftr = [ status_dict.get(x) for x in status_list]
             device_list = device_list.filter(status__in=ftr)
+
+        if register_id:
+            ftr = register_id.split("|")
+            device_list = device_list.filter(id__in=ftr)
 
     except IndexError:
         return HttpResponse("Please follow the search syntax and try again :)  Click the question mark after the search box for quick help.")
