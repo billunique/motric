@@ -85,7 +85,7 @@ def form_receiver(request):
             rd = RequestedDevice(model_type=model_type[i], os_version=os_version[i], quantity=quantity[i], requester=usr, request_date=timezone.now(), comment=comment, status=status)
             rd.save()
             # combo += ' * ' + model_type[i] + ' x ' + quantity[i] +'\t<span style="float:right">http://' + motric_host + '/details/?t=r&pk=' + str(rd.pk) + '</span><br/>'
-            combo += '<tr><td>' + model_type[i] + ' * ' + quantity[i] + '</td><td>http://' + motric_host + '/details/?t=r&pk=' + str(rd.pk) + '</td></tr>'
+            combo += '<tr><td>' + model_type[i] + ' * ' + quantity[i] + '</td><td>https://' + motric_host + '/details/?t=r&pk=' + str(rd.pk) + '</td></tr>'
         combo += '</table>'
 
     except KeyError:
