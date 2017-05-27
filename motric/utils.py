@@ -317,8 +317,8 @@ def device_allocate(request):
         subject = '[Motric]Updates of your device request for mobile-harness'
         sender = 'mobileharness.motric@gmail.com'
         recipient = [requester  + '@google.com']
-        cc_rcpt = ['xiawang@google.com']
-        # cc_rcpt = ['mobileharness-ops@google.com', 'mobileharness-ops-mtv@google.com']
+        # cc_rcpt = ['xiawang@google.com']
+        cc_rcpt = ['mobileharness-ops@google.com', 'mobileharness-ops-mtv@google.com']
 
         id_comb = ''
         lds_resp = LabDevice.objects.filter(respond_to=rd)
