@@ -67,7 +67,7 @@ def form_receiver(request):
 
         server = form_dict.get('svr')
 
-        combo = '<table cellpadding="3">'
+        combo = '<table cellpadding="3" border="1" style="border:2px solid gray; border-collapse:collapse">'
         motric_host = "motric"
         subject = '[Motric]Somebody raised device request!'
         sender = 'mobileharness.motric@gmail.com'
@@ -228,6 +228,8 @@ def device_allocate(request):
     # if status == 'LOC':
     #     rd.lab_location = dict['location']
     # else:
+    
+    duplicates = []
     if status == 'CUR':
         price_cny_sum = 0
         price_usd_sum = 0
@@ -265,12 +267,12 @@ def device_allocate(request):
             rd.po_number = ",".join(po_number)
             event_msg_rd = log_generator(allocate_date, 'Resolved by allocating current devices from public pool to fulfill: <br/>' \
             + json.dumps(ld_dict), operator)
+
         evt_rd = Event(request=rd, event=event_msg_rd)
         evt_rd.save()
     else: # status is 'ASS' or 'AVA'
         lds = LabDevice.objects.all()
         id_list = [e.device_id for e in lds]
-        duplicates = []
         device_list = []
         serial_no = dict.pop('did') # got a list of serial number;
         if status == 'AVA':
@@ -309,6 +311,31 @@ def device_allocate(request):
         evt_rd = Event(request=rd, event=event_msg_rd)
         evt_rd.save()
     rd.save()
+
+    if rd.resolved:
+        requester = rd.requester.ldap
+        subject = '[Motric]Updates of your device request for mobile-harness'
+        sender = 'mobileharness.motric@gmail.com'
+        recipient = [requester  + '@google.com']
+        cc_rcpt = ['xiawang@google.com']
+        # cc_rcpt = ['mobileharness-ops@google.com', 'mobileharness-ops-mtv@google.com']
+
+        id_comb = ''
+        lds_resp = LabDevice.objects.filter(respond_to=rd)
+        for e in lds_resp:
+            id_comb += e.device_id + '|'
+        id_comb = id_comb[:-1]
+        moha_url = 'https://mobileharness.corp.google.com/lab.html#subpage=DEVICE_SEARCH&q=id:' + id_comb
+        
+        message = "Dear " + requester + ",<br/><br/>This is to inform you that your device request for " + rd.model_type + " (quantity: " + str(rd.quantity) + ") is fulfilled.<br/>" + "The devices have been set up, please check here:" + moha_url + "<br/><br/>Thank you for using Mobile Harness and happy playing!"
+        motric_send_mail(
+            subject,
+            message,
+            sender,
+            recipient, 
+            cc_rcpt
+        )
+
 
     # except:
         # return HttpResponse(expection_carrier())
