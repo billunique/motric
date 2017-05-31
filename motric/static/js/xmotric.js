@@ -9,7 +9,7 @@ function addDevice() {
 
 	var imodel = document.createElement("INPUT");
 	imodel.setAttribute("type", "text");
-	imodel.setAttribute("class", "mtinput form-control");
+	imodel.setAttribute("class", "mtinput form-control device_extraline");
 	imodel.setAttribute("id", "device" + abrow);
 	imodel.setAttribute("name", "device");
 	model.appendChild(imodel);
@@ -880,6 +880,30 @@ $(document).ready(function(){
 
 		window.scrollTo(0,document.body.scrollHeight)  // Scroll automatically to the bottom of the page.
 
+	});
+
+	$('#moha-device-request').on('submit', function(event) {
+
+    	$(this).find('.device_extraline').each(function (){
+    		if ($.trim($(this).val()) === '') {
+    			$(this).parent().parent().remove(); // Remove the whole line if model type isn't defined.
+				// $(this).prop("disabled", true);
+				// $(this).attr("disabled", "disabled");
+    		}
+
+    		return true;
+    	});
+
+    	vals = $(this).serialize() + '&opt=' + operator;
+    	console.log(vals);
+    	// $.ajax({
+     //        url: '/request/',
+     //        type: 'post',
+     //        // dataType: 'json',
+     //        data: vals,
+     //    })
+
+    	// event.preventDefault();
 	});
 
 	$('#device_register_form').on('submit', function(event) {

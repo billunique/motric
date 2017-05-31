@@ -85,17 +85,19 @@ def form_receiver(request):
             rd = RequestedDevice(model_type=model_type[i], os_version=os_version[i], quantity=quantity[i], requester=usr, request_date=timezone.now(), comment=comment, status=status)
             rd.save()
             # combo += ' * ' + model_type[i] + ' x ' + quantity[i] +'\t<span style="float:right">http://' + motric_host + '/details/?t=r&pk=' + str(rd.pk) + '</span><br/>'
-            combo += '<tr><td>' + model_type[i] + ' * ' + quantity[i] + '</td><td>https://' + motric_host + '/details/?t=r&pk=' + str(rd.pk) + '</td></tr>'
+            combo += '<tr><td>' + model_type[i] + ' * ' + quantity[i] + '</td><td>http://' + motric_host + '/details/?t=r&pk=' + str(rd.pk) + '</td></tr>'
         combo += '</table>'
 
     except KeyError:
         return HttpResponse("No corresponding key found!")
+    except IndexError:
+        return HttpResponse("You might input something which causes the list index out of range, please check and try again.")
     except ValueError: # invalid literal for int() with base 10: '' if only one line of device request submitted.
         pass
     # except:
     #     return HttpResponse(expection_carrier())
 
-    message = ldap + ' raised device request for:<br/><br/>' + combo + '<br/>You can also go to http://' + motric_host + '/request_disposal/?f=req for overviews.'
+    message = ldap + ' raised device request for:<br/><br/>' + combo + '<p>You can also go to http://' + motric_host + '/request_disposal/?f=req for overviews.</p>'
     motric_send_mail(
         subject,
         message,
