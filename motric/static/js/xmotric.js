@@ -566,7 +566,7 @@ $(document).ready(function(){
 /* When user clicks Yes on the confirm modal. */
 	$('#yes').on('click', {pk: primary_key}, function(event) {
 
-  		$.post('/edit_request/', {pk: primary_key, name: 'status', value:'REF', 'csrfmiddlewaretoken': token, ov:'Requested', 'opt':operator})
+  		$.post('/edit_request/', {pk: primary_key, name: 'status', value:'REF', 'csrfmiddlewaretoken': token, ov:'Requested', 'opt':operator, 'reason':$('#refuse_reason').val()})
   			.done( function(response) {
   				// alert('Response is ' + response);
   				$('a[data-pk=' + primary_key + ']').parent().parent().fadeOut(1000);

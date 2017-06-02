@@ -6,7 +6,7 @@ from django.core import serializers
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django import forms
 from models import *
-import time, json, threading, getpass, shlex
+import time, json, threading, getpass, shlex, socket
 
 def expection_carrier():
     import sys
@@ -127,13 +127,14 @@ def request_editor(request):
     column_value = p.get('value')
     oldvalue = p.get('ov')
     operator = p.get('opt')
+    reason = p.get('reason')
 
     requester = rd.requester.ldap
     subject = "[Motric]Updates of your device request for mobile-harness"
     sender = 'mobileharness.motric@gmail.com'
     recipient = [requester + '@google.com']
-    cc_rcpt = []
-    # cc_rcpt = ['mobileharness-ops@google.com']
+    # cc_rcpt = []
+    cc_rcpt = ['mobileharness-ops@google.com', 'mobileharness-ops-mtv@google.com']
 
     # if column == 'po_number':
     #     rd.po_number = column_value
@@ -146,29 +147,33 @@ def request_editor(request):
 
     rd.__dict__[column] = column_value
     response = column_value
+    motric_host = "motric"
+    if 'motric' not in socket.gethostname():
+        motric_host = "xiawang.bej:8080"
+    url = "http://" + motric_host + "/details/?t=r&pk=" + pk
 
     if column == 'status':
         if column_value == 'REF': # status'value could be REF-refuse, ORD-ordered, etc.
             rd.resolved = True
-            body = "Dear " + requester + ",<br/><br/>We're sorry that your device request for " + rd.model_type + " (quantity: " + str(rd.quantity) + ") is temporarily refused for some reason.<br/>" + "Please contact mobileharness-ops@goole.com for details."
+            body = "Dear " + requester + ",<br/><br/>We're sorry that your device request for " + rd.model_type + " * " + str(rd.quantity) + " (" + url + ") is temporarily refused for the reason: <b>" + reason + "</b><br/><br/>You can contact mobileharness-ops@goole.com for details."
 
         if column_value == 'APP':
             rd.approve_date = timezone.now();
-            body = "Dear " + requester + ",<br/><br/>This is to inform you that your device request for " + rd.model_type + " (quantity: " + str(rd.quantity) + ") is approved.<br/>" + "We will start your purchase order shortly. Please stay tuned."
+            body = "Dear " + requester + ",<br/><br/>This is to inform you that your device request for " + rd.model_type + " * " + str(rd.quantity) + " (" + url + ") is approved.<br/>" + "We will start your purchase order shortly. Please stay tuned."
 
         if column_value == 'ORD': # this request is autoly submit after the po_number is inputted, so rd.po_number has gotten value.
             rd.po_date = timezone.now()
             # url = "https://pivt.googleplex.com/viewPo?poid=" + rd.po_number
             # body = "Dear " + requester + ",<br/><br/>This is to inform you that your device request for " + rd.model_type + " (quantity: " + str(rd.quantity) + ") is approved.<br/>" + "We have started your purchase order: " + url + " Please stay tuned."
             # body = "Dear " + requester + ",<br/><br/>This is to inform you that the purchase order for your request is raised.<br/>" + "You can check it here: " + url + " Looking forward to seeing you get and run these devices."
-            body = "Dear " + requester + ",<br/><br/>This is to inform you that the purchase order for your request is raised.<br/>Looking forward to seeing you get and run these devices on Mobile Harness."
+            body = "Dear " + requester + ",<br/><br/>This is to inform you that the purchase order of your request for " + rd.model_type + " * " + str(rd.quantity) + " (" + url + ") is raised.<br/>Looking forward to seeing you get and run these devices on Mobile Harness."
 
         if column_value == 'REC':
             rd.receive_date = timezone.now();
-            url = "https://motric/details/?t=r&pk=" + pk
-            body = "Hi Gang,<br/><br/>This is to inform you that the devices of request " + url + " already arrived.<br/>" + "Yanyan will hand them to you, please be ready to register them and make them online."
-            recipient = ['ligang@google.com', 'yanyanl@google.com']
-            cc_rcpt = ['xiawang@google.com', 'jinrui@google.com', 'derekchen@google.com', 'joyl@google.com', 'nanz@google.com']
+            # body = "Dear " + requester + ",<br/><br/>This is to inform you that the devices of request " + url + " already arrived.<br/>" + "Yanyan will hand them to you, please be ready to register them and make them online."
+            body = "Dear " + requester + ",<br/><br/>This is to inform you that the devices of your request for " + rd.model_type + " * " + str(rd.quantity) + " (" + url + ")  already arrived.<br/>" + "We will set up and make them online soon, and will inform you once they are ready."
+
+        body += "<br/><p>Best regards,<br/>Mobile Harness team</p>"
 
         # email = EmailMessage(subject, body, sender, recipient, cc_rcpt, headers={'Cc': ','.join(cc_rcpt)})  # headers section must be included into the EmailMessage brackets.
         # email.send(fail_silently=False)
@@ -319,7 +324,7 @@ def device_allocate(request):
         subject = '[Motric]Updates of your device request for mobile-harness'
         sender = 'mobileharness.motric@gmail.com'
         recipient = [requester  + '@google.com']
-        # cc_rcpt = ['xiawang@google.com']
+        cc_rcpt = ['xiawang@google.com']
         cc_rcpt = ['mobileharness-ops@google.com', 'mobileharness-ops-mtv@google.com']
 
         id_comb = ''
@@ -329,7 +334,8 @@ def device_allocate(request):
         id_comb = id_comb[:-1]
         moha_url = 'https://mobileharness.corp.google.com/lab.html#subpage=DEVICE_SEARCH&q=id:' + id_comb
         
-        message = "Dear " + requester + ",<br/><br/>This is to inform you that your device request for " + rd.model_type + " (quantity: " + str(rd.quantity) + ") is fulfilled.<br/>" + "The devices have been set up, please check here:" + moha_url + "<br/><br/>Thank you for using Mobile Harness and happy playing!"
+        message = "Dear " + requester + ",<br/><br/>This is to inform you that your device request for " + rd.model_type + " * " + str(rd.quantity) + " is fulfilled.<br/>" + "The devices have been set up, please check here:" + moha_url + "<br/><br/>Thank you for using Mobile Harness and happy playing!<br/><p>Best regards,<br/>Mobile Harness team</p>"
+
         motric_send_mail(
             subject,
             message,
