@@ -1,0 +1,46 @@
+{% extends 'motric_moresrc.html' %}
+
+{% block title %}Statistics of Malfunction & Broken{% endblock %}
+
+{% block body %}
+  <div class="container">
+	<h3>Overall statistics of device malfunction & broken</h3>
+	<br/>
+	<table class="table table-bordered font-compacted">
+		<caption style="font-size: 16">Soft Malfunction</caption>
+	  	<tr>
+	  	  <th class="btn-primary">Type</th>
+	  	  <th class="btn-warning" title="total occurence on all devices">Occurence</th>
+	  	  <th class="btn-success" title="on how many devices did it occur">Scale</th>
+	  	  <th class="btn-danger">Percentage</th>
+	  	</tr>
+	  	{% for type, count in soft_mal_list %}
+	  	<tr>
+	  	  <td>{{ type }}</td>
+	  	  <td>{{ count }}</td>
+	  	  <td>{{ xlist }}</td>
+	  	  <td>{% widthratio count soft_sum 100 %}</td>
+	  	</tr>
+		{% endfor %}
+	</table>
+
+	<table class="table table-bordered font-compacted">
+		<caption style="font-size: 16">Hard Malfunction</caption>
+	  	<tr>
+	  	  <th class="btn-primary">Type</th>
+	  	  <th class="btn-warning" title="total occurence on all devices">Occurence</th>
+	  	  <th class="btn-success" title="on how many devices did it occur">Scale</th>
+	  	  <th class="btn-danger">Percentage</th>
+	  	</tr>
+	  	{% for mal in hard_mal_list %}
+	  	<tr>
+	  	  <td>{{ mal.0 }}</td>
+	  	  <td>{{ mal.1 }}</td>
+	  	  <td>{{ mal }}</td>
+	  	  <td>{% widthratio mal.1 hard_sum 100 %}</td>
+	  	</tr>
+		{% endfor %}
+	</table>
+  </div>
+
+{% endblock %}

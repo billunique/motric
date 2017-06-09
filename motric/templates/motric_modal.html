@@ -85,3 +85,97 @@
     </div>
   </div>
 </div>
+
+
+<div class="modal fade" id="malfunction_modal" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Log malfunction event</h4>
+      </div>
+      <form id="malfunction_form" method="post" action='/mal_record/'>
+        <div class="modal-body">
+          <p>Note: If the malfunctions occured more than one time, <span class="noticeable">please record them every time.</span> One submit counts one occurence.</p><p><span style="color:#0099CC; font-weight: bold"> - Which type of malfunction did you encounter?</span></p>
+          <p></p>
+          {% csrf_token %} 
+          <div class="checkbox">
+            <label><input type="checkbox" name="maltype" value="201">Disconnected(usb)</label>
+          </div>
+          <div class="checkbox">
+            <label><input type="checkbox" name="maltype" value="202">Offline(usb)</label>
+          </div>
+          <div class="checkbox">
+            <label><input type="checkbox" name="maltype" value="203">Unauthorized(usb)</label>
+          </div>
+          <div class="checkbox">
+            <label><input type="checkbox" name="maltype" value="204">Lose internet connection</label>
+          </div>
+          <div class="checkbox">
+            <label><input type="checkbox" name="maltype" value="205">Stuck on fastboot screen</label>
+          </div>
+          <div class="checkbox">
+            <label><input type="checkbox" name="maltype" value="206">Stuck on splash screen</label>
+          </div>
+          <div class="checkbox">
+            <label><input type="checkbox" name="maltype" value="207">Stuck on white screen(iOS)</label>
+          </div>
+          <div class="checkbox">
+            <label><input type="checkbox" name="maltype" value="208">Reboot loop</label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-warning btn-md button_in_modal" id="submit_malfunction" type="submit">Submit</button>
+          <button class="btn btn-info btn-md button_in_modal" id="cancel_malfunction" data-dismiss="modal">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="broken_modal" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Log broken type</h4>
+      </div>
+      <form id="broken_form" method="post" action='/mal_record/'>
+        <div class="modal-body">
+          <p><span style="color:#0099CC; font-weight: bold"> - Which type of broken happened on this device?</span></p>
+          <p></p>
+          {% csrf_token %} 
+          <div class="checkbox">
+            <label><input type="checkbox" name="maltype" value="101">Cannot power on</label>
+          </div>
+          <div class="checkbox">
+            <label><input type="checkbox" name="maltype" value="102">Screen cannot go light</label>
+          </div>
+          <div class="checkbox">
+            <label><input type="checkbox" name="maltype" value="103">Screen touch broken</label>
+          </div>
+          <div class="checkbox">
+            <label><input type="checkbox" name="maltype" value="104">Scramble screen</label>
+          </div>
+          <div class="checkbox">
+            <label><input type="checkbox" name="maltype" value="105">Wifi hardware broken</label>
+          </div>
+          <div class="checkbox">
+            <label><input type="checkbox" name="maltype" value="106">SDcard broken</label>
+          </div>
+          <div class="checkbox">
+            <label><input type="checkbox" name="maltype" value="107">Battery broken</label>
+          </div>
+          <div class="checkbox">
+            <label><input type="checkbox" name="maltype" value="108">Screen fragmentation</label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-warning btn-md button_in_modal" id="submit_broken" type="submit">Submit</button>
+          <!-- <button class="btn btn-info btn-md button_in_modal" id="cancel_malfunction" data-dismiss="modal">Cancel</button> -->
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

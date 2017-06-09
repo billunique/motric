@@ -453,7 +453,11 @@ $(document).ready(function(){
 				} // end of condition newValue 'ASS'.
 			} // end of condition newValue 'AVA' or 'ASS'.
 			if ( (['BRO', 'REP', 'RTR'].indexOf(newValue) > -1) && !htitle.startsWith("Broken") ) {
-				$(this).parent().parent().fadeOut(1500);
+				primary_key = $(this).attr('data-pk')
+				console.log(primary_key)
+				$('#broken_modal').modal({backdrop: "static"});
+				// $(this).parent().parent().fadeOut(1500);
+
 			}
 
 		},
@@ -741,6 +745,7 @@ $(document).ready(function(){
 	});
 
 
+
 /* When user clicks the Received button of every request item */
 	$('.btn-hidden-receive').on('click', function(event) {
 		primary_key = $(this).attr('data-pk');
@@ -962,6 +967,35 @@ $(document).ready(function(){
 	    });
 	});
 
+
+/* When user clicks the MalRecord button of every device item */
+	$('.btn-hidden-malrec').on('click', function(event) {
+		primary_key = $(this).attr('data-pk');
+		$('#malfunction_modal').modal({backdrop: "static"});
+	});
+
+	$('#malfunction_form, #broken_form').on('submit', function(event) {
+    	vals = $(this).serialize() + '&pk=' + primary_key +'&opt=' + operator;
+    	console.log(vals);
+
+  		$.ajax({
+            url: '/mal_record/',
+            type: 'post',
+            data: vals,
+        })
+        .done(function(data) {
+        	toastr.success('Saved successfully!', {timeOut: 2000});
+        	$('#malfunction_form')[0].reset()
+        	$('#broken_form')[0].reset()
+        	$('#malfunction_modal, #broken_modal').modal('hide');
+
+        })
+        // .fail(function(data) {
+        // 	alert("Error! You might input something illegal.")
+        // })
+        event.preventDefault();
+
+	});
 
 	$(window).on('load', function() {
 

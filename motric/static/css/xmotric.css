@@ -173,27 +173,13 @@ thead th {
     margin-right:16px;
 }
 
-.btn-hidden-replace{
-    /*opacity:0;*/
-    /*visibility:hidden;*/
-    display:none;
-}
-
-.btn-hidden-receive{
-    /*opacity:0;*/
-    /*visibility:hidden;*/
-    display:none;
-}
-
-.btn-hidden-charge{
-    /*opacity:0;*/
-    /*visibility:hidden;*/
-    display:none;
-}
-
+.btn-hidden-replace, 
+.btn-hidden-malrec, 
+.btn-hidden-receive, 
 .btn-hidden-attach_bug{
-    /*visibility: hidden;*/
-    display: none;
+    /*opacity:0;*/
+    /*visibility:hidden;*/
+    display:none;
 }
 
 tr td:hover button{
@@ -213,6 +199,11 @@ tr td:hover button{
 
 .bold_green {
     color:#4CAF50;
+    font-weight: bold;
+}
+
+.bold_orange {
+    color:#FF9900;
     font-weight: bold;
 }
 

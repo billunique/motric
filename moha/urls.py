@@ -42,6 +42,8 @@ urlpatterns = [
     url(r'^search/', utils.search, name='search'),
     url(r'^device_replacement/', utils.device_replacement, name='replacement'),
     url(r'^register/', utils.device_register, name='labd_register'),
+    url(r'^mal_record/', utils.malfunction_record, name='mal_record'),
+    url(r'^mal_statistics/', utils.malfunction_statistics, name='mal_statistics'),
 
     url(r'^who/', utils.who_are_you, name='who'),
     url(r'^sync_info/', utils.syncer, name='sync_info'),

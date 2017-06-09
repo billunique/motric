@@ -5,6 +5,7 @@ from django.utils import timezone
 from django.core import serializers
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django import forms
+from collections import Counter
 from models import *
 import time, json, threading, getpass, shlex, socket
 
@@ -369,7 +370,11 @@ def details(request):
             last_response_target = request_list[len(request_list)-1]
         event_list = Event.objects.filter(device=ld)
         replacement_list = LabDevice.objects.filter(labdevice=pk)
-        return render(request, 'motric_details_device.html', {'device':ld, 'did':did, 'request_list':request_list, 'first_target':first_response_target, 'last_target':last_response_target, 'event_list':event_list, 'replacement_list':replacement_list})
+        mf = MalFunction.objects.filter(device=ld)
+        lst = [e.get_type_display() for e in mf]
+        mf_dict = dict(Counter(lst))
+        items_lst = sorted(mf_dict.items(), key=lambda pair:pair[1], reverse=True)
+        return render(request, 'motric_details_device.html', {'device':ld, 'did':did, 'request_list':request_list, 'first_target':first_response_target, 'last_target':last_response_target, 'event_list':event_list, 'replacement_list':replacement_list, 'type_count_list':items_lst})
         # return render(request, 'motric_details_device.html', {'device':ld, 'did':did, 'request_list':request_list, 'event_list':event_list, 'replacement_list':replacement_list})
     if tp == 'r': # query request
         rd = RequestedDevice.objects.get(pk=pk)
@@ -628,3 +633,45 @@ def search(request):
     full_path = request.get_full_path()
     current_path = full_path.split("&")[0]
     return render(request, 'motric_searchresult.html', {'device_list':device_list, 'count':count, 'first_param':current_path})
+
+def malfunction_record(request):
+    p = request.POST.copy()
+    pk = p.get('pk')
+    maltype = p.getlist('maltype')
+    ld = LabDevice.objects.get(pk=pk)
+    operator = p.get('opt')
+
+    for i in range(len(maltype)):
+        mal = MalFunction(device=ld, type=maltype[i])
+        mal.save()
+        if maltype[i].startswith('1'):
+            evt = Event(device=ld, event=log_generator(mal.occur_date, '<span class="noticeable">Broken</span>: ' + mal.get_type_display(), operator))
+        if maltype[i].startswith('2'):
+            evt = Event(device=ld, event=log_generator(mal.occur_date, '<span class="bold_orange">Malfunction</span>: ' + mal.get_type_display(), operator))
+        evt.save()
+
+    return HttpResponse(json.dumps(maltype))
+
+def malfunction_statistics(request):
+    mfs = MalFunction.objects.filter(type__gt=200)
+    soft_type_lst = [e.get_type_display() for e in mfs]
+    soft_counter = Counter(soft_type_lst)
+    soft_dct = dict(soft_counter)
+    soft_items_lst = sorted(soft_dct.items(), key=lambda pair:pair[1], reverse=True)
+    soft_sum = mfs.count()
+    dct = dict(MalFunction.TYPE)
+    new_dct = {v: k for k, v in dct.iteritems()}
+    xlist = []
+    for k,v in soft_items_lst:
+        tp = new_dct.get(k)
+        lds = mfs.filter(type=tp).values('device').distinct()
+        xlist.append(lds)
+
+    bks = MalFunction.objects.filter(type__lt=200)
+    hard_type_lst = [e.get_type_display() for e in bks]
+    hard_counter = Counter(hard_type_lst)
+    hard_dct = dict(hard_counter)
+    hard_items_lst = sorted(hard_dct.items(), key=lambda pair:pair[1], reverse=True)
+    hard_sum = bks.count()
+
+    return render(request, 'motric_mal_statistics.html', {'soft_mal_list':soft_items_lst, 'hard_mal_list':hard_items_lst, 'soft_sum':soft_sum, 'hard_sum':hard_sum, 'xlist':xlist})

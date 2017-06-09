@@ -79,7 +79,8 @@ class LabDevice(DeviceStatus):
 	price_cny = models.DecimalField(max_digits=6, decimal_places=1, blank=True, null=True)
 	po_number = models.CharField(max_length=50, blank=True, null=True)
 	po_date = models.DateTimeField(blank=True, null=True)
-	replaced_by = models.ManyToManyField('self', symmetrical=False, blank=True, null=True)
+	broken_date = models.DateTimeField(blank=True, null=True)
+	replaced_by = models.ManyToManyField('self', symmetrical=False, blank=True)
 	replaced = models.BooleanField(default=False)
 
 	def __unicode__(self):
@@ -102,3 +103,31 @@ class Event(models.Model):
 
 	def __unicode__(self):
 		return u'%s, %s' % (self.event_id, self.event)
+
+class MalFunction(models.Model):
+	device = models.ForeignKey(LabDevice, on_delete=models.CASCADE, blank=True, null=True)
+	TYPE = (
+		('101', 'Cannot power on'), 
+		('102', 'Screen cannot go light'),
+		('103', 'Screen touch broken'),
+		('104', 'Scramble screen'),
+		('105', 'Wifi hardware broken'),
+		('106', 'SDcard broken'),
+		('107', 'Battery broken'),
+		('108', 'Screen fragmentation'),
+		('201', 'Disconnected(usb)'),
+		('202', 'Offline(usb)'),
+		('203', 'Unauthorized(usb)'),
+		('204', 'Lose internet connection'),
+		('205', 'Stuck on fastboot screen'),
+		('206', 'Stuck on splash screen'),
+		('207', 'Stuck on white screen'),
+		('208', 'Reboot loop'),
+		('1001', 'Others'),
+	)
+	type = models.CharField(max_length=4, choices=TYPE)
+	occur_date = models.DateTimeField(auto_now_add=True)
+	fix_date = models.DateTimeField(blank=True, null=True)
+
+	def __unicode__(self):
+		return u'%s, %s' % (self.type, self.occur_date)
