@@ -7,25 +7,30 @@
 	<h3>Overall statistics of device malfunction & broken</h3>
 	<br/>
 	<table class="table table-bordered font-compacted">
-		<caption style="font-size: 16">Soft Malfunction</caption>
+		<caption style="font-size: 16">Soft Malfunction (totally <span class="noticeable">{{ soft_sum }}</span> occurences)</caption>
 	  	<tr>
 	  	  <th class="btn-primary">Type</th>
 	  	  <th class="btn-warning" title="total occurence on all devices">Occurence</th>
 	  	  <th class="btn-success" title="on how many devices did it occur">Scale</th>
 	  	  <th class="btn-danger">Percentage</th>
 	  	</tr>
-	  	{% for type, count in soft_mal_list %}
+	  	{% for type, count, scale in soft_mal_list %}
 	  	<tr>
 	  	  <td>{{ type }}</td>
 	  	  <td>{{ count }}</td>
-	  	  <td>{{ xlist }}</td>
-	  	  <td>{% widthratio count soft_sum 100 %}</td>
+	  	  <td>On <span style="color:red">{{ scale|length }}</span> device{{ scale|length|pluralize:",s"}}:<br/>
+	  	  	{% for device in scale %}
+	  	  	<a href="/details?t=d&pk={{ device.id }}" target="_blank">{{ device }}</a><br/>
+	  	  	{% endfor %}
+	  	  </td>
+	  	  <td>{% widthratio count soft_sum 100 %}%</td>
 	  	</tr>
-		{% endfor %}
+	  	{% endfor %}
+	  	<tr>
 	</table>
 
 	<table class="table table-bordered font-compacted">
-		<caption style="font-size: 16">Hard Malfunction</caption>
+		<caption style="font-size: 16">Hard Malfunction (totally <span class="noticeable">{{ hard_sum }}</span> occurences)</caption>
 	  	<tr>
 	  	  <th class="btn-primary">Type</th>
 	  	  <th class="btn-warning" title="total occurence on all devices">Occurence</th>
@@ -36,8 +41,12 @@
 	  	<tr>
 	  	  <td>{{ mal.0 }}</td>
 	  	  <td>{{ mal.1 }}</td>
-	  	  <td>{{ mal }}</td>
-	  	  <td>{% widthratio mal.1 hard_sum 100 %}</td>
+	  	  <td>On <span style="color:red">{{ mal.2|length }}</span> device{{ mal.2|length|pluralize:",s"}}:<br/>
+	  	    {% for device in mal.2 %}
+	  	    <a href="/details?t=d&pk={{ device.id }}" target="_blank">{{ device }}</a><br/>
+	  	    {% endfor %}
+	  	  </td>
+	  	  <td>{% widthratio mal.1 hard_sum 100 %}%</td>
 	  	</tr>
 		{% endfor %}
 	</table>

@@ -130,4 +130,4 @@ class MalFunction(models.Model):
 	fix_date = models.DateTimeField(blank=True, null=True)
 
 	def __unicode__(self):
-		return u'%s, %s' % (self.type, self.occur_date)
+		return u'%s, %s, %s' % (self.type, self.occur_date, self.device)

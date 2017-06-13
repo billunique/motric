@@ -332,7 +332,7 @@ def device_allocate(request):
         lds_resp = LabDevice.objects.filter(respond_to=rd)
         for e in lds_resp:
             id_comb += e.device_id + '|'
-        id_comb = id_comb[:-1]
+        id_comb = id_comb[:-1]  # trim the last "|"
         moha_url = 'https://mobileharness.corp.google.com/lab.html#subpage=DEVICE_SEARCH&q=id:' + id_comb
         
         message = "Dear " + requester + ",<br/><br/>This is to inform you that your device request for " + rd.model_type + " * " + str(rd.quantity) + " is fulfilled.<br/>" + "The devices have been set up, please check here:" + moha_url + "<br/><br/>Thank you for using Mobile Harness and happy playing!<br/><p>Best regards,<br/>Mobile Harness team</p>"
@@ -657,21 +657,33 @@ def malfunction_statistics(request):
     soft_type_lst = [e.get_type_display() for e in mfs]
     soft_counter = Counter(soft_type_lst)
     soft_dct = dict(soft_counter)
-    soft_items_lst = sorted(soft_dct.items(), key=lambda pair:pair[1], reverse=True)
+    soft_items_tup_lst = sorted(soft_dct.items(), key=lambda pair:pair[1], reverse=True)
+    soft_items_lst_lst = [list(e) for e in soft_items_tup_lst]
     soft_sum = mfs.count()
     dct = dict(MalFunction.TYPE)
     new_dct = {v: k for k, v in dct.iteritems()}
-    xlist = []
-    for k,v in soft_items_lst:
-        tp = new_dct.get(k)
-        lds = mfs.filter(type=tp).values('device').distinct()
-        xlist.append(lds)
+    # xlist = []
+    for si in soft_items_lst_lst:
+        tp = new_dct.get(si[0])
+        lds = mfs.filter(type=tp).values_list('device', flat=True).distinct()
+        # lds = mfs.filter(type=tp).values('device').distinct()
+        # lds = mfs.filter(type=tp).distinct('device')
+        lds = [LabDevice.objects.get(pk=e) for e in lds]
+        si.append(lds)
 
     bks = MalFunction.objects.filter(type__lt=200)
     hard_type_lst = [e.get_type_display() for e in bks]
     hard_counter = Counter(hard_type_lst)
     hard_dct = dict(hard_counter)
-    hard_items_lst = sorted(hard_dct.items(), key=lambda pair:pair[1], reverse=True)
+    hard_items_tup_lst = sorted(hard_dct.items(), key=lambda pair:pair[1], reverse=True)
+    hard_items_lst_lst = [list(e) for e in hard_items_tup_lst]
     hard_sum = bks.count()
 
-    return render(request, 'motric_mal_statistics.html', {'soft_mal_list':soft_items_lst, 'hard_mal_list':hard_items_lst, 'soft_sum':soft_sum, 'hard_sum':hard_sum, 'xlist':xlist})
+    for hi in hard_items_lst_lst:
+        tp = new_dct.get(hi[0])
+        lds = bks.filter(type=tp).values_list('device', flat=True).distinct()
+        # lds = bks.filter(type=tp).distinct('device')
+        lds = [LabDevice.objects.get(pk=e) for e in lds]
+        hi.append(lds)
+
+    return render(request, 'motric_mal_statistics.html', {'soft_mal_list':soft_items_lst_lst, 'hard_mal_list':hard_items_lst_lst, 'soft_sum':soft_sum, 'hard_sum':hard_sum})

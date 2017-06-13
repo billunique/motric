@@ -108,7 +108,7 @@
 	    <caption>Malfunction & Broken Occurence <a href='/mal_statistics/' target="_blank">( Overall Statistics )</a></span></caption>
 	    <tr>
 		{% for type, count in type_count_list %}
-		  	  <td>{{ type }}</td><td>{{ count }}</td>
+		  	  <td>{{ type }}</td><td style="color:#800000">{{ count }}</td>
 		{% if forloop.counter|divisibleby:"3" %}</tr><tr>{% endif %}
 	  	{% empty %}
 	  	<tr><td>None yet.</td></tr>
