@@ -176,7 +176,8 @@ thead th {
 .btn-hidden-replace, 
 .btn-hidden-malrec, 
 .btn-hidden-receive, 
-.btn-hidden-attach_bug{
+.btn-hidden-attach_bug,
+.btn-hidden-charge {
     /*opacity:0;*/
     /*visibility:hidden;*/
     display:none;

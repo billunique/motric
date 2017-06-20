@@ -9,6 +9,20 @@ from collections import Counter
 from models import *
 import time, json, threading, getpass, shlex, socket
 
+
+motric_host = "motric"
+sender = 'mobileharness.motric@gmail.com'
+recipient = ['mobileharness-ops@google.com', 'mobileharness-ops-mtv@google.com']
+# recipient = ['xiawang@google.com', 'yanyanl@google.com', 'ligang@google.com', 'jinrui@google.com', 'derekchen@google.com', 'joyl@google.com', 'nanz@google.com', 'magicpig@google.com', 'xmhu@google.com', 'dschlaak@google.com', 'ansalgado@google.com']
+cc_rcpt = ['mobileharness-ops@google.com', 'mobileharness-ops-mtv@google.com']
+# cc_rcpt = ['magicpig@google.com', 'xmhu@google.com', 'dschlaak@google.com', 'ansalgado@google.com', 'ffeng@google.com']
+
+if 'motric' not in socket.gethostname():
+    motric_host = "xiawang.bej:8080"
+    recipient = ['xiawang@google.com', 'yanyanl@google.com']
+    cc_rcpt = []
+
+
 def expection_carrier():
     import sys
     dict = {}
@@ -66,23 +80,14 @@ def form_receiver(request):
         quantity = form_dict.pop('quantity') # list
         used_for = form_dict.getlist('used_for')
         status = 'REQ'
-
         server = form_dict.get('svr')
 
         combo = '<table cellpadding="3" border="1" style="border:2px solid gray; border-collapse:collapse">'
-        motric_host = "motric"
         subject = '[Motric]Somebody raised device request!'
-        sender = 'mobileharness.motric@gmail.com'
-        recipient = ['mobileharness-ops@google.com', 'mobileharness-ops-mtv@google.com']
-        # recipient = ['xiawang@google.com', 'yanyanl@google.com', 'ligang@google.com', 'jinrui@google.com', 'derekchen@google.com', 'joyl@google.com', 'nanz@google.com', 'magicpig@google.com', 'xmhu@google.com', 'dschlaak@google.com', 'ansalgado@google.com']
-        # recipient = ['xiawang@google.com', 'yanyanl@google.com']
-        cc_rcpt = []
-        # cc_rcpt = ['magicpig@google.com', 'xmhu@google.com', 'dschlaak@google.com', 'ansalgado@google.com', 'ffeng@google.com']
         if server: # value is 't' (for test)
             motric_host = "xiawang.bej:8080"
             recipient = ['xiawang@google.com']
-            # recipient = ['xiawang@google.com', 'yanyanl@google.com', 'ligang@google.com', 'jinrui@google.com', 'joyl@google.com']
-            cc_rcpt = []
+
         for i in range(len(model_type)):
             rd = RequestedDevice(model_type=model_type[i], os_version=os_version[i], quantity=quantity[i], requester=usr, request_date=timezone.now(), comment=comment, status=status)
             rd.save()
@@ -137,10 +142,7 @@ def request_editor(request):
 
     requester = rd.requester.ldap
     subject = "[Motric]Updates of your device request for mobile-harness"
-    sender = 'mobileharness.motric@gmail.com'
     recipient = [requester + '@google.com']
-    # cc_rcpt = []
-    cc_rcpt = ['mobileharness-ops@google.com', 'mobileharness-ops-mtv@google.com']
 
     # if column == 'po_number':
     #     rd.po_number = column_value
@@ -153,11 +155,8 @@ def request_editor(request):
 
     rd.__dict__[column] = column_value
     response = column_value
-    motric_host = "motric"
-    if 'motric' not in socket.gethostname():
-        motric_host = "xiawang.bej:8080"
-    url = "http://" + motric_host + "/details/?t=r&pk=" + pk
 
+    url = "http://" + motric_host + "/details/?t=r&pk=" + pk
     if column == 'status':
         if column_value == 'REF': # status'value could be REF-refuse, ORD-ordered, etc.
             rd.resolved = True
@@ -183,7 +182,13 @@ def request_editor(request):
 
         # email = EmailMessage(subject, body, sender, recipient, cc_rcpt, headers={'Cc': ','.join(cc_rcpt)})  # headers section must be included into the EmailMessage brackets.
         # email.send(fail_silently=False)
-        motric_send_mail(subject, body, sender, recipient, cc_rcpt)
+        motric_send_mail(
+            subject, 
+            body, 
+            sender, 
+            recipient, 
+            cc_rcpt
+        )
         column_value = rd.get_status_display()
 
     rd.save()
@@ -328,10 +333,8 @@ def device_allocate(request):
     if rd.resolved:
         requester = rd.requester.ldap
         subject = '[Motric]Updates of your device request for mobile-harness'
-        sender = 'mobileharness.motric@gmail.com'
         recipient = [requester  + '@google.com']
-        cc_rcpt = ['xiawang@google.com']
-        cc_rcpt = ['mobileharness-ops@google.com', 'mobileharness-ops-mtv@google.com']
+        url = "http://" + motric_host + "/details/?t=r&pk=" + pk
 
         id_comb = ''
         lds_resp = LabDevice.objects.filter(respond_to=rd)
@@ -340,7 +343,7 @@ def device_allocate(request):
         id_comb = id_comb[:-1]  # trim the last "|"
         moha_url = 'https://mobileharness.corp.google.com/lab.html#subpage=DEVICE_SEARCH&q=id:' + id_comb
         
-        message = "Dear " + requester + ",<br/><br/>This is to inform you that your device request for " + rd.model_type + " * " + str(rd.quantity) + " is fulfilled.<br/>" + "The devices have been set up, please check here:" + moha_url + "<br/><br/>Thank you for using Mobile Harness and happy playing!<br/><p>Best regards,<br/>Mobile Harness team</p>"
+        message = "Dear " + requester + ",<br/><br/>This is to inform you that your device request for " + rd.model_type + " * " + str(rd.quantity) + " (" + url + ") is fulfilled.<br/>" + "The devices have been set up, please check here:" + moha_url + "<br/><br/>Thank you for using Mobile Harness and happy playing!<br/><p>Best regards,<br/>Mobile Harness team</p>"
 
         motric_send_mail(
             subject,
