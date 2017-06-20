@@ -1,19 +1,52 @@
-<div class="form-group">
+<div class="row">
+<div class="form-group col-sm-5" >
   <label for="requester">LDAP:<span class="noticeable">*</span></label>
-  <input type="text" class="form-control mtinput required" id="requester" placeholder="Enter your own ldap username, omitting the @google.com." name="requester" required>
+  <input type="text" class="form-control mtinput required" id="requester" placeholder="Enter your own ldap username, omitting @google.com." name="requester" required>
 </div>
-<div class="form-group">
+<div class="form-group col-sm-7">
   <label for="costcenter">Cost Center:<span class="noticeable">*</span></label>
   <input type="text" class="form-control mtinput required" id="costcenter" placeholder="Enter your cost center code." name="costcenter" required>
 </div>
-<div class="form-group">
+</div>
+<div class="row">
+<div class="form-group col-sm-5">
   <label for="project">Project name:<span class="noticeable">*</span></label>
   <input type="text" class="form-control mtinput required" id="project" placeholder="e.g. GMSCore, Youtube." name="project" required>
 </div>
-<div class="form-group">
+<div class="form-group col-sm-7">
   <label for="owner">Device owner:<span class="noticeable">*</span></label>
-  <input type="text" class="form-control mtinput required" id="owner" placeholder="Please list all the LDAPs/MDBs that need to access the device. Mailing group are not supported." name="owner" required>
+  <input type="text" class="form-control mtinput required" id="owner" placeholder="List all the LDAPs/MDBs that need to access the device." title="Mailing group are not supported." name="owner" required>
 </div>
+</div>
+
+<div class="form-group">
+  <label for="business_need">Used for <span style="font-size: 12">(hold ctrl to select more than one):</span><span class="noticeable">*</span></label>
+  <select multiple class="form-control mtinput" name="used_for" required size="5">
+    <option value="FT">Functionality Test</option>
+    <option value="SHT">System Health(battery, memory, latency) Test</option>
+    <option value="ST">Stablity Test</option>
+    <option value="NTU">Non-testing Usage</option>
+    <option value="OTR">Others (please write them down as additional comment)</option>
+  </select>
+</div>
+
+<!-- <div class="form-group">
+  <label for="business_need">Used for:<span class="noticeable">*</span></label>
+  <div class="checkbox">
+    <label><input type="checkbox" name="buss_need" value="FT">Functionality Test</label>
+  </div>
+  <div class="checkbox">
+    <label><input type="checkbox" name="buss_need" value="SHT">System Health(battery, memory, latency) Test</label>
+  </div>
+  <div class="checkbox">
+    <label><input type="checkbox" name="buss_need" value="ST">Stablity Test</label>
+  </div>
+  <div class="checkbox">
+    <label><input type="checkbox" name="buss_need" value="NTU">Non-testing Usage</label>
+  </div>
+</div> -->
+
+
 <div class="form-group">
   <label for="devicelabel">Device label:</label>
   <input type="text" class="form-control mtinput" id="label" placeholder="Label your devices, in order to locate and search your devices with job dimension 'label'." name="label">

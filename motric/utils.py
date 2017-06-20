@@ -64,6 +64,7 @@ def form_receiver(request):
         model_type = form_dict.pop('device') # list
         os_version = form_dict.pop('os') # list
         quantity = form_dict.pop('quantity') # list
+        used_for = form_dict.getlist('used_for')
         status = 'REQ'
 
         server = form_dict.get('svr')
@@ -88,6 +89,10 @@ def form_receiver(request):
             # combo += ' * ' + model_type[i] + ' x ' + quantity[i] +'\t<span style="float:right">http://' + motric_host + '/details/?t=r&pk=' + str(rd.pk) + '</span><br/>'
             combo += '<tr><td>' + model_type[i] + ' * ' + quantity[i] + '</td><td>http://' + motric_host + '/details/?t=r&pk=' + str(rd.pk) + '</td></tr>'
         combo += '</table>'
+
+        for x in range(len(used_for)):
+            ug = Usage(request = rd, used_for=used_for[x])
+            ug.save()
 
     except KeyError:
         return HttpResponse("No corresponding key found!")

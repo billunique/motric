@@ -123,6 +123,7 @@ class MalFunction(models.Model):
 		('206', 'Stuck on splash screen'),
 		('207', 'Stuck on white screen'),
 		('208', 'Reboot loop'),
+		('209', 'Not able to be reset'),
 		('1001', 'Others'),
 	)
 	type = models.CharField(max_length=4, choices=TYPE)
@@ -131,3 +132,16 @@ class MalFunction(models.Model):
 
 	def __unicode__(self):
 		return u'%s, %s, %s' % (self.type, self.occur_date, self.device)
+
+
+class Usage(models.Model):
+	request = models.ForeignKey(RequestedDevice, on_delete=models.CASCADE, blank=True, null=True)
+	USAGE = (
+		('FT', 'Functionality Test'), 
+		('SHT', 'System Health(battery, memory, latency) Test'),
+		('ST', 'Stablity Test'),
+		('NTU', 'Non-testing Usage'),
+		('OTR', 'Others'),
+	)
+	used_for = models.CharField(max_length=3, choices=USAGE)
+	others_detail = models.CharField(max_length=200, blank=True, null=True)
