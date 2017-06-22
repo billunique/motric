@@ -19,8 +19,8 @@ cc_rcpt = ['mobileharness-ops@google.com', 'mobileharness-ops-mtv@google.com']
 
 if 'motric' not in socket.gethostname():
     motric_host = "xiawang.bej:8080"
-    recipient = ['xiawang@google.com', 'yanyanl@google.com']
-    cc_rcpt = []
+    recipient = ['xiawang@google.com']
+    cc_rcpt = ['yanyanl@google.com']
 
 
 def expection_carrier():
@@ -84,9 +84,10 @@ def form_receiver(request):
 
         combo = '<table cellpadding="3" border="1" style="border:2px solid gray; border-collapse:collapse">'
         subject = '[Motric]Somebody raised device request!'
-        if server: # value is 't' (for test)
-            motric_host = "xiawang.bej:8080"
-            recipient = ['xiawang@google.com']
+        global motric_host, recipient, cc_rcpt  # mysteriuos, no need to global copy the variable sender, guess it's defined by the settings.py and be used globally.
+        # if server: # value is 't' (for test)
+        #     motric_host = "xiawang.bej:8080"
+        #     recipient = ['xiawang@google.com']
 
         for i in range(len(model_type)):
             rd = RequestedDevice(model_type=model_type[i], os_version=os_version[i], quantity=quantity[i], requester=usr, request_date=timezone.now(), comment=comment, status=status)
@@ -139,6 +140,7 @@ def request_editor(request):
     oldvalue = p.get('ov')
     operator = p.get('opt')
     reason = p.get('reason')
+    eta = p.get('eta')
 
     requester = rd.requester.ldap
     subject = "[Motric]Updates of your device request for mobile-harness"
@@ -164,7 +166,7 @@ def request_editor(request):
 
         if column_value == 'APP':
             rd.approve_date = timezone.now();
-            body = "Dear " + requester + ",<br/><br/>This is to inform you that your device request for " + rd.model_type + " * " + str(rd.quantity) + " (" + url + ") is approved.<br/>" + "We will start your purchase order shortly. Please stay tuned."
+            body = "Dear " + requester + ",<br/><br/>This is to inform you that your device request for " + rd.model_type + " * " + str(rd.quantity) + " (" + url + ") is approved. <br/>Hopefully it will be fulfilled by <b>" + str(eta) + "</b> (estimated). We will start your purchase order shortly. Please stay tuned."
 
         if column_value == 'ORD': # this request is autoly submit after the po_number is inputted, so rd.po_number has gotten value.
             rd.po_date = timezone.now()
@@ -196,6 +198,13 @@ def request_editor(request):
     event_msg = log_generator(timezone.now(), '<span class="">' + column + '</span> was changed from <span class="required">' + oldvalue + '</span> --> <span class="bold">' + column_value + '</span>', operator)
     evt = Event(request=rd, event=event_msg)
     evt.save()
+
+    if eta:
+        rd.eta_date = eta
+        rd.save()
+        event_msg = log_generator(timezone.now(), 'Estimated completion day was set to <span class="required">' + eta + '</span>.' , operator)
+        evt = Event(request=rd, event=event_msg)
+        evt.save()
 
 
     # except:

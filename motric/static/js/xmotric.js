@@ -520,21 +520,11 @@ $(document).ready(function(){
 					$('#confirm_modal').modal('show'); 
 					break;
 
-				case 'APP': 
-    				var td_status = $(this).parent().prev();
+				case 'APP':
+					// var poi = $(this).parent().prevAll().find('a[data-name="po_number"]');
+				    var td_status = $(this).parent().prev();
     				var oldValue = td_status.text();
-					$.post('/edit_request/', {pk: primary_key, name: 'status', value:'APP', 'csrfmiddlewaretoken': token, ov:oldValue, 'opt':operator});
-					td_status.html('Approved');
-					$("select[data-pk=" + primary_key + "] option[value='REF']").remove();
-    				$("select[data-pk=" + primary_key + "] option[value='APP']").remove();
-					// $(this).parent().prevAll().find('a[data-name="po_number"]').trigger("click");
-					var poi = $(this).parent().prevAll().find('a[data-name="po_number"]');
-					console.log(poi, poi.val(), poi.text());
-					if ( poi.text() == 'Empty') {
-					    setTimeout(function() {
-					        poi.editable('show');
-					    }, 200);						
-					}
+					$('#eta_modal').modal({backdrop: "static"});
 					break;
 
 				case 'ASS':
@@ -563,6 +553,25 @@ $(document).ready(function(){
 				default:
 
 			}
+			$('#eta_form').on('submit', function(event) {
+		  		// event.preventDefault();
+		  		eta = $('#eta_date').val()
+		  		$.post('/edit_request/', {pk: primary_key, name: 'status', value:'APP', 'eta': eta, 'csrfmiddlewaretoken':token, ov: oldValue, 'opt':operator})
+					.done( function(response) {
+						toastr.success('Saved successfully!', {timeOut: 2000});
+						$('#eta_date').val('');
+						$('#eta_form')[0].reset();
+						$('#eta_modal').modal('hide');
+						td_status.html('Approved');
+						$("select[data-pk=" + primary_key + "] option[value='REF']").remove();
+	    				$("select[data-pk=" + primary_key + "] option[value='APP']").remove();
+						// if ( poi.text() == 'Empty') {
+						//     setTimeout(function() {
+						//         poi.editable('show');
+						//     }, 200);						
+						// }
+					});
+		  	});
 
 		}
 	);
@@ -782,6 +791,7 @@ $(document).ready(function(){
 				td_bug.html('<a href="http://b/' + bugid + '" target="_blank">' + bugid +'</a>');
 			});
   	});
+
 
 
   /* When user clicks the Show or Hide anchor */

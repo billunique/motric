@@ -182,3 +182,26 @@
     </div>
   </div>
 </div>
+
+
+<div class="modal fade" id="eta_modal" role="dialog">
+  <div class="modal-dialog">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Choose a reasonable ETA</h4>
+      </div>
+      <form id="eta_form">
+      {% csrf_token %}
+      <div class="modal-body">
+        <p>Please estimate a reasonable and sufficient completion day, which will be <span class="bold_orange">informed to user</span> so they will have a rough expectation.</p><p></p>
+        <input type="date" class="form-control mtinput" id="eta_date" placeholder="Date" required>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-warning btn-md button_in_modal" id="submit_eta" type="submit">Submit</button>
+        <!-- <button class="btn btn-info btn-md button_in_modal" id="cancel_eta" data-dismiss="modal">Cancel</button> -->
+      </div>
+      </form>
+    </div>
+  </div>
+</div>
