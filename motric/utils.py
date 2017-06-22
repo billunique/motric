@@ -12,7 +12,7 @@ import time, json, threading, getpass, shlex, socket
 
 motric_host = "motric"
 sender = 'mobileharness.motric@gmail.com'
-recipient = ['mobileharness-ops@google.com', 'mobileharness-ops-mtv@google.com']
+recipient = []
 # recipient = ['xiawang@google.com', 'yanyanl@google.com', 'ligang@google.com', 'jinrui@google.com', 'derekchen@google.com', 'joyl@google.com', 'nanz@google.com', 'magicpig@google.com', 'xmhu@google.com', 'dschlaak@google.com', 'ansalgado@google.com']
 cc_rcpt = ['mobileharness-ops@google.com', 'mobileharness-ops-mtv@google.com']
 # cc_rcpt = ['magicpig@google.com', 'xmhu@google.com', 'dschlaak@google.com', 'ansalgado@google.com', 'ffeng@google.com']

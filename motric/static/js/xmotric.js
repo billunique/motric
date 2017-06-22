@@ -522,8 +522,8 @@ $(document).ready(function(){
 
 				case 'APP':
 					// var poi = $(this).parent().prevAll().find('a[data-name="po_number"]');
-				    var td_status = $(this).parent().prev();
-    				var oldValue = td_status.text();
+				    // var td_status = $(this).parent().prev();
+    				// var oldValue = td_status.text().trim();
 					$('#eta_modal').modal({backdrop: "static"});
 					break;
 
@@ -553,28 +553,38 @@ $(document).ready(function(){
 				default:
 
 			}
-			$('#eta_form').on('submit', function(event) {
-		  		// event.preventDefault();
-		  		eta = $('#eta_date').val()
-		  		$.post('/edit_request/', {pk: primary_key, name: 'status', value:'APP', 'eta': eta, 'csrfmiddlewaretoken':token, ov: oldValue, 'opt':operator})
-					.done( function(response) {
-						toastr.success('Saved successfully!', {timeOut: 2000});
-						$('#eta_date').val('');
-						$('#eta_form')[0].reset();
-						$('#eta_modal').modal('hide');
-						td_status.html('Approved');
-						$("select[data-pk=" + primary_key + "] option[value='REF']").remove();
-	    				$("select[data-pk=" + primary_key + "] option[value='APP']").remove();
-						// if ( poi.text() == 'Empty') {
-						//     setTimeout(function() {
-						//         poi.editable('show');
-						//     }, 200);						
-						// }
-					});
-		  	});
 
+	});
+
+
+	$('#submit_eta').on('click', function(event) {
+
+  		eta = $('#eta_date').val();
+  		if (eta == '') {
+  			alert("Please choose a date!");
+  		} else {
+	  		$.post('/edit_request/', {pk: primary_key, name: 'status', value:'APP', 'eta': eta, 'csrfmiddlewaretoken':token, ov: 'Requested', 'opt':operator})
+				.done( function(response) {
+					toastr.success('Saved successfully!', {timeOut: 2000});
+					$('#eta_date').val('');
+					// $('#eta_form')[0].reset();
+					$('#eta_modal').modal('hide');
+					$("select[data-pk=" + primary_key + "]").parent().prev().html('Approved');
+					$("select[data-pk=" + primary_key + "]").val('');
+					$("select[data-pk=" + primary_key + "] option[value='REF']").remove();
+    				$("select[data-pk=" + primary_key + "] option[value='APP']").remove();
+
+					// if ( poi.text() == 'Empty') {
+					//     setTimeout(function() {
+					//         poi.editable('show');
+					//     }, 200);						
+					// }
+				})
+				.fail(function() {
+					alert("Error! You might input something illegal.")
+				});
 		}
-	);
+  	});
 
 /* When user clicks Yes on the confirm modal. */
 	$('#yes').on('click', {pk: primary_key}, function(event) {
