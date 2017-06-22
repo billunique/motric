@@ -395,9 +395,10 @@ def details(request):
         # return render(request, 'motric_details_device.html', {'device':ld, 'did':did, 'request_list':request_list, 'event_list':event_list, 'replacement_list':replacement_list})
     if tp == 'r': # query request
         rd = RequestedDevice.objects.get(pk=pk)
+        ug = Usage.objects.filter(request=rd)
         event_list = Event.objects.filter(request=rd)
         device_list = rd.labdevice_set.all().distinct()
-        return render(request, 'motric_details_request.html', {'request':rd, 'device_list':device_list, 'event_list':event_list})
+        return render(request, 'motric_details_request.html', {'request':rd, 'usage':ug, 'device_list':device_list, 'event_list':event_list})
 
 
 def device_replacement(request):

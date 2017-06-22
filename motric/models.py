@@ -146,3 +146,6 @@ class Usage(models.Model):
 	)
 	used_for = models.CharField(max_length=3, choices=USAGE)
 	others_detail = models.CharField(max_length=200, blank=True, null=True)
+
+	def __unicode__(self):
+		return u'%s; %s' % (self.request, self.used_for)

@@ -12,6 +12,7 @@
 	  	  <th>Cost Center</th>
 	  	  <th>Project</th>
 	  	  <th>Device Owner</th>
+	  	  <th>Used for</th>
 	  	  <th>Device label</th>
 	  	  <th>Preferred lab</th>
 	  	  <th>Comment</th>
@@ -23,6 +24,11 @@
 	  	  <td>{{ requester.cost_center }}</td>
 	  	  <td>{{ requester.project }}</td>
 	  	  <td>{{ requester.device_owner }}</td>
+	  	  <td>
+	  	  	{% for u in usage %}
+	  	  	*{{ u.get_used_for_display }}<br/>
+	  	  	{% endfor %}
+	  	  </td>
 	  	  <td>{{ requester.device_label }}</td>
 	  	  <td>{{ requester.pref_location |default:"" }}</td>
 	  	  {% endwith %}
@@ -41,6 +47,7 @@
 	  	  <th>PO Date</th>
 	  	  <th>Price(USD)</th>
 	  	  <th>Price(CNY)</th>
+	  	  <th>ETA</th>
 	  	  <th class="btn-danger">Status</th>
 		</tr>
 		<tr>
@@ -51,6 +58,7 @@
 	  	  <td>{{ request.po_date |default:"" }}</td>
 	  	  <td>{{ request.price_usd |default:"" }}</td>
 	  	  <td>{{ request.price_cny |default:"" }}</td>
+	  	  <td>{{ request.eta_date |date:"SHORT_DATE_FORMAT" }}</td>
 	  	  <td>{{ request.get_status_display }}
 	  	</tr>
 	</table>	
