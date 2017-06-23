@@ -92,13 +92,13 @@ def form_receiver(request):
         for i in range(len(model_type)):
             rd = RequestedDevice(model_type=model_type[i], os_version=os_version[i], quantity=quantity[i], requester=usr, request_date=timezone.now(), comment=comment, status=status)
             rd.save()
+            for x in range(len(used_for)):
+                ug = Usage(request=rd, used_for=used_for[x])
+                ug.save()
             # combo += ' * ' + model_type[i] + ' x ' + quantity[i] +'\t<span style="float:right">http://' + motric_host + '/details/?t=r&pk=' + str(rd.pk) + '</span><br/>'
             combo += '<tr><td>' + model_type[i] + ' * ' + quantity[i] + '</td><td>http://' + motric_host + '/details/?t=r&pk=' + str(rd.pk) + '</td></tr>'
         combo += '</table>'
 
-        for x in range(len(used_for)):
-            ug = Usage(request = rd, used_for=used_for[x])
-            ug.save()
 
     except KeyError:
         return HttpResponse("No corresponding key found!")
