@@ -571,7 +571,7 @@ $(document).ready(function(){
 					$('#eta_modal').modal('hide');
 					$("select[data-pk=" + primary_key + "]").parent().prev().html('Approved');
 					$("select[data-pk=" + primary_key + "]").val('');
-					$("select[data-pk=" + primary_key + "] option[value='REF']").remove();
+					// $("select[data-pk=" + primary_key + "] option[value='REF']").remove();
     				$("select[data-pk=" + primary_key + "] option[value='APP']").remove();
 
 					// if ( poi.text() == 'Empty') {

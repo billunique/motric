@@ -27,9 +27,10 @@
 		    <select class="form-control" data-name="req_action" data-title="Choose action" data-pk="{{ request.id }}">
 		      <option></option>
 		      {% if request.status == 'REQ' %}
-	  	  	  <option value="REF">Refuse</option>
+	  	  	  <!-- <option value="REF">Refuse</option> -->
 	  	  	  <option value="APP">Approve</option>
 	  	  	  {% endif %}
+	  	  	  <option value="REF">Refuse</option>
 	  	  	  <option value="AVA">Make Public</option>
 	  	  	  <option value="ASS">Allocate New</option>
 	  	  	  <option value="CUR">Allocate Current</option>
