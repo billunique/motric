@@ -9,6 +9,7 @@ from collections import Counter
 from models import *
 import time, json, threading, getpass, shlex, socket
 
+loginer = ''
 
 motric_host = "motric"
 sender = 'mobileharness.motric@gmail.com'
@@ -20,7 +21,7 @@ cc_rcpt = ['mobileharness-ops@google.com', 'mobileharness-ops-mtv@google.com']
 if 'motric' not in socket.gethostname():
     motric_host = "xiawang.bej:8080"
     recipient = ['xiawang@google.com']
-    cc_rcpt = ['yanyanl@google.com']
+    cc_rcpt = ['yanyanl@google.com', 'xiawang@google.com']
 
 
 def expection_carrier():
@@ -34,7 +35,9 @@ def expection_carrier():
 def who_are_you(request):
     p = request.POST.copy()
     data = json.dumps(p)
-    who = p['operator']
+    who = p.get('operator')
+    global loginer
+    loginer = who
     return HttpResponse(data)
 
 
@@ -181,6 +184,19 @@ def request_editor(request):
             body = "Dear " + requester + ",<br/><br/>This is to inform you that the devices of your request for " + rd.model_type + " * " + str(rd.quantity) + " (" + url + ")  already arrived.<br/>" + "We will set up and make them online soon, and will inform you once they are ready."
 
         body += "<br/><p>Best regards,<br/>Mobile Harness team</p>"
+        column_value = rd.get_status_display()
+        motric_send_mail(subject, body, sender, recipient, cc_rcpt)
+
+    if column == 'assignee':
+        subject = "[Motric]" + str(rd)
+        ase = column_value
+        recipient = [ase + '@google.com']
+        body = url + "<br/><br/>"  + "</p><br/><span style='color:#999999'>request:</span> " + str(rd) + "<br/><span style='color:#999999'>status: </span>" + rd.get_status_display() \
+        + "<p><br/>" + operator + "@google.com <b>Changed</b><br/><span style='color:#999999'>assignee:</span> " + oldvalue + " &rarr; " + ase + "</p>" \
+        # + "<p>Hi " + ase +", you are set to be assignee for this request, please check what will you do next. Thanks!"
+        
+        
+       
 
         # email = EmailMessage(subject, body, sender, recipient, cc_rcpt, headers={'Cc': ','.join(cc_rcpt)})  # headers section must be included into the EmailMessage brackets.
         # email.send(fail_silently=False)
@@ -191,7 +207,7 @@ def request_editor(request):
             recipient, 
             cc_rcpt
         )
-        column_value = rd.get_status_display()
+        
 
     rd.save()
 
@@ -705,3 +721,9 @@ def malfunction_statistics(request):
         hi.append(lds)
 
     return render(request, 'motric_mal_statistics.html', {'soft_mal_list':soft_items_lst_lst, 'hard_mal_list':hard_items_lst_lst, 'soft_sum':soft_sum, 'hard_sum':hard_sum})
+
+
+def my_request(request):
+    request_list = RequestedDevice.objects.filter(assignee=loginer, resolved=0)
+    count = request_list.count()
+    return render(request, 'motric_pending_request.html', {'request_list': request_list, 'count': count})

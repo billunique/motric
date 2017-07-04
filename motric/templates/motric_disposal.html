@@ -59,9 +59,10 @@
 				  <li><a href="?ao={{ current_tab }}&s={{ current_status }}&l=twd">TWD</a></li>
 				  {% endwith %}
 				</ul>
-			</th>
+		  </th>
 	  	  <!-- <th class="btn-danger">Status</th> -->
 	  	  {% block status %}{% endblock %}
+	  	  <th class="btn-danger">Assignee</th>
 	  	  <!-- <th class="btn-danger">Action</th> -->
 	  	  {% block action_title %}{% endblock %}
 	  	</tr>
@@ -95,6 +96,7 @@
 		  {% if request.get_status_display == 'Ordered' %}<button data-pk="{{ request.id }}" title="Mark the device as Received" class="btn btn-xs btn-hidden-receive" style="float:right">Received</button>{% endif %}
 		  {% if request.get_status_display == 'Assigned' and not request.charged == 1 %}<button data-pk="{{ request.id }}" title="Mark the request as Charged" class="btn btn-xs btn-hidden-charge" style="float:right">Charged</button>{% endif %}
 		  </td>
+		  <td><a href="#" data-target="req_editor" data-name="assignee" data-title="Point assignee" data-pk="{{ request.id }}">{{ request.assignee |default:"" }}</a></td>
 		  {% block action %}{% endblock %}
 		</tr>
 		{% endfor %}

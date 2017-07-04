@@ -168,7 +168,15 @@ $(document).ready(function(){
 	$(".navul a").on("click", function(){
 	   $(".navul").find(".active").removeClass("active");
 	   $(this).addClass("active");
+	   if ($(this).attr('id') == 'mytasks') {
+	    $.ajax({
+	      type: 'POST',
+	      url: '/who/',
+	      data: {'operator': operator, 'csrfmiddlewaretoken': token},
+	    })
+	   }
 	});
+
 
 	$("#tips-toggle").on("click", function() {
 		if($("#search-tips").css('display') == 'none' ) {
@@ -569,7 +577,7 @@ $(document).ready(function(){
 					$('#eta_date').val('');
 					// $('#eta_form')[0].reset();
 					$('#eta_modal').modal('hide');
-					$("select[data-pk=" + primary_key + "]").parent().prev().html('Approved');
+					$("select[data-pk=" + primary_key + "]").parent().prevAll(".td_status").html('Approved');
 					$("select[data-pk=" + primary_key + "]").val('');
 					// $("select[data-pk=" + primary_key + "] option[value='REF']").remove();
     				$("select[data-pk=" + primary_key + "] option[value='APP']").remove();

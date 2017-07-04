@@ -208,6 +208,10 @@ tr td:hover button{
     font-weight: bold;
 }
 
+.gray9 {
+    color:#999999;
+}
+
 /*.hidden_column{
     display: none;
 }
