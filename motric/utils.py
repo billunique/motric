@@ -94,6 +94,10 @@ def form_receiver(request):
 
         for i in range(len(model_type)):
             rd = RequestedDevice(model_type=model_type[i], os_version=os_version[i], quantity=quantity[i], requester=usr, request_date=timezone.now(), comment=comment, status=status)
+            if usr.pref_location == 'MTV':
+                rd.assignee = 'ffeng'
+            if usr.pref_location == 'PEK':
+                rd.assignee = 'yanyanl'
             rd.save()
             for x in range(len(used_for)):
                 ug = Usage(request=rd, used_for=used_for[x])

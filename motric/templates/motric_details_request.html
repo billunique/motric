@@ -48,6 +48,7 @@
 	  	  <th>Price(USD)</th>
 	  	  <th>Price(CNY)</th>
 	  	  <th>ETA</th>
+	  	  <th class="btn-danger">Assignee</th>
 	  	  <th class="btn-danger">Status</th>
 		</tr>
 		<tr>
@@ -59,6 +60,7 @@
 	  	  <td>{{ request.price_usd |default:"" }}</td>
 	  	  <td>{{ request.price_cny |default:"" }}</td>
 	  	  <td>{{ request.eta_date |date:"SHORT_DATE_FORMAT" }}</td>
+	  	  <td>{{ request.assignee }}</td>
 	  	  <td>{{ request.get_status_display }}
 	  	</tr>
 	</table>	
