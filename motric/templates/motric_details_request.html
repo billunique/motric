@@ -60,7 +60,7 @@
 	  	  <td>{{ request.price_usd |default:"" }}</td>
 	  	  <td>{{ request.price_cny |default:"" }}</td>
 	  	  <td>{{ request.eta_date |date:"SHORT_DATE_FORMAT" }}</td>
-	  	  <td>{{ request.assignee }}</td>
+	  	  <td>{{ request.assignee |default:"" }}</td>
 	  	  <td>{{ request.get_status_display }}
 	  	</tr>
 	</table>	
