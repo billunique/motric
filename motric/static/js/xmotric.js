@@ -348,6 +348,10 @@ $(document).ready(function(){
 
     			}
 
+    			if (location.pathname == '/details/'){
+    				location.reload();
+    			}
+
 
 		},
 		error: function(response, newValue) {

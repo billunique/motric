@@ -38,6 +38,7 @@
 	</table>
 
 	<table class="table table-bordered font-compacted">
+	{% csrf_token %}
 	    <caption>Requested Device Info</caption>
 		<tr class="btn-success">
 	  	  <th>Model</th>
@@ -60,7 +61,7 @@
 	  	  <td>{{ request.price_usd |default:"" }}</td>
 	  	  <td>{{ request.price_cny |default:"" }}</td>
 	  	  <td>{{ request.eta_date |date:"SHORT_DATE_FORMAT" }}</td>
-	  	  <td>{{ request.assignee |default:"" }}</td>
+	  	  <td><a href="#" data-target="req_editor" data-name="assignee" data-title="Point assignee" data-pk="{{ request.id }}">{{ request.assignee |default:"" }}</a></td>
 	  	  <td>{{ request.get_status_display }}
 	  	</tr>
 	</table>	
