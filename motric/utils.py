@@ -407,11 +407,12 @@ def details(request):
             last_response_target = request_list[len(request_list)-1]
         event_list = Event.objects.filter(device=ld)
         replacement_list = LabDevice.objects.filter(labdevice=pk)
+        replacement_to_list = LabDevice.objects.get(pk=pk).labdevice_set.all()
         mf = MalFunction.objects.filter(device=ld)
         lst = [e.get_type_display() for e in mf]
         mf_dict = dict(Counter(lst))
         items_lst = sorted(mf_dict.items(), key=lambda pair:pair[1], reverse=True)
-        return render(request, 'motric_details_device.html', {'device':ld, 'did':did, 'request_list':request_list, 'first_target':first_response_target, 'last_target':last_response_target, 'event_list':event_list, 'replacement_list':replacement_list, 'type_count_list':items_lst})
+        return render(request, 'motric_details_device.html', {'device':ld, 'did':did, 'request_list':request_list, 'first_target':first_response_target, 'last_target':last_response_target, 'event_list':event_list, 'replacement_list':replacement_list, 'replacement_to_list':replacement_to_list, 'type_count_list':items_lst})
         # return render(request, 'motric_details_device.html', {'device':ld, 'did':did, 'request_list':request_list, 'event_list':event_list, 'replacement_list':replacement_list})
     if tp == 'r': # query request
         rd = RequestedDevice.objects.get(pk=pk)
@@ -469,11 +470,12 @@ def device_replacement(request):
     ld_attack.save()
 
     evt = Event(device=ld_attack, event=log_generator(replace_date, 'Properties are changed in bundle.<br/>' \
-        + 'owner from <span class="required">' + owner_old + '</span> --> <b>' + ld_attack.owner + '</b>;<br/>' 
-        + 'user from <span class="required">' + user_old + '</span> --> <b>' + ld_attack.user + '</b>;<br/>' \
-        + 'label from <span class="required">' + label_old + '</span> --> <b>' + ld_attack.label + '</b>;<br/>' \
-        + 'project from <span class="required">' + project_old + '</span> --> <b>' + ld_attack.project + '</b><br/>' \
-        + 'status from <span class="required">' + status_d[status_old] + '</span> --> <b>' + ld_attack.get_status_display() + '</b>.', operator))
+        + 'owner from <span class="required">' + str(owner_old) + '</span> --> <b>' + str(ld_attack.owner) + '</b>;<br/>' 
+        + 'user from <span class="required">' + str(user_old) + '</span> --> <b>' + str(ld_attack.user) + '</b>;<br/>' \
+        + 'label from <span class="required">' + str(label_old) + '</span> --> <b>' + str(ld_attack.label) + '</b>;<br/>' \
+        + 'project from <span class="required">' + str(project_old) + '</span> --> <b>' + str(ld_attack.project) + '</b>;<br/>' \
+        + 'status from <span class="required">' + status_d[status_old] + '</span> --> <b>' + ld_attack.get_status_display() + '</b>.' \
+        , operator))
     evt.save()
 
     return HttpResponse(data)

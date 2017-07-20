@@ -116,15 +116,24 @@
 	</table>
 
 	<table class="table table-bordered font-compacted">
-	    <caption>Replacement History (replaced by)</caption>
+	    <caption>Replacement History</caption>
+	    {% if replacement_to_list or replacement_list %}
+		{% for rep_to in replacement_to_list %}
+			<tr>
+		  <td>#{{ rep_to.id }}</td>
+		  <td><span class="bold_green">(replaced)</span> -- <a href="/details/?t=d&pk={{ rep_to.id }}" target="_blank">{{ rep_to }}</a></td>
+		</tr>
+        {% endfor %}
 		{% for rep in replacement_list %}
 		<tr>
 	  	  <td>#{{ rep.id }}</td>
-	  	  <td><a href="/details/?t=d&pk={{ rep.id }}" target="_blank">{{ rep }}</a></td>
+	  	  <td><span style="color:red">(be replaced by)</span> -- <a href="/details/?t=d&pk={{ rep.id }}" target="_blank">{{ rep }}</a></td>
 	  	</tr>
-	  	{% empty %}
-	  	<tr><td>None yet.</td></tr>
 	  	{% endfor %}
+	  	{% else %}
+	  	<tr><td>None yet.</td></tr>
+	  	{% endif %}
+
 	</table>
 
 	<table class="table table-bordered table-condensed font-compacted">
