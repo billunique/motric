@@ -2,12 +2,14 @@
 {% load motric_custom_tags %}
 {% block title %}Resolved Request{% endblock %}
 {% block date_filter %}
+	  {% if request.path != "/search/" %}
 	  <ul class="nav nav-tabs" style="float:right">
 		  <li><a href="{{ request.path }}?ao=all">All</a></li>
 		  <li><a href="{{ request.path }}?ao=tm">This Month</a></li>
 		  <li><a href="{{ request.path }}?ao=lm">Last Month</a></li>
 		  <li><a href="{{ request.path }}?ao=more">More early</a></li>
 	  </ul>
+	  {% endif %}
 {% endblock %}
 {% block status %}
 	  	    <th class="btn-danger dropdown">

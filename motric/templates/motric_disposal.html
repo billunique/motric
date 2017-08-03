@@ -18,15 +18,25 @@
 	</div> -->
     <!-- <div><span><a href="#" id="ex_rate" data-name="exchange_rate" data-type="text" data-placement="right" data-title="Enter exchange rate" data-value="">Click here to input exchage rate</a></span></div> -->
 
+    <table id="disposal" class="table table-bordered table-hover text-center font-compacted">  {# table be here or be the very head of thead, the display vary #}
+	  {% csrf_token %}
+
 	  <h4 style="float:left;margin-left:10">Totally <span class="noticeable">{{ count }}</span> requests   
 	  {% if request.path == "/request_disposal/" %}
 	  <a class="btn btn-default" href="/public_device/" target="_blank">See public pool</a>   
 	  {% endif %}
 	  <a class="btn btn-link" href="#" id="toggle-show">Show more columns</a></h4>
+
+	  <form class="navbar-form" role="search" action="/search/" id="mini-search-form">
+	  <!-- <div class="input-group"> -->
+	  	<input class="mini_search_bar" type="text" name="q" id="mini_search_bar" placeholder="Search (syntax is similar to FE)" style="margin-top:8px;">
+	  	<input type="hidden" name="opt" id="opter_mini">
+	  	<button class="glyphicon glyphicon-search mt-searchicon" type="submit" id="mini_search_submit" title="Check the help on homepage if you like."></button>
+	  <!-- </div> -->
+	  </form>
+
 	  {% block date_filter %}{% endblock %}
 
-	<table id="disposal" class="table table-bordered table-hover text-center font-compacted">
-	  {% csrf_token %}
 	  <thead>
 	  	<tr class="btn-primary">
 	  	  <th>#</th>

@@ -193,12 +193,16 @@ $(document).ready(function(){
 		dest.val(dest.val().replace(/\s*\|\s*/g, '|'))
 		dest.val(dest.val().replace(/\s*\:\s*/g, ':'))
 		// dest.val(dest.val().replace(/(\s*)\|(\s*)/, '|'))
+
+		$('#opter').val(operator)  // My trick to transfer the operator to backend.
 	});
 
 	$("#mini_search_submit").on("click", function() {
 		var dest = $("#mini_search_bar");
 		dest.val(dest.val().replace(/\s*\|\s*/g, '|'))
 		dest.val(dest.val().replace(/\s*\:\s*/g, ':'))
+
+		$('#opter_mini').val(operator)  // My trick to transfer the operator to backend.
 	});
 
 	var token = $('input[name="csrfmiddlewaretoken"]').prop('value');

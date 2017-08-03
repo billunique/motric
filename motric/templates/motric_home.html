@@ -10,6 +10,7 @@
     <div class="input-group centered_searchbox">
       <!-- <input type="hidden" name="by" value="id" /> -->
       <input type="text" class="form-control mtinput" placeholder="Search by device id, model, project, owner, location, etc. Syntax is similar to FE." name="q" id="search_box" size="100" />
+      <input type="hidden" name="opt" id="opter" />
       <div class="input-group-btn">
         <button class="btn btn-primary glyphicon glyphicon-search mtinput" type="submit" id="search_submit"></button>
       </div>
@@ -32,6 +33,11 @@
           <li>model:pixel owner:mobileharness</li>          
           <li>location:MTV status:public</li>
           <li>model:"nexus 5"|"nexus 6p" os:6.0.1</li>
+        </ul></b>
+        For request query, examples are:<p style="margin-bottom: 10px">
+        <b><ul>
+          <li>requester:xiawang|yanyanl</li>          
+          <li>cost_center:909</li>
         </ul></b>
       </div>
   </div>

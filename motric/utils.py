@@ -5,9 +5,10 @@ from django.utils import timezone
 from django.core import serializers
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django import forms
+from django.db.models import Q
 from collections import Counter
 from models import *
-import time, json, threading, getpass, shlex, socket
+import time, json, threading, getpass, shlex, socket, operator
 
 loginer = ''
 
@@ -95,6 +96,7 @@ def form_receiver(request):
         for i in range(len(model_type)):
             rd = RequestedDevice(model_type=model_type[i], os_version=os_version[i], quantity=quantity[i], requester=usr, request_date=timezone.now(), comment=comment, status=status)
             if usr.pref_location == 'MTV':
+                rd.lab_location = 'MTV'
                 rd.assignee = 'ffeng'
             if usr.pref_location == 'PEK':
                 rd.assignee = 'yanyanl'
@@ -582,6 +584,7 @@ def search(request):
     data = json.dumps(q)
     keyword = q.get('q')
     page = q.get('page')
+    searcher = q.get('opt')
     # by = q.get('by') # default by id.
 
     # strin= shlex.shlex(keyword)
@@ -601,6 +604,7 @@ def search(request):
 
         # return HttpResponse(json.dumps(query))
 
+        ## for device search ##
         device_id = query.get('id')
         model = query.get('model')
         project = query.get('project')
@@ -611,68 +615,93 @@ def search(request):
         os = query.get('os')
         register_id = query.get('#')
 
+        ## for request search ##
+        requester = query.get('requester')
+        costcenter = query.get('cost_center')
+
         status_dict = {'public':'AVA', 'assigned':'ASS', 
         'requested':'REQ', 'approved':'APP', 'refused':'REF',
         'ordered':'ORD', 'received':'REC', 'broken':'BRO',
         'in repair':'REP', 'retrieved':'RET', 'retired':'RTR'}
 
-        device_list = LabDevice.objects.all()
+        result_list = LabDevice.objects.all()
+        requestsearch = 0
 
         if device_id:
             ftr = device_id.split("|")
-            device_list = device_list.filter(device_id__in=ftr)
+            result_list = result_list.filter(device_id__in=ftr)
 
         if model:
             ftr = model.split("|")
-            device_list = device_list.filter(model__in=ftr)
+            result_list = result_list.filter(model__in=ftr)
 
         if project:
             ftr = project.split("|")
-            device_list = device_list.filter(project__in=ftr)
+            result_list = dresult_list.filter(project__in=ftr)
 
         if owner:
             ftr = owner.split("|")
-            device_list = device_list.filter(owner__in=ftr)
+            query = reduce(operator.and_, (Q(owner__contains = item) for item in ftr))
+            result_list = result_list.filter(query)
 
         if lab_location:
             ftr = lab_location.split("|")
-            device_list = device_list.filter(lab_location__in=ftr)
+            result_list = dresult_list.filter(lab_location__in=ftr)
 
         if label:
             ftr = label.split("|")
-            device_list = device_list.filter(label__in=ftr)
+            result_list = result_list.filter(label__in=ftr)
 
         if os:
             ftr = os.split("|")
-            device_list = device_list.filter(os__in=ftr)
+            result_list = result_list.filter(os__in=ftr)
 
         if status:
             status_list = status.lower().split("|")
             ftr = [ status_dict.get(x) for x in status_list]
-            device_list = device_list.filter(status__in=ftr)
+            result_list = result_list.filter(status__in=ftr)
 
         if register_id:
             ftr = register_id.split("|")
-            device_list = device_list.filter(id__in=ftr)
+            result_list = result_list.filter(id__in=ftr)
+
+        if requester:
+            ftr = requester.split("|")
+            result_list = RequestedDevice.objects.filter(requester__ldap__in=ftr)
+            requestsearch = 1
+
+        if costcenter:
+            ftr = costcenter.split("|")
+            result_list = RequestedDevice.objects.filter(requester__cost_center__in=ftr)
+            requestsearch = 1
 
     except IndexError:
         return HttpResponse("Please follow the search syntax and try again :)  Click the question mark after the search box for quick help.")
 
-    count = device_list.count()
+    count = result_list.count()
 
-    paginator = Paginator(device_list, 100) # Show 100 devices per page.
+    paginator = Paginator(result_list, 100) # Show 100 devices per page.
     try:
-        device_list = paginator.page(page)
+        result_list = paginator.page(page)
     except PageNotAnInteger:
         # If page is not an integer, deliver first page.
-        device_list = paginator.page(1)
+        result_list = paginator.page(1)
     except EmptyPage:
         # If page is out of range (e.g. 9999), deliver last page of results.
-        device_list = paginator.page(paginator.num_pages)
+        result_list = paginator.page(paginator.num_pages)
 
+    sh = SearchHistory(query=keyword, searcher=searcher)
+    sh.save()
     full_path = request.get_full_path()
     current_path = full_path.split("&")[0]
-    return render(request, 'motric_searchresult.html', {'device_list':device_list, 'count':count, 'first_param':current_path})
+    if not requestsearch:
+        return render(request, 'motric_sr_device.html', {'device_list':result_list, 'count':count, 'first_param':current_path})
+        sh.q_type = 1
+    else:
+        return render(request, 'motric_sr_request.html', {'request_list':result_list, 'count':count, 'first_param':current_path})
+        sh.q_type = 2
+    sh.save()
+    
 
 def malfunction_record(request):
     p = request.POST.copy()

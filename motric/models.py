@@ -27,7 +27,7 @@ class DeviceStatus(models.Model):
 		abstract = True
 
 class Requester(models.Model):
-	ldap = models.CharField(max_length=30)
+	ldap = models.CharField(max_length=100)
 	cost_center = models.CharField(max_length=50)
 	project = models.CharField(max_length=50)
 	device_owner = models.CharField(max_length=100)
@@ -150,3 +150,11 @@ class Usage(models.Model):
 
 	def __unicode__(self):
 		return u'%s; %s' % (self.request, self.used_for)
+
+
+class SearchHistory(models.Model):
+	query = models.CharField(max_length=1000, blank=True, null=True)
+	q_type = models.IntegerField(blank=True, null=True)
+	field = models.CharField(max_length=100, blank=True, null=True)
+	searcher = models.CharField(max_length=50, blank=True, null=True)
+	q_date = models.DateTimeField(auto_now_add=True)

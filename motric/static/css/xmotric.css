@@ -283,9 +283,11 @@ tr td:hover button{
 }
 
 .centered_tips {
-  position: absolute;
-  top: 52%;
-  left: 46%;
+  position: relative;
+  top: 600px;
+  left: 550px;
+  width:800px;
+  height:400px;
   transform: translate(-50%, -50%);
   font-size:14px;
   color:white;
