@@ -60,7 +60,7 @@ class RequestedDevice(DeviceStatus):
 	assignee = models.CharField(max_length=100, blank=True, null=True)
 
 	def __unicode__(self):
-		return u'%s %s, requested by %s, from %s, at %s, for %s project' % (self.quantity, self.model_type, self.requester.ldap, self.requester.cost_center, self.request_date, self.requester.project)
+		return u'%s, %s, requested by %s, from %s, at %s, for %s project' % (self.model_type, self.quantity, self.requester.ldap, self.requester.cost_center, self.request_date, self.requester.project)
 		# return self.model_type
 
 class LabDevice(DeviceStatus):
