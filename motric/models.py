@@ -60,7 +60,7 @@ class RequestedDevice(DeviceStatus):
 	assignee = models.CharField(max_length=100, blank=True, null=True)
 
 	def __unicode__(self):
-		return u'%s %s, requested by %s, for %s project' % (self.quantity, self.model_type, self.requester.ldap, self.requester.project)
+		return u'%s %s, requested by %s, from %s, at %s, for %s project' % (self.quantity, self.model_type, self.requester.ldap, self.requester.cost_center, self.request_date, self.requester.project)
 		# return self.model_type
 
 class LabDevice(DeviceStatus):
@@ -154,7 +154,10 @@ class Usage(models.Model):
 
 class SearchHistory(models.Model):
 	query = models.CharField(max_length=1000, blank=True, null=True)
-	q_type = models.IntegerField(blank=True, null=True)
+	q_type = models.IntegerField(default=0)
 	field = models.CharField(max_length=100, blank=True, null=True)
 	searcher = models.CharField(max_length=50, blank=True, null=True)
 	q_date = models.DateTimeField(auto_now_add=True)
+
+	def __unicode__(self):
+		return u'%s at %s' % (self.query, self.q_date)

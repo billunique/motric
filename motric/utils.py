@@ -641,8 +641,8 @@ def search(request):
 
         if owner:
             ftr = owner.split("|")
-            query = reduce(operator.and_, (Q(owner__contains = item) for item in ftr))
-            result_list = result_list.filter(query)
+            fltr = reduce(operator.and_, (Q(owner__contains = item) for item in ftr))
+            result_list = result_list.filter(fltr)
 
         if lab_location:
             ftr = lab_location.split("|")
@@ -690,17 +690,19 @@ def search(request):
         # If page is out of range (e.g. 9999), deliver last page of results.
         result_list = paginator.page(paginator.num_pages)
 
-    sh = SearchHistory(query=keyword, searcher=searcher)
+    sh = SearchHistory(query=keyword, searcher=searcher, field=list(query))
     sh.save()
     full_path = request.get_full_path()
     current_path = full_path.split("&")[0]
     if not requestsearch:
-        return render(request, 'motric_sr_device.html', {'device_list':result_list, 'count':count, 'first_param':current_path})
         sh.q_type = 1
+        sh.save()
+        return render(request, 'motric_sr_device.html', {'device_list':result_list, 'count':count, 'first_param':current_path})
     else:
-        return render(request, 'motric_sr_request.html', {'request_list':result_list, 'count':count, 'first_param':current_path})
         sh.q_type = 2
-    sh.save()
+        sh.save()
+        return render(request, 'motric_sr_request.html', {'request_list':result_list, 'count':count, 'first_param':current_path})
+    
     
 
 def malfunction_record(request):
