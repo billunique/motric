@@ -11,9 +11,9 @@ def index(request):
 def home(request):
 	return render(request, 'motric_home.html')
 
-def labdevice(request):
-	device_list_all = LabDevice.objects.filter(status__in=['AVA', 'ASS']).order_by('-id')
-	q = request.GET.copy()
+def device_page(base_list, httpRqt, response_page):
+	device_list_all = base_list
+	q = httpRqt.GET.copy()
 	loc = q.get('loc')
 	page = q.get('page')
 
@@ -38,91 +38,30 @@ def labdevice(request):
 	    device_list = paginator.page(paginator.num_pages)
 
 	first_param = "?loc=" + str(loc or "")
-	return render(request, 'motric_labdevice.html', {'device_list':device_list, 'count':count, 'first_param':first_param})
+	return render(httpRqt, response_page, {'device_list':device_list, 'count':count, 'first_param':first_param})
+
+
+def labdevice(request):
+	filtered_list = LabDevice.objects.filter(status__in=['AVA', 'ASS']).order_by('-id')
+	page=device_page(filtered_list, request, 'motric_labdevice.html')
+	return page
+
 
 def public_device(request):
-	device_list_all = LabDevice.objects.filter(status='AVA').order_by('-id')
-	q = request.GET.copy()
-	loc = q.get('loc')
-	page = q.get('page')
-
-	device_list = device_list_all
-	if loc:
-		if loc == 'pek':
-			device_list = device_list_all.filter(lab_location='PEK')
-		if loc == 'mtv':
-			device_list = device_list_all.filter(lab_location='MTV')
-		if loc == 'twd':
-			device_list = device_list_all.filter(lab_location='TWD')
-	count = device_list.count()
-	paginator = Paginator(device_list, 100) # Show 100 devices per page.
-	try:
-	    device_list = paginator.page(page)
-	except PageNotAnInteger:
-	    # If page is not an integer, deliver first page.
-	    device_list = paginator.page(1)
-	except EmptyPage:
-	    # If page is out of range (e.g. 9999), deliver last page of results.
-	    device_list = paginator.page(paginator.num_pages)
-
-	first_param = "?loc=" + str(loc or "")
-	return render(request, 'motric_public.html', {'device_list':device_list, 'count':count, 'first_param':first_param})
+	filtered_list = LabDevice.objects.filter(status='AVA').order_by('-id')
+	page=device_page(filtered_list, request, 'motric_public.html')
+	return page
 
 def dedicated_device(request):
-	device_list_all = LabDevice.objects.filter(status='ASS').order_by('-id')
-	q = request.GET.copy()
-	loc = q.get('loc')
-	page = q.get('page')
-
-	device_list = device_list_all
-	if loc:
-		if loc == 'pek':
-			device_list = device_list_all.filter(lab_location='PEK')
-		if loc == 'mtv':
-			device_list = device_list_all.filter(lab_location='MTV')
-		if loc == 'twd':
-			device_list = device_list_all.filter(lab_location='TWD')
-	count = device_list.count()
-	paginator = Paginator(device_list, 100) # Show 100 devices per page.
-	try:
-	    device_list = paginator.page(page)
-	except PageNotAnInteger:
-	    # If page is not an integer, deliver first page.
-	    device_list = paginator.page(1)
-	except EmptyPage:
-	    # If page is out of range (e.g. 9999), deliver last page of results.
-	    device_list = paginator.page(paginator.num_pages)
-
-	first_param = "?loc=" + str(loc or "")
-	return render(request, 'motric_dedicated.html', {'device_list':device_list, 'count':count, 'first_param':first_param})
+	filtered_list = LabDevice.objects.filter(status='ASS').order_by('-id')
+	page=device_page(filtered_list, request, 'motric_dedicated.html')
+	return page
 
 def broken_device(request):
-	device_list_all = LabDevice.objects.filter(status__in=['BRO', 'REP', 'RET', 'RTR']).order_by('-id')
-	q = request.GET.copy()
-	loc = q.get('loc')
-	page = q.get('page')
+	filtered_list = LabDevice.objects.filter(status__in=['BRO', 'REP', 'RET', 'RTR']).order_by('-id')
+	page=device_page(filtered_list, request, 'motric_broken.html')
+	return page
 
-	device_list = device_list_all
-	if loc:
-		if loc == 'pek':
-			device_list = device_list_all.filter(lab_location='PEK')
-		if loc == 'mtv':
-			device_list = device_list_all.filter(lab_location='MTV')
-		if loc == 'twd':
-			device_list = device_list_all.filter(lab_location='TWD')
-	count = device_list.count()
-	paginator = Paginator(device_list, 100) # Show 100 devices per page.
-	try:
-	    device_list = paginator.page(page)
-	except PageNotAnInteger:
-	    # If page is not an integer, deliver first page.
-	    device_list = paginator.page(1)
-	except EmptyPage:
-	    # If page is out of range (e.g. 9999), deliver last page of results.
-	    device_list = paginator.page(paginator.num_pages)
-
-	first_param = "?loc=" + str(loc or "")
-	return render(request, 'motric_broken.html', {'device_list':device_list, 'count':count, 'first_param':first_param})
 
 def device_request(request):
 	return render(request, 'motric_request.html')
