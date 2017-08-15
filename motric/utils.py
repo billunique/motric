@@ -641,7 +641,7 @@ def search(request):
 
         if owner:
             ftr = owner.split("|")
-            fltr = reduce(operator.and_, (Q(owner__contains = item) for item in ftr))
+            fltr = reduce(lambda x,y:x|y,  [Q(owner__icontains = item) for item in ftr])
             result_list = result_list.filter(fltr)
 
         if lab_location:
@@ -650,7 +650,8 @@ def search(request):
 
         if label:
             ftr = label.split("|")
-            result_list = result_list.filter(label__in=ftr)
+            fltr = reduce(lambda x,y:x|y,  [Q(label__icontains = item) for item in ftr])
+            result_list = result_list.filter(fltr)
 
         if os:
             ftr = os.split("|")
