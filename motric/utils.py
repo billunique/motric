@@ -105,7 +105,7 @@ def form_receiver(request):
                 ug = Usage(request=rd, used_for=used_for[x])
                 ug.save()
             # combo += ' * ' + model_type[i] + ' x ' + quantity[i] +'\t<span style="float:right">http://' + motric_host + '/details/?t=r&pk=' + str(rd.pk) + '</span><br/>'
-            combo += '<tr><td>' + model_type[i] + ' * ' + quantity[i] + '</td><td>http://' + motric_host + '/details/?t=r&pk=' + str(rd.pk) + '</td></tr>'
+            combo += '<tr><td>' + model_type[i] + ' * ' + quantity[i] + ' at ' + rd.lab_location + ' lab</td><td>http://' + motric_host + '/details/?t=r&pk=' + str(rd.pk) + '</td></tr>'
         combo += '</table>'
 
 
@@ -118,7 +118,11 @@ def form_receiver(request):
     # except:
     #     return HttpResponse(expection_carrier())
 
-    message = ldap + ' raised device request for:<br/><br/>' + combo + '<p>You can also go to http://' + motric_host + '/request_disposal/?f=req for overviews.</p>'
+    recipient = [ldap + '@google.com']
+    message = 'Dear ' + ldap + ',<br/><br/>We have received your device request for:<br/><br/>' + combo + '<p>Please see <a href="https://docs.google.com/document/d/1x-0ldb9j1vmDX7YVGJuEwKqsZEzgpqPN8E7rnIwzY8g/edit#heading=h.yvtx8zw2ebuj" target="_blank"><i><b>Mobile Harness Device Procurement and Preparation SLA</b></i></a> to expect the ETA.</p><p>Basically we will inform you if there are any update on your request, <br/>you can also go to http://' + motric_host + '/search/?q=requester:' + ldap + ' to check current status of the requests under your name.</p>'
+
+    message += "<br/><p>Best regards,<br/>Mobile Harness team</p>"
+
     motric_send_mail(
         subject,
         message,
@@ -627,6 +631,17 @@ def search(request):
         result_list = LabDevice.objects.all()
         requestsearch = 0
 
+
+        if requester:
+            ftr = requester.split("|")
+            result_list = RequestedDevice.objects.filter(requester__ldap__in=ftr)
+            requestsearch = 1
+
+        if costcenter:
+            ftr = costcenter.split("|")
+            result_list = RequestedDevice.objects.filter(requester__cost_center__in=ftr)
+            requestsearch = 1
+
         if device_id:
             ftr = device_id.split("|")
             result_list = result_list.filter(device_id__in=ftr)
@@ -666,15 +681,7 @@ def search(request):
             ftr = register_id.split("|")
             result_list = result_list.filter(id__in=ftr)
 
-        if requester:
-            ftr = requester.split("|")
-            result_list = RequestedDevice.objects.filter(requester__ldap__in=ftr)
-            requestsearch = 1
 
-        if costcenter:
-            ftr = costcenter.split("|")
-            result_list = RequestedDevice.objects.filter(requester__cost_center__in=ftr)
-            requestsearch = 1
 
     except IndexError:
         return HttpResponse("Please follow the search syntax and try again :)  Click the question mark after the search box for quick help.")
