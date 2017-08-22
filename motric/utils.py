@@ -8,7 +8,7 @@ from django import forms
 from django.db.models import Q
 from collections import Counter
 from models import *
-import time, json, threading, getpass, shlex, socket, operator
+import time, json, threading, getpass, shlex, socket, operator, random
 
 loginer = ''
 
@@ -59,6 +59,13 @@ class EmailThread(threading.Thread):
 def motric_send_mail(subject, body, sender, recipient, cc_rcpt):
     EmailThread(subject, body, sender, recipient, cc_rcpt).start()
 
+def fancy_name(name):
+    color_list = ['#4285F4', '#EA4335', '#FBBC05', '#34A853']
+    user = '<b>'
+    for c in name:
+        user += '<span style="color:' + random.choice(color_list) +'">' + c + '</span>'
+    user += '</b>'
+    return user
 
 def form_receiver(request):
 
@@ -87,7 +94,7 @@ def form_receiver(request):
         server = form_dict.get('svr')
 
         combo = '<table cellpadding="3" border="1" style="border:2px solid gray; border-collapse:collapse">'
-        subject = '[Motric]Somebody raised device request!'
+        subject = '[Motric]New device request received!'
         global motric_host, recipient, cc_rcpt  # mysteriuos, no need to global copy the variable sender, guess it's defined by the settings.py and be used globally.
         # if server: # value is 't' (for test)
         #     motric_host = "xiawang.bej:8080"
@@ -119,9 +126,10 @@ def form_receiver(request):
     #     return HttpResponse(expection_carrier())
 
     recipient = [ldap + '@google.com']
-    message = 'Dear ' + ldap + ',<br/><br/>We have received your device request for:<br/><br/>' + combo + '<p>Please see <a href="https://docs.google.com/document/d/1x-0ldb9j1vmDX7YVGJuEwKqsZEzgpqPN8E7rnIwzY8g/edit#heading=h.yvtx8zw2ebuj" target="_blank"><i><b>Mobile Harness Device Procurement and Preparation SLA</b></i></a> to expect the ETA.</p><p>Basically we will inform you if there are any update on your request, <br/>you can also go to http://' + motric_host + '/search/?q=requester:' + ldap + ' to check current status of the requests under your name.</p>'
 
-    message += "<br/><p>Best regards,<br/>Mobile Harness team</p>"
+    message = 'Dear ' + fancy_name(ldap) + ',<br/><br/>We have received your device request for:<br/><br/>' + combo + '<p>Please see <a href="https://docs.google.com/document/d/1x-0ldb9j1vmDX7YVGJuEwKqsZEzgpqPN8E7rnIwzY8g/edit#heading=h.yvtx8zw2ebuj" target="_blank"><i><b>Mobile Harness Device Procurement and Preparation SLA</b></i></a> to expect the ETA.</p><p>Basically we will inform you if there are any update on your request, <br/>you can also go to http://' + motric_host + '/search/?q=requester:' + ldap + ' to check current status of the requests under your name.</p>'
+
+    message += '<br/><p>Best regards,<br/>Mobile Harness team</p>'
 
     motric_send_mail(
         subject,
@@ -175,23 +183,23 @@ def request_editor(request):
     if column == 'status':
         if column_value == 'REF': # status'value could be REF-refuse, ORD-ordered, etc.
             rd.resolved = True
-            body = "Dear " + requester + ",<br/><br/>We're sorry that your device request for " + rd.model_type + " * " + str(rd.quantity) + " (" + url + ") is temporarily refused for the reason: <b>" + reason + "</b><br/><br/>You can contact mobileharness-ops@goole.com for details."
+            body = "Dear " + fancy_name(requester) + ",<br/><br/>We're sorry that your device request for " + rd.model_type + " * " + str(rd.quantity) + " (" + url + ") is temporarily refused for the reason: <b>" + reason + "</b><br/><br/>You can contact mobileharness-ops@goole.com for details."
 
         if column_value == 'APP':
             rd.approve_date = timezone.now();
-            body = "Dear " + requester + ",<br/><br/>This is to inform you that your device request for " + rd.model_type + " * " + str(rd.quantity) + " (" + url + ") is approved. <br/>Hopefully it will be fulfilled by <b>" + str(eta) + "</b> (estimated). We will start your purchase order shortly. Please stay tuned."
+            body = "Dear " + fancy_name(requester) + ",<br/><br/>This is to inform you that your device request for " + rd.model_type + " * " + str(rd.quantity) + " (" + url + ") is approved. <br/>Hopefully it will be fulfilled by <b>" + str(eta) + "</b> (estimated). We will start your purchase order shortly. Please stay tuned."
 
         if column_value == 'ORD': # this request is autoly submit after the po_number is inputted, so rd.po_number has gotten value.
             rd.po_date = timezone.now()
             # url = "https://pivt.googleplex.com/viewPo?poid=" + rd.po_number
             # body = "Dear " + requester + ",<br/><br/>This is to inform you that your device request for " + rd.model_type + " (quantity: " + str(rd.quantity) + ") is approved.<br/>" + "We have started your purchase order: " + url + " Please stay tuned."
             # body = "Dear " + requester + ",<br/><br/>This is to inform you that the purchase order for your request is raised.<br/>" + "You can check it here: " + url + " Looking forward to seeing you get and run these devices."
-            body = "Dear " + requester + ",<br/><br/>This is to inform you that the purchase order of your request for " + rd.model_type + " * " + str(rd.quantity) + " (" + url + ") is raised.<br/>Looking forward to seeing you get and run these devices on Mobile Harness."
+            body = "Dear " + fancy_name(requester) + ",<br/><br/>This is to inform you that the purchase order of your request for " + rd.model_type + " * " + str(rd.quantity) + " (" + url + ") is raised.<br/>Looking forward to seeing you get and run these devices on Mobile Harness."
 
         if column_value == 'REC':
             rd.receive_date = timezone.now();
             # body = "Dear " + requester + ",<br/><br/>This is to inform you that the devices of request " + url + " already arrived.<br/>" + "Yanyan will hand them to you, please be ready to register them and make them online."
-            body = "Dear " + requester + ",<br/><br/>This is to inform you that the devices of your request for " + rd.model_type + " * " + str(rd.quantity) + " (" + url + ")  already arrived.<br/>" + "We will set up and make them online soon, and will inform you once they are ready."
+            body = "Dear " + fancy_name(requester) + ",<br/><br/>This is to inform you that the devices of your request for " + rd.model_type + " * " + str(rd.quantity) + " (" + url + ")  already arrived.<br/>" + "We will set up and make them online soon, and will inform you once they are ready."
 
         body += "<br/><p>Best regards,<br/>Mobile Harness team</p>"
         column_value = rd.get_status_display()
@@ -378,7 +386,7 @@ def device_allocate(request):
         id_comb = id_comb[:-1]  # trim the last "|"
         moha_url = 'https://mobileharness.corp.google.com/lab.html#subpage=DEVICE_SEARCH&q=id:' + id_comb
         
-        message = "Dear " + requester + ",<br/><br/>This is to inform you that your device request for " + rd.model_type + " * " + str(rd.quantity) + " (" + url + ") is fulfilled.<br/>" + "The devices have been set up, please check here:" + moha_url + "<br/><br/>Thank you for using Mobile Harness and happy playing!<br/><p>Best regards,<br/>Mobile Harness team</p>"
+        message = "Dear " + fancy_name(requester) + ",<br/><br/>This is to inform you that your device request for " + rd.model_type + " * " + str(rd.quantity) + " (" + url + ") is fulfilled.<br/>" + "The devices have been set up, please check here:" + moha_url + "<br/><br/>Thank you for using Mobile Harness and happy playing!<br/><p>Best regards,<br/>Mobile Harness team</p>"
 
         motric_send_mail(
             subject,
@@ -634,7 +642,7 @@ def search(request):
 
         if requester:
             ftr = requester.split("|")
-            result_list = RequestedDevice.objects.filter(requester__ldap__in=ftr)
+            result_list = RequestedDevice.objects.filter(requester__ldap__in=ftr).filter(resolved__in=[0,1]).order_by('-id')
             requestsearch = 1
 
         if costcenter:
