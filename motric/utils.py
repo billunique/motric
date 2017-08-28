@@ -5,10 +5,11 @@ from django.utils import timezone
 from django.core import serializers
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django import forms
-from django.db.models import Q
+from django.db.models import Q, Sum, Count
+from django.db.models.functions import TruncMonth, ExtractMonth, ExtractYear
 from collections import Counter
+import time, json, threading, getpass, shlex, socket, operator, random, gviz_api
 from models import *
-import time, json, threading, getpass, shlex, socket, operator, random
 
 loginer = ''
 
@@ -780,3 +781,37 @@ def my_request(request):
     request_list = RequestedDevice.objects.filter(assignee=loginer, resolved=0)
     count = request_list.count()
     return render(request, 'motric_pending_request.html', {'request_list': request_list, 'count': count})
+
+
+def request_dashboard(request):
+    # Creating the data
+    rds = RequestedDevice.objects.filter(resolved__in=[0,1])
+    mset = rds.values_list('model_type').annotate(qty=Sum('quantity')).order_by('-qty')
+
+    description_model = [("model_type", "string", "Model"),
+                         ("qty", "number", "Quantity")]
+    data_model = list(mset)
+
+    # Loading it into gviz_api.DataTable
+    data_table = gviz_api.DataTable(description_model)
+    data_table.LoadData(data_model)
+
+    # Create a JavaScript code string.
+    jscode = data_table.ToJSCode("jscode_data",
+                                 columns_order=("model_type", "qty"), order_by="-qty")
+    # Create a JSON string.
+    json_model = data_table.ToJSon(columns_order=("model_type", "qty"), order_by="-qty")
+
+
+    rset = rds.annotate(month=ExtractMonth('request_date'), year=ExtractYear('request_date')).values_list('year', 'month').annotate(request=Count('id'), device=Sum('quantity')).values_list('year', 'month', 'request', 'device')
+    data_request = [(str(e[0]) + "/" + str(e[1]), e[2], e[3]) for e in rset]
+    description_request = [("month", "string", "Month"),
+                           ("request_times", "number", "Request times"),
+                           ("request_device_quantity", "number", "Requested Device Quantity")]
+
+    data_table_r = gviz_api.DataTable(description_request)
+    data_table_r.LoadData(data_request)
+    json_request = data_table_r.ToJSon(columns_order=("month", "request_times", "request_device_quantity"), order_by="month")
+
+
+    return render(request, 'motric_request_statistics.html', {'jscode':jscode, 'json_model':json_model, 'json_request':json_request})

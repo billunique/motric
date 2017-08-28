@@ -157,7 +157,5 @@ def device_register(request):
 # def about(request):
 # 	return render(request, 'motric_about.html')
 
-# This is an incorrect configuration.
-# def receiver(request):
-# 	return render(request, 'receiver.jsonReceiver')
-# --------------------------------------------------
+def xtest(request):
+	return render(request, 'test.html')

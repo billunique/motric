@@ -328,3 +328,11 @@ tr td:hover button{
     top: 4px;
     padding: 2px 2px;
 }
+
+.chart_border {
+    border: 1px solid #ccc;
+}
+
+.left-align {
+    text-align: left
+}

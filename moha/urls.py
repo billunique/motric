@@ -15,8 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
-from motric import views
-from motric import utils
+from motric import views, utils, tests
 
 urlpatterns = [
     url(r'^$', views.index, name='index'),
@@ -45,12 +44,15 @@ urlpatterns = [
     url(r'^register/', utils.device_register, name='labd_register'),
     url(r'^mal_record/', utils.malfunction_record, name='mal_record'),
     url(r'^mal_statistics/', utils.malfunction_statistics, name='mal_statistics'),
+    url(r'^request_dashboard/', utils.request_dashboard, name='req_dashboard'),
 
     url(r'^who/', utils.who_are_you, name='who'),
     url(r'^sync_info/', utils.syncer, name='sync_info'),
     url(r'^response_status/', utils.response_checker, name='response_checker'),
     url(r'^import_data/', utils.import_sheet, name='data_importor'),
     url(r'^admin/', admin.site.urls),
+
+    # url(r'^xt/', views.xtest),
 ]
 
 # Customize the header title of the admin site.
