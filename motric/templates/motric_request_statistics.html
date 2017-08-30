@@ -10,12 +10,12 @@
       {{ jscode |safe}}
       var jscode_table = new google.visualization.Table(document.getElementById('table_models'));
       var css_modeltable = {headerRow: 'left-align motric-font', tableRow: 'motric-font', tableCell: 'motric-font'};
-      jscode_table.draw(jscode_data, {showRowNumber: true, width: '100%', height: 800, cssClassNames: css_modeltable});
+      jscode_table.draw(jscode_data, {showRowNumber: true, width: '100%', height: 800, allowHtml: true, cssClassNames: css_modeltable});
 
       var json_table = new google.visualization.PieChart(document.getElementById('pie_models'));
       var json_data = new google.visualization.DataTable( {{ json_model |safe}} );
       var options = {height: 800, 
-                    title:'Most popular device models',
+                    title:'Percentage of device models (total: {{ d_count }})',
                     titleTextStyle:{color:'gray', fontSize:18, bold:true},
                     is3D: true,
                     fontName: 'Courier New',
@@ -48,8 +48,8 @@
     {% endwith %}
     </ul>
     <tr>
-      <td width="25%"><div id="table_models" class=""></div></td>
-      <td width="73%"><div id="pie_models" class=""></div></td>
+      <td width="25%"><div id="table_models" class="chart_border"></div></td>
+      <td width="73%"><div id="pie_models" class="chart_border"></div></td>
     </tr>
   </table>
 
@@ -64,8 +64,5 @@
 <!--   <H3 style="text-align: center">Request times and device quantity brokendown by month</H3>
   <h4 style="text-align: center">(as from 2016-10)</h4>
   <div id="bar_requests""></div> -->
-<!--     <H2>Table created using ToJSCode</H2>
-    <div id="table_div_jscode" style="border: 1px solid #ccc; float:left"></div>
-    <H2>Table created using ToJSon</H2>
-    <div id="table_div_json"  style="border: 1px solid #ccc; float:right"></div> -->
+
 {% endblock %}

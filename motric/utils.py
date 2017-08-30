@@ -813,14 +813,16 @@ def request_dashboard(request):
     if mode == '1':
         rds = rds_valid
     rset = rds.annotate(month=ExtractMonth('request_date'), year=ExtractYear('request_date')).values_list('year', 'month').annotate(request=Count('id'), device=Sum('quantity')).values_list('year', 'month', 'request', 'device')
+    r_count = rds.count()
+    d_count = rds.aggregate(total=Sum('quantity'))['total']
     data_request = [(str(e[0]) + "/" + str(e[1]), e[2], e[3]) for e in rset]
     description_request = [("month", "string", "Month"),
-                           ("request_times", "number", "# of requests"),
-                           ("request_device_quantity", "number", "# of device_list")]
+                           ("request_times", "number", "# of requests (total: " + str(r_count) + " )"),
+                           ("request_device_quantity", "number", "# of devices (total: " + str(d_count) + " )")]
 
     data_table_r = gviz_api.DataTable(description_request)
     data_table_r.LoadData(data_request)
     json_request = data_table_r.ToJSon(columns_order=("month", "request_times", "request_device_quantity"), order_by="month")
 
 
-    return render(request, 'motric_request_statistics.html', {'jscode':jscode, 'json_model':json_model, 'json_request':json_request})
+    return render(request, 'motric_request_statistics.html', {'jscode':jscode, 'json_model':json_model, 'json_request':json_request, 'r_count':r_count, 'd_count':d_count})
