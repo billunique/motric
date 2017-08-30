@@ -297,7 +297,7 @@ def device_allocate(request):
         price_usd_sum = 0
         po_number = []
         ld_dict = {}
-        ld_pk = dict.pop('pkid')
+        ld_pk = dict.getlist('pkid')
         for i in range(len(ld_pk)):
             ld = LabDevice.objects.get(pk=ld_pk[i])
             ld_dict[ld_pk[i]]=ld.device_id
@@ -336,7 +336,7 @@ def device_allocate(request):
         lds = LabDevice.objects.all()
         id_list = [e.device_id for e in lds]
         device_list = []
-        serial_no = dict.pop('did') # got a list of serial number;
+        serial_no = dict.getlist('did') # got a list of serial number;
         if status == 'AVA':
             rd.requester.device_owner = 'mobileharness'
             rd.requester.project = 'PUBLIC'
