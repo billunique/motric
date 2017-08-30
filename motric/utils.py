@@ -809,6 +809,7 @@ def request_dashboard(request):
                                  columns_order=("model_type", "qty"), order_by="-qty")
     # Create a JSON string.
     json_model = data_table.ToJSon(columns_order=("model_type", "qty"), order_by="-qty")
+    dvc_count = rds.aggregate(total=Sum('quantity'))['total']
 
     if mode == '1':
         rds = rds_valid
@@ -825,4 +826,4 @@ def request_dashboard(request):
     json_request = data_table_r.ToJSon(columns_order=("month", "request_times", "request_device_quantity"), order_by="month")
 
 
-    return render(request, 'motric_request_statistics.html', {'jscode':jscode, 'json_model':json_model, 'json_request':json_request, 'r_count':r_count, 'd_count':d_count})
+    return render(request, 'motric_request_statistics.html', {'jscode':jscode, 'json_model':json_model, 'json_request':json_request, 'r_count':r_count, 'd_count':dvc_count})
