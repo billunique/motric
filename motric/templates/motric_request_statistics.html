@@ -39,16 +39,23 @@
 {% endblock %}
 {% block body %}
   <table width="100%">
-    <caption><H3 style="text-align: center">Requested device quantity brokendown by model</H3></caption>
+    <caption><H3 style="text-align: center">Requests break-down by model</H3></caption>
+    <ul class="nav nav-tabs" style="float:right">
+    {% with sa=request.GET.standalone %}
+      <li><a href="{{ request.path }}{% if sa %}?standalone=1{% endif %}">All</a></li>
+      <li><a href="{{ request.path }}?days=180{% if sa %}&standalone=1{% endif %}">180Days</a></li>
+      <li><a href="{{ request.path }}?days=90{% if sa %}&standalone=1{% endif %}">90Days</a></li>
+    {% endwith %}
+    </ul>
     <tr>
-      <td width="25%"><div id="table_models" class="chart_border"></div></td>
-      <td width="73%"><div id="pie_models" class="chart_border"></div></td>
+      <td width="25%"><div id="table_models" class=""></div></td>
+      <td width="73%"><div id="pie_models" class=""></div></td>
     </tr>
   </table>
 
   <br/><br/><br/>
   <table width="98%">
-    <caption><H3 style="text-align: center">Request times and device quantity brokendown by month</H3></caption>
+    <caption><H3 style="text-align: center">Amount of requests and devices break-down by month</H3></caption>
     <tr>
       <td><div id="bar_requests"></div></td>
     </tr>

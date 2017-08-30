@@ -8,7 +8,7 @@ from django import forms
 from django.db.models import Q, Sum, Count
 from django.db.models.functions import TruncMonth, ExtractMonth, ExtractYear
 from collections import Counter
-import time, json, threading, getpass, shlex, socket, operator, random, gviz_api
+import json, threading, shlex, socket, operator, random, gviz_api
 from models import *
 
 loginer = ''
@@ -27,7 +27,7 @@ if 'motric' not in socket.gethostname():
 
 
 def expection_carrier():
-    import sys
+    import sys, time
     dict = {}
     info = "%s || %s" % (sys.exc_info()[0], sys.exc_info()[1])
     dict['message'] = info
@@ -784,10 +784,18 @@ def my_request(request):
 
 
 def request_dashboard(request):
+    import datetime
+    from datetime import timedelta
+    g = request.GET.copy()
+    days = g.get('days')
+    mode = g.get('standalone')
     # Creating the data
-    rds = RequestedDevice.objects.filter(resolved__in=[0,1])
-    mset = rds.values_list('model_type').annotate(qty=Sum('quantity')).order_by('-qty')
+    # rds = RequestedDevice.objects.filter(resolved__in=[0,1])
+    rds_valid = RequestedDevice.objects.filter(resolved__in=[0,1]).exclude(request_date__lt=datetime.date(2016, 12, 1)) # We start migrating users from 2016/12
+    r_range = timezone.now() - timedelta(days=int(days or 36500)) # 36500 stands for 100 years, enough for query all the requests :D
+    rds = rds_valid.filter(request_date__gte=r_range)
 
+    mset = rds.values_list('model_type').annotate(qty=Sum('quantity')).order_by('-qty')
     description_model = [("model_type", "string", "Model"),
                          ("qty", "number", "Quantity")]
     data_model = list(mset)
@@ -802,12 +810,13 @@ def request_dashboard(request):
     # Create a JSON string.
     json_model = data_table.ToJSon(columns_order=("model_type", "qty"), order_by="-qty")
 
-
+    if mode == '1':
+        rds = rds_valid
     rset = rds.annotate(month=ExtractMonth('request_date'), year=ExtractYear('request_date')).values_list('year', 'month').annotate(request=Count('id'), device=Sum('quantity')).values_list('year', 'month', 'request', 'device')
     data_request = [(str(e[0]) + "/" + str(e[1]), e[2], e[3]) for e in rset]
     description_request = [("month", "string", "Month"),
-                           ("request_times", "number", "Request times"),
-                           ("request_device_quantity", "number", "Requested Device Quantity")]
+                           ("request_times", "number", "# of requests"),
+                           ("request_device_quantity", "number", "# of device_list")]
 
     data_table_r = gviz_api.DataTable(description_request)
     data_table_r.LoadData(data_request)
