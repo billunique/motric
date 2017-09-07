@@ -786,6 +786,7 @@ def my_request(request):
 def request_dashboard(request):
     import datetime
     from datetime import timedelta
+    from decimal import Decimal
     g = request.GET.copy()
     days = g.get('days')
     mode = g.get('standalone')
@@ -804,26 +805,93 @@ def request_dashboard(request):
     data_table = gviz_api.DataTable(description_model)
     data_table.LoadData(data_model)
 
-    # Create a JavaScript code string.
-    jscode = data_table.ToJSCode("jscode_data",
+    # Create a JavaScript code string, preparing for the table chart.
+    jscode_model = data_table.ToJSCode("jscode_data",
                                  columns_order=("model_type", "qty"), order_by="-qty")
-    # Create a JSON string.
+    # Create a JSON string, preparing for the pie chart.
     json_model = data_table.ToJSon(columns_order=("model_type", "qty"), order_by="-qty")
     dvc_count = rds.aggregate(total=Sum('quantity'))['total']
 
+
+    ##### For the column chart, "Count of requests and devices break-down by month".
     if mode == '1':
         rds = rds_valid
     rset = rds.annotate(month=ExtractMonth('request_date'), year=ExtractYear('request_date')).values_list('year', 'month').annotate(request=Count('id'), device=Sum('quantity')).values_list('year', 'month', 'request', 'device')
     r_count = rds.count()
     d_count = rds.aggregate(total=Sum('quantity'))['total']
-    data_request = [(str(e[0]) + "/" + str(e[1]), e[2], e[3]) for e in rset]
+    data_request_withdev = [(str(e[0]) + "/" + str(e[1]), e[2], e[3]) for e in rset]
     description_request = [("month", "string", "Month"),
                            ("request_times", "number", "# of requests (total: " + str(r_count) + " )"),
                            ("request_device_quantity", "number", "# of devices (total: " + str(d_count) + " )")]
 
     data_table_r = gviz_api.DataTable(description_request)
-    data_table_r.LoadData(data_request)
+    data_table_r.LoadData(data_request_withdev)
     json_request = data_table_r.ToJSon(columns_order=("month", "request_times", "request_device_quantity"), order_by="month")
 
 
-    return render(request, 'motric_request_statistics.html', {'jscode':jscode, 'json_model':json_model, 'json_request':json_request, 'r_count':r_count, 'd_count':dvc_count})
+    ##### For the combo chart, "Response of requests break-down by month".
+    fday_overall = []
+    for e in rds:
+       if e.resolved_date == None:
+         fday_overall.append(('OPEN', (timezone.now() - e.request_date).days))
+       else:
+         fday_overall.append(('RESOLVED', (e.resolved_date - e.request_date).days))
+
+    total = sum(e[1] for e in fday_overall) # the total of the fulfilling days.
+    average_overall = Decimal(total, 1)/rds.count()
+
+    rset_nodev = rds.annotate(month=ExtractMonth('request_date'), year=ExtractYear('request_date')).values_list('year', 'month').annotate(request=Count('id')).values_list('year', 'month', 'request')
+    data_request_nodev = [(str(e[0]) + "/" + str(e[1]), e[2]) for e in rset_nodev]
+
+    mset_month = rds.datetimes('request_date', 'month')
+    data_request_com = []
+    x = 0
+    for m in mset_month:
+       rd_res = rds.filter(resolved_date__month=m.month)
+       month_fdays = 0
+       for e in rd_res:
+         month_fdays += (e.resolved_date - e.request_date).days
+         month_average = round(Decimal(month_fdays, 1)/rd_res.count(), 1)
+       print m, month_fdays, rd_res.count(), month_average
+       data_request_com.append(data_request_nodev[x] + (rd_res.count(), month_average))
+       x += 1
+
+
+    resolved_count = rds.filter(resolved=1).count()
+    description_resolved_r = [("month", "string", "Month"),
+                              ("request_amount", "number", "# of submitted requests (total: " + str(r_count) + " )"),
+                              ("resolved_request_amount", "number", "# of resolved requests (total: " + str(resolved_count) + " )"),
+                              ("month_res_average", "number", "average fulfilling days")]
+
+    data_table_resolved_r =  gviz_api.DataTable(description_resolved_r)
+    data_table_resolved_r.LoadData(data_request_com)
+    json_resolved_r = data_table_resolved_r.ToJSon(columns_order=("month", "request_amount", "resolved_request_amount", "month_res_average"), order_by="month")
+
+
+    ##### For the table chart "Response of requests break-down by month".
+    data_request_com_4tc = []
+    accum_rts = 0
+    accum_res = 0
+    for e in data_request_com:
+       accum_rts += e[1]
+       accum_res += e[2]
+       res_ratio = round(Decimal(accum_res, 1)/accum_rts, 2)
+       print "{0:.0f}%".format(res_ratio * 100)
+       data_request_com_4tc.append(e + (accum_rts, accum_res, str(res_ratio * 100) + '%'))
+
+    description_resolved_4tc = [("month", "string", "Month"),
+                              ("request_amount", "number", "submitted requests"),
+                              ("resolved_request_amount", "number", "resolved requests"),
+                              ("month_res_average", "number", "average fulfilling days"),
+                              ("accum_rts", "number", "accumulation of submitted"),
+                              ("accum_res", "number", "accumulation of resolved"),
+                              ("resolve ratio", "string", "resolve ratio"),
+                              ]
+
+    data_table_resolved_4tc = gviz_api.DataTable(description_resolved_4tc)
+    data_table_resolved_4tc.LoadData(data_request_com_4tc)
+    json_resolved_4tc = data_table_resolved_4tc.ToJSon(columns_order=("month", "request_amount", "resolved_request_amount", "month_res_average", 
+                                                                   "accum_rts", "accum_res", "resolve ratio"), order_by="month")
+
+
+    return render(request, 'motric_request_statistics.html', {'jscode':jscode_model, 'json_model':json_model, 'json_request':json_request, 'r_count':r_count, 'd_count':dvc_count, 'json_resolved':json_resolved_r, 'json_resolved_4tc':json_resolved_4tc})

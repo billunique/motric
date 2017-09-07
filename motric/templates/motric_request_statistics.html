@@ -14,7 +14,8 @@
 
       var json_table = new google.visualization.PieChart(document.getElementById('pie_models'));
       var json_data = new google.visualization.DataTable( {{ json_model |safe}} );
-      var options = {height: 800, 
+      var options = {
+                    height: 800, 
                     title:'Percentage of device models (total: {{ d_count }})',
                     titleTextStyle:{color:'gray', fontSize:18, bold:true},
                     is3D: true,
@@ -25,7 +26,7 @@
       json_table.draw(json_data, options);
 
 
-      var json_table_r = new google.visualization.ColumnChart(document.getElementById('bar_requests'))
+      var json_table_r = new google.visualization.ColumnChart(document.getElementById('col_requests'))
       var json_data_r = new google.visualization.DataTable( {{ json_request |safe}} );
       var options_r = {
                       // title: 'Request by month', subtitle: 'Request times and Requested-device quantity from 2016-10',
@@ -33,6 +34,58 @@
                       fontName: 'Courier New',
                     };
       json_table_r.draw(json_data_r, options_r);
+
+
+      // var json_resolved_combo = new google.visualization.ComboChart(document.getElementById('bar_requests'))
+      var json_resolved_combo = new google.visualization.ColumnChart(document.getElementById('bar_requests'))
+      // var json_resolved_combo = new google.charts.Bar(document.getElementById('bar_requests'))
+      var json_data_resolved_combo = new google.visualization.DataTable( {{ json_resolved |safe}} );
+      var options_resolved_r = {
+                      // width: 1200,
+                      height: 800,
+                      fontName: 'Courier New',
+                      vAxis: {
+                        // format: '#.0',
+                      },
+                      // orientation: 'vertical',
+                      seriesType: 'bars',
+                      series:{
+                        0: {color: 'orange'},
+                        1: {color: '#34A853'},
+                        2: {type: 'steppedArea', color:'#4285F4'},
+                      }
+                    };
+
+      var materialOptions = {
+                width: '100%', height: 800,
+                // fontName: 'Courier New',
+                chart: {
+                  title: 'Request & Fulfillment',
+                  subtitle: '# of requests on the left, fulfilling-days on the right'
+                },
+                chartArea:{left:200, top:100},
+                // bars:'horizontal',
+                axisTitlesPosition:'in',
+                series: {
+                  0: { axis: 'requests'}, // Bind series 0 to an axis named 'requests'.
+                  1: { axis: 'requests'},
+                  2: { axis: 'fdays_average'}, // Bind series 1 to an axis named 'fdays_average'
+                },
+                axes: {
+                  y: {
+                    requests: {side:'left', label: '# of requests submitted and resolved'}, // Left y-axis.
+                    fdays_average: {side: 'right', label: 'average fulfilling-days  (unit: day)'} // Right y-axis.
+                  }
+                }
+              };
+      json_resolved_combo.draw(json_data_resolved_combo, options_resolved_r);
+      // json_resolved_combo.draw(json_data_resolved_combo, google.charts.Bar.convertOptions(materialOptions));
+
+
+      var json_resolved_tc = new google.visualization.Table(document.getElementById('table_requests'));
+      var json_data_resolved_4tc = new google.visualization.DataTable( {{ json_resolved_4tc |safe}} );
+      json_resolved_tc.draw(json_data_resolved_4tc, {showRowNumber: true, width:'86%', height: 600, allowHtml: true, cssClassNames: css_modeltable});
+
     }
 
   </script>
@@ -55,9 +108,20 @@
 
   <br/><br/><br/>
   <table width="98%">
-    <caption><H3 style="text-align: center">Amount of requests and devices break-down by month</H3></caption>
+    <caption><H3 style="text-align: center">Count of requests and devices break-down by month</H3></caption>
+    <tr>
+      <td><div id="col_requests"></div></td>
+    </tr>
+  </table>
+
+  <br/><br/><br/>
+  <table width="98%">
+    <caption><H3 style="text-align: center">Response of requests break-down by month</H3></caption>
     <tr>
       <td><div id="bar_requests"></div></td>
+    </tr>
+    <tr>
+      <td style="padding-left:250px"><div id="table_requests"></div></td>
     </tr>
   </table>
 
