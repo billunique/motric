@@ -907,7 +907,12 @@ def request_dashboard(request):
 
 
     cnt_preflab = Counter(list(rds.values_list('requester__pref_location')));
-    data_preflab = [k + (v,) for k,v in cnt_preflab.items()];
+    data_preflab_1 = [k + (v,) for k,v in cnt_preflab.items()];
+    # import unicodedata
+    # data_preflab = [tuple(map(lambda i: str.replace(unicodedata.normalize('NFKD', i).encode('ascii','ignore'), '', 'Whatever'), tup)) for tup in data_preflab]
+    data_preflab = [tuple('DontCare' if x == '' else x for x in tup) for tup in data_preflab_1]
+
+
     description_preflab = [("pref_location", "string", "Preferred Location"),
                          ("request_count", "number", "Preferred location for the requests"),
                          ]
@@ -915,5 +920,24 @@ def request_dashboard(request):
     data_table_preflab = gviz_api.DataTable(description_preflab)
     data_table_preflab.LoadData(data_preflab)
     json_preflab = data_table_preflab.ToJSon(columns_order=("pref_location", "request_count"), order_by="pref_location")
+
+
+    #### For the column chart "Location distribution break-down by month"
+    data_request_loc_cc = []
+    data_month = [(str(e[0]) + "/" + str(e[1])) for e in rset_nodev]
+    i = 0
+    for m in mset_month:
+       rd_res = rds.filter(request_date__month=m.month)
+       vl = rd_res.values_list('lab_location', 'requester__pref_location')
+       ct_lab = Counter(e[0] for e in vl)
+       ct_pref = Counter(e[1] for e in vl)
+       data_request_loc_cc.append(data_month[i])
+       data_request_loc_cc.append(ct_lab)
+       data_request_loc_cc.append(ct_pref)
+       i += 1
+
+    description_loc_trends = [("month", "string", "Month"),
+                            {("location","string"):("count","number")},        
+                            ]
 
     return render(request, 'motric_request_statistics.html', {'jscode':jscode_model, 'json_model':json_model, 'json_request':json_request, 'r_count':r_count, 'd_count':dvc_count, 'json_resolved':json_resolved_r, 'json_resolved_4tc':json_resolved_4tc, 'json_labloc':json_labloc, 'json_preflab':json_preflab })
