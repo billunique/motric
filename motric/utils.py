@@ -894,4 +894,26 @@ def request_dashboard(request):
                                                                    "accum_rts", "accum_res", "resolve ratio"), order_by="month")
 
 
-    return render(request, 'motric_request_statistics.html', {'jscode':jscode_model, 'json_model':json_model, 'json_request':json_request, 'r_count':r_count, 'd_count':dvc_count, 'json_resolved':json_resolved_r, 'json_resolved_4tc':json_resolved_4tc})
+    #### For the pie chart "Lab location distribution"
+    cnt_labloc = Counter(list(rds.values_list('lab_location')));
+    data_labloc = [k + (v,) for k,v in cnt_labloc.items()];
+    description_labloc = [("lab_location", "string", "Lab Location"),
+                        ("request_count", "number", "Requests on each location"),
+                        ]
+
+    data_table_labloc = gviz_api.DataTable(description_labloc)
+    data_table_labloc.LoadData(data_labloc)
+    json_labloc = data_table_labloc.ToJSon(columns_order=("lab_location", "request_count"), order_by="lab_location")
+
+
+    cnt_preflab = Counter(list(rds.values_list('requester__pref_location')));
+    data_preflab = [k + (v,) for k,v in cnt_preflab.items()];
+    description_preflab = [("pref_location", "string", "Preferred Location"),
+                         ("request_count", "number", "Preferred location for the requests"),
+                         ]
+
+    data_table_preflab = gviz_api.DataTable(description_preflab)
+    data_table_preflab.LoadData(data_preflab)
+    json_preflab = data_table_preflab.ToJSon(columns_order=("pref_location", "request_count"), order_by="pref_location")
+
+    return render(request, 'motric_request_statistics.html', {'jscode':jscode_model, 'json_model':json_model, 'json_request':json_request, 'r_count':r_count, 'd_count':dvc_count, 'json_resolved':json_resolved_r, 'json_resolved_4tc':json_resolved_4tc, 'json_labloc':json_labloc, 'json_preflab':json_preflab })

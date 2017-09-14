@@ -83,8 +83,41 @@
 
 
       var json_resolved_tc = new google.visualization.Table(document.getElementById('table_requests'));
-      var json_data_resolved_4tc = new google.visualization.DataTable( {{ json_resolved_4tc |safe}} );
+      var json_data_resolved_4tc = new google.visualization.DataTable( {{ json_resolved_4tc |safe }} );
       json_resolved_tc.draw(json_data_resolved_4tc, {showRowNumber: true, width:'86%', height: 600, allowHtml: true, cssClassNames: css_modeltable});
+
+
+      var json_labloc_pc = new google.visualization.PieChart(document.getElementById('pie_labloc'));
+      var json_data_labloc_4pc = new google.visualization.DataTable( {{ json_labloc |safe }});
+      var options_labloc = {
+                    height: 800, 
+                    title:'Final lab location distribution',
+                    titleTextStyle:{color:'gray', fontSize:18, bold:true},
+                    // is3D: true,
+                    pieHole: 0.25,
+                    fontName: 'Courier New',
+                    // chartArea: {left:200, top:150},
+                    sliceVisibilityThreshold: .002
+                  }
+      json_labloc_pc.draw(json_data_labloc_4pc, options_labloc);
+
+
+
+
+      var json_preflab_pc = new google.visualization.PieChart(document.getElementById('pie_preflab'));
+      var json_data_preflab_4pc = new google.visualization.DataTable( {{ json_preflab |safe }});
+      var options_prelab = {
+                    height: 800, 
+                    title:'User preferred lab location distribution',
+                    titleTextStyle:{color:'gray', fontSize:18, bold:true},
+                    // is3D: true,
+                    pieHole: 0.25,
+                    fontName: 'Courier New',
+                    // chartArea: {left:200, top:150},
+                    sliceVisibilityThreshold: .002
+                  }
+
+      json_preflab_pc.draw(json_data_preflab_4pc, options_prelab);
 
     }
 
@@ -101,7 +134,7 @@
     {% endwith %}
     </ul>
     <tr>
-      <td width="25%"><div id="table_models" class=""></div></td>
+      <td style="padding-left:88px" width="25%"><div id="table_models" class=""></div></td>
       <td width="73%"><div id="pie_models" class=""></div></td>
     </tr>
   </table>
@@ -121,7 +154,19 @@
       <td><div id="bar_requests"></div></td>
     </tr>
     <tr>
-      <td style="padding-left:250px"><div id="table_requests"></div></td>
+      <td style="padding-left:220px"><div id="table_requests"></div></td>
+    </tr>
+  </table>
+
+    <br/><br/><br/>
+  <table width="98%">
+    <caption><H3 style="text-align: center">Requests break-down by lab location</H3></caption>
+    <tr>
+      <td style="padding-left:20px" width="58%"><div id="pie_labloc"></div></td>
+      <td width="40%"><div id="pie_preflab"></div></td>
+    </tr>
+    <tr>
+      <td><div id="table_preflab"></div></td>
     </tr>
   </table>
 
