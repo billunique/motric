@@ -861,7 +861,7 @@ def request_dashboard(request):
     description_resolved_r = [("month", "string", "Month"),
                               ("request_amount", "number", "# of submitted requests (total: " + str(r_count) + " )"),
                               ("resolved_request_amount", "number", "# of resolved requests (total: " + str(resolved_count) + " )"),
-                              ("month_res_average", "number", "average fulfilling days")]
+                              ("month_res_average", "number", "Average fulfilling days")]
 
     data_table_resolved_r =  gviz_api.DataTable(description_resolved_r)
     data_table_resolved_r.LoadData(data_request_com)
@@ -894,35 +894,35 @@ def request_dashboard(request):
                                                                    "accum_rts", "accum_res", "resolve ratio"), order_by="month")
 
 
-    #### For the pie chart "Lab location distribution"
+    #### For the pie charts "Requests breakdown by lab location"
     cnt_labloc = Counter(list(rds.values_list('lab_location')));
     data_labloc = [k + (v,) for k,v in cnt_labloc.items()];
-    description_labloc = [("lab_location", "string", "Lab Location"),
+    description_labloc = [("lab_location", "string", "Lab location"),
                         ("request_count", "number", "Requests on each location"),
                         ]
 
     data_table_labloc = gviz_api.DataTable(description_labloc)
     data_table_labloc.LoadData(data_labloc)
-    json_labloc = data_table_labloc.ToJSon(columns_order=("lab_location", "request_count"), order_by="lab_location")
+    json_labloc = data_table_labloc.ToJSon(columns_order=("lab_location", "request_count"), order_by="-request_count")
 
 
     cnt_preflab = Counter(list(rds.values_list('requester__pref_location')));
-    data_preflab_1 = [k + (v,) for k,v in cnt_preflab.items()];
+    data_preflab = [k + (v,) for k,v in cnt_preflab.items()];
     # import unicodedata
     # data_preflab = [tuple(map(lambda i: str.replace(unicodedata.normalize('NFKD', i).encode('ascii','ignore'), '', 'Whatever'), tup)) for tup in data_preflab]
-    data_preflab = [tuple('DontCare' if x == '' else x for x in tup) for tup in data_preflab_1]
+    data_preflab = [tuple('No Preference' if x == '' else x for x in tup) for tup in data_preflab]
 
 
-    description_preflab = [("pref_location", "string", "Preferred Location"),
+    description_preflab = [("pref_location", "string", "Preferred location"),
                          ("request_count", "number", "Preferred location for the requests"),
                          ]
 
     data_table_preflab = gviz_api.DataTable(description_preflab)
     data_table_preflab.LoadData(data_preflab)
-    json_preflab = data_table_preflab.ToJSon(columns_order=("pref_location", "request_count"), order_by="pref_location")
+    json_preflab = data_table_preflab.ToJSon(columns_order=("pref_location", "request_count"), order_by="-request_count")
 
 
-    #### For the column chart "Location distribution break-down by month"
+    #### For the column chart "Location distribution break-down by month upon request"
     data_request_loc_cc = []
     data_month = [(str(e[0]) + "/" + str(e[1])) for e in rset_nodev]
     i = 0
@@ -931,13 +931,66 @@ def request_dashboard(request):
        vl = rd_res.values_list('lab_location', 'requester__pref_location')
        ct_lab = Counter(e[0] for e in vl)
        ct_pref = Counter(e[1] for e in vl)
-       data_request_loc_cc.append(data_month[i])
-       data_request_loc_cc.append(ct_lab)
-       data_request_loc_cc.append(ct_pref)
+       # each_month = [data_month[i], dict(ct_lab), dict(ct_pref)] # use this can get the readable data for each location.
+       # each_month = (data_month[i],) + (ct_lab.values(),) + (ct_pref.values(),)
+       each_month = (data_month[i],) + tuple(ct_lab.values()) + tuple(ct_pref.values())
+       data_request_loc_cc.append(each_month)
        i += 1
 
     description_loc_trends = [("month", "string", "Month"),
-                            {("location","string"):("count","number")},        
+                            ("count_mtv","number", "Located on MTV (" + str(cnt_labloc[('MTV',)]) + ")"), ("count_pek", "number", "Located on PEK (" + str(cnt_labloc[('PEK',)]) + ")"),
+                            ("pre_ct_dontcare", "number", "No Preferrence (" + str(cnt_preflab[('',)]) + ")"), ("pre_ct_mtv", "number", "Preferred on MTV (" + str(cnt_preflab[('MTV',)]) + ")"), ("pre_ct_pek","number", "Preferred on PEK (" + str(cnt_preflab[('PEK',)]) + ")"),        
+                            ]
+    data_table_loc_trends_cc = gviz_api.DataTable(description_loc_trends)
+    data_table_loc_trends_cc.LoadData(data_request_loc_cc)
+    json_loc_trends = data_table_loc_trends_cc.ToJSon(columns_order=("month", "count_mtv", "count_pek", "pre_ct_dontcare", "pre_ct_mtv", "pre_ct_pek"), order_by="month")
+
+
+
+    #### For the pie charts "Devices break-down by lab location"
+    data_device_loc = rds.values_list('lab_location').annotate(device=Sum('quantity')).values_list('lab_location', 'device')
+    description_device_loc = [("lab_location", "string", "Lab location"),
+                        ("device_count", "number", "Devices on each location"),
+                        ]
+    data_table_device_loc = gviz_api.DataTable(description_device_loc)
+    data_table_device_loc.LoadData(data_device_loc)
+    json_device_loc = data_table_device_loc.ToJSon(columns_order=("lab_location", "device_count"), order_by="-device_count")
+
+
+    data_device_pref_loc_set = rds.values_list('requester__pref_location').annotate(device=Sum('quantity')).values_list('requester__pref_location', 'device')
+    data_device_pref_loc = [tuple('No Preference' if x == '' else x for x in tup) for tup in data_device_pref_loc_set]
+    description_device_pref_loc = [("pref_location", "string", "Preferred location"),
+                        ("device_count", "number", "Prefered location for the devices"),
+                        ]
+    data_table_device_pref_loc = gviz_api.DataTable(description_device_pref_loc)
+    data_table_device_pref_loc.LoadData(data_device_pref_loc)
+    json_device_pref_loc = data_table_device_pref_loc.ToJSon(columns_order=("pref_location", "device_count"), order_by="-device_count")
+
+
+    #### For the column charts "Location distribution break-down by month upon device"
+    data_device_loc_cc = []
+    i = 0
+    mset_month = rds.datetimes('request_date', 'month')
+    for m in mset_month:
+        rd_res = rds.filter(request_date__month=m.month)
+        labloc = rd_res.values_list('lab_location').annotate(device=Sum('quantity')).values_list('lab_location', 'device').order_by('lab_location')
+        prefloc = rd_res.values_list('requester__pref_location').annotate(device=Sum('quantity')).values_list('requester__pref_location', 'device').order_by('requester__pref_location')
+        each_month = (data_month[i],) + tuple([e[1] for e in labloc]) + tuple([e[1] for e in prefloc])
+        data_device_loc_cc.append(each_month)
+        i += 1
+
+    description_loc_device_trends = [("month", "string", "Month"),
+                            ("count_mtv","number", "Located on MTV (" + str(data_device_loc.order_by('lab_location')[0][1]) + ")"), ("count_pek", "number", "Located on PEK (" + str(data_device_loc.order_by('lab_location')[1][1]) + ")"),
+                            ("pre_ct_dontcare", "number", "No Preferrence (" + str(data_device_pref_loc_set.order_by('requester__pref_location')[0][1]) + ")"), ("pre_ct_mtv", "number", "Preferred on MTV (" + str(data_device_pref_loc_set.order_by('requester__pref_location')[1][1]) + ")"), ("pre_ct_pek","number", "Preferred on PEK (" + str(data_device_pref_loc_set.order_by('requester__pref_location')[2][1]) + ")"),        
                             ]
 
-    return render(request, 'motric_request_statistics.html', {'jscode':jscode_model, 'json_model':json_model, 'json_request':json_request, 'r_count':r_count, 'd_count':dvc_count, 'json_resolved':json_resolved_r, 'json_resolved_4tc':json_resolved_4tc, 'json_labloc':json_labloc, 'json_preflab':json_preflab })
+    data_table_loc_device_trends_cc = gviz_api.DataTable(description_loc_device_trends)
+    data_table_loc_device_trends_cc.LoadData(data_device_loc_cc)
+    json_loc_device_trends = data_table_loc_device_trends_cc.ToJSon(columns_order=("month", "count_mtv", "count_pek", "pre_ct_dontcare", "pre_ct_mtv", "pre_ct_pek"), order_by="month")
+
+    return render(request, 'motric_request_statistics.html', 
+        {'jscode':jscode_model, 'json_model':json_model, 
+        'json_request':json_request, 'r_count':r_count, 'd_count':dvc_count, 
+        'json_resolved':json_resolved_r, 'json_resolved_4tc':json_resolved_4tc, 
+        'json_labloc':json_labloc, 'json_preflab':json_preflab, 'json_loc_trends':json_loc_trends,
+        'json_device_loc':json_device_loc, 'json_device_pref_loc':json_device_pref_loc, 'json_loc_device_trends':json_loc_device_trends })

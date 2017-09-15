@@ -87,37 +87,91 @@
       json_resolved_tc.draw(json_data_resolved_4tc, {showRowNumber: true, width:'86%', height: 600, allowHtml: true, cssClassNames: css_modeltable});
 
 
-      var json_labloc_pc = new google.visualization.PieChart(document.getElementById('pie_labloc'));
-      var json_data_labloc_4pc = new google.visualization.DataTable( {{ json_labloc |safe }});
-      var options_labloc = {
+
+      var json_labloc_request_pc = new google.visualization.PieChart(document.getElementById('pie_labloc_request'));
+      var json_data_labloc_request_pc = new google.visualization.DataTable( {{ json_labloc |safe }});
+      var options_labloc_request = {
                     height: 800, 
                     title:'Final lab location distribution',
                     titleTextStyle:{color:'gray', fontSize:18, bold:true},
-                    // is3D: true,
+                    is3D: true,
                     pieHole: 0.25,
                     fontName: 'Courier New',
                     // chartArea: {left:200, top:150},
                     sliceVisibilityThreshold: .002
                   }
-      json_labloc_pc.draw(json_data_labloc_4pc, options_labloc);
+      json_labloc_request_pc.draw(json_data_labloc_request_pc, options_labloc_request);
 
 
 
 
-      var json_preflab_pc = new google.visualization.PieChart(document.getElementById('pie_preflab'));
-      var json_data_preflab_4pc = new google.visualization.DataTable( {{ json_preflab |safe }});
-      var options_prelab = {
+      var json_preflab_request_pc = new google.visualization.PieChart(document.getElementById('pie_preflab_request'));
+      var json_data_preflab_request_pc = new google.visualization.DataTable( {{ json_preflab |safe }});
+      var options_prelab_request = {
                     height: 800, 
                     title:'User preferred lab location distribution',
                     titleTextStyle:{color:'gray', fontSize:18, bold:true},
-                    // is3D: true,
+                    is3D: true,
                     pieHole: 0.25,
                     fontName: 'Courier New',
                     // chartArea: {left:200, top:150},
                     sliceVisibilityThreshold: .002
                   }
 
-      json_preflab_pc.draw(json_data_preflab_4pc, options_prelab);
+      json_preflab_request_pc.draw(json_data_preflab_request_pc, options_prelab_request);
+
+
+
+      var json_loc_trends_request = new google.visualization.ColumnChart(document.getElementById('col_loc_trends_request'))
+      var json_data_loc_trends_request = new google.visualization.DataTable( {{ json_loc_trends |safe}} );
+      var options_loc_trends_request = {
+                      width: '100%', height: 1000,
+                      fontName: 'Courier New',
+                    };
+      json_loc_trends_request.draw(json_data_loc_trends_request, options_loc_trends_request);
+
+
+
+      var json_labloc_device_pc = new google.visualization.PieChart(document.getElementById('pie_labloc_device'));
+      var json_data_labloc_device_pc = new google.visualization.DataTable( {{ json_device_loc |safe }});
+      var options_labloc_device = {
+                    height: 800, 
+                    title:'Final lab location distribution',
+                    titleTextStyle:{color:'gray', fontSize:18, bold:true},
+                    is3D: true,
+                    pieHole: 0.25,
+                    fontName: 'Courier New',
+                    // chartArea: {left:200, top:150},
+                    sliceVisibilityThreshold: .002
+                  }
+      json_labloc_device_pc.draw(json_data_labloc_device_pc, options_labloc_device);
+
+
+
+
+      var json_preflab_device_pc = new google.visualization.PieChart(document.getElementById('pie_preflab_device'));
+      var json_data_preflab_device_pc = new google.visualization.DataTable( {{ json_device_pref_loc |safe }});
+      var options_prelab_device = {
+                    height: 800, 
+                    title:'User preferred lab location distribution',
+                    titleTextStyle:{color:'gray', fontSize:18, bold:true},
+                    is3D: true,
+                    pieHole: 0.25,
+                    fontName: 'Courier New',
+                    // chartArea: {left:200, top:150},
+                    sliceVisibilityThreshold: .002
+                  }
+
+      json_preflab_device_pc.draw(json_data_preflab_device_pc, options_prelab_device);
+
+
+      var json_loc_trends_device = new google.visualization.ColumnChart(document.getElementById('col_loc_trends_device'))
+      var json_data_loc_trends_device = new google.visualization.DataTable( {{ json_loc_device_trends |safe}} );
+      var options_loc_trends_device = {
+                      width: '100%', height: 800,
+                      fontName: 'Courier New',
+                    };
+      json_loc_trends_device.draw(json_data_loc_trends_device, options_loc_trends_device);
 
     }
 
@@ -162,11 +216,30 @@
   <table width="98%">
     <caption><H3 style="text-align: center">Requests break-down by lab location</H3></caption>
     <tr>
-      <td style="padding-left:20px" width="50%"><div id="pie_labloc"></div></td>
-      <td width="48%"><div id="pie_preflab"></div></td>
+      <td style="padding-left:20px" width="50%"><div id="pie_labloc_request"></div></td>
+      <td width="48%"><div id="pie_preflab_request"></div></td>
     </tr>
     <tr>
-      <td><div id="table_preflab"></div></td>
+      <td colspan="2"><h3 style="text-align: center; color: gray">Location distribution break-down by month upon requests</h3></td>
+    </tr>
+    <tr>
+      <td colspan="2"><div id="col_loc_trends_request"></div></td>
+    </tr>
+  </table>
+
+
+    <br/><br/><br/>
+  <table width="98%">
+    <caption><H3 style="text-align: center">Devices break-down by lab location</H3></caption>
+    <tr>
+      <td style="padding-left:20px" width="50%"><div id="pie_labloc_device"></div></td>
+      <td width="48%"><div id="pie_preflab_device"></div></td>
+    </tr>
+    <tr>
+      <td colspan="2"><h3 style="text-align: center; color: gray">Location distribution break-down by month upon devices</h3></td>
+    </tr>
+    <tr>
+      <td colspan="2"><div id="col_loc_trends_device"></div></td>
     </tr>
   </table>
 
