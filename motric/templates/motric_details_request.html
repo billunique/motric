@@ -3,6 +3,7 @@
 {% block title %}Details of request{% endblock %}
 
 {% block body %}
+{% include 'motric_modal.html' %}
   <div class="container">
 	<h3>Details of request #{{ request.id }}<span class="required">{% if request.resolved == 1 %} (resolved){% else %} (open)</span>{% endif %}</h3>
 	<table class="table table-bordered font-compacted">
@@ -48,6 +49,7 @@
 	  	  <th>PO Date</th>
 	  	  <th>Price(USD)</th>
 	  	  <th>Price(CNY)</th>
+	  	  <th>Bug ID</th>
 	  	  <th>ETA</th>
 	  	  <th class="btn-danger">Assignee</th>
 	  	  <th class="btn-danger">Status</th>
@@ -57,9 +59,10 @@
 	  	  <td>{{ request.os_version }}
 	  	  <td>{{ request.quantity }}</td>
 	  	  <td>{{ request.po_number |default:"" }}</td>
-	  	  <td>{{ request.po_date |default:"" }}</td>
+	  	  <td>{{ request.po_date |date:"SHORT_DATE_FORMAT" }}</td>
 	  	  <td>{{ request.price_usd |default:"" }}</td>
 	  	  <td>{{ request.price_cny |default:"" }}</td>
+	  	  <td><a href="http://b/{{ request.bug_id }}" target="_blank">{{ request.bug_id |default:"" }}</a><button class="btn btn-xs btn-hidden-attach_bug" data-pk="{{ request.id }}" style="float:right"> {% if not request.bug_id %}Attach Bug{% endif %}{% if request.bug_id %}Modify ID{% endif %}</button></td>
 	  	  <td>{{ request.eta_date |date:"SHORT_DATE_FORMAT" }}</td>
 	  	  <td><a href="#" data-target="req_editor" data-name="assignee" data-title="Point assignee" data-pk="{{ request.id }}">{{ request.assignee |default:"" }}</a></td>
 	  	  <td>{{ request.get_status_display }}
