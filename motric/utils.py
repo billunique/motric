@@ -657,7 +657,8 @@ def search(request):
 
         if model:
             ftr = model.split("|")
-            result_list = result_list.filter(model__in=ftr)
+            fltr = reduce(lambda x,y:x|y,  [Q(model__icontains = item) for item in ftr])
+            result_list = result_list.filter(fltr)
 
         if project:
             ftr = project.split("|")
