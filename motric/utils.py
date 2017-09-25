@@ -848,12 +848,12 @@ def request_dashboard(request):
     data_request_com = []
     x = 0
     for m in mset_month:
-       rd_res = rds.filter(resolved_date__month=m.month)
+       rd_res = rds_valid.filter(resolved_date__month=m.month)  # DONOT set it to rds.
        month_fdays = 0
        for e in rd_res:
          month_fdays += (e.resolved_date - e.request_date).days
-         month_average = round(Decimal(month_fdays, 1)/rd_res.count(), 1)
-       print m, month_fdays, rd_res.count(), month_average
+       month_average = round(Decimal(month_fdays, 1)/rd_res.count(), 1)
+       # print m, month_fdays, rd_res.count(), month_average
        data_request_com.append(data_request_nodev[x] + (rd_res.count(), month_average))
        x += 1
 
