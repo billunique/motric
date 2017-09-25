@@ -33,7 +33,13 @@ class LabDeviceAdmin(admin.ModelAdmin):
     readonly_fields = ('replaced_by',)
     # fields = ('model', 'device_id', 'status', 'os', 'owner', 'user', 'label', 'project', 'lab_location')
 
+class ResponseRelationshipAdmin(admin.ModelAdmin):
+    list_display = ['id', 'device', 'request', 'response_date']
+    ordering = ['-response_date']
+        
+
 admin.site.register(Requester, RequesterAdmin)
 admin.site.register(RequestedDevice, RequestedDeviceAdmin)
 admin.site.register(LabDevice, LabDeviceAdmin)
 admin.site.register(Event)
+admin.site.register(ResponseRelationship, ResponseRelationshipAdmin)
