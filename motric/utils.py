@@ -576,11 +576,12 @@ def import_sheet(request):
                 return row
             else:
                 # return None
-                if rd.lab_location == 'PEK':
-                    rd.lab_location = row[6]
-                    rd.owner = row[3]
-                    rd.label = row[4]
-                    rd.save()
+                # if rd.lab_location == 'PEK':
+                rd.lab_location = row[6]
+                rd.owner = row[3]
+                rd.label = row[4]
+                rd.model = row[0]
+                rd.save()
 
 
         # if form.is_valid():
