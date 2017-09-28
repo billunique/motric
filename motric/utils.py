@@ -571,10 +571,17 @@ def import_sheet(request):
                               request.FILES)
         def filtrate_dupe(row):
             # row[1] represents device id.
-            if LabDevice.objects.filter(device_id=row[1]).first() == None:  #filter().first() won't return DoesNotExist Error, while get() will.
+            rd = LabDevice.objects.filter(device_id=row[1]).first()
+            if rd == None:  #filter().first() won't return DoesNotExist Error, while get() will.
                 return row
             else:
-                return None
+                # return None
+                if rd.lab_location == 'PEK':
+                    rd.lab_location = row[6]
+                    rd.owner = row[3]
+                    rd.label = row[4]
+                    rd.save()
+
 
         # if form.is_valid():
         request.FILES.get('file').save_to_database(
