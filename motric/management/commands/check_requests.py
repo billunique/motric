@@ -2,7 +2,8 @@ from django.core.management.base import BaseCommand, CommandError
 from django.core.mail import send_mail, EmailMessage
 from django.utils import timezone
 from datetime import timedelta
-from motric.models import RequestedDevice
+from dateutil.relativedelta import relativedelta
+from motric.models import RequestedDevice, LabDevices
 from motric.utils import EmailThread, motric_send_mail
 import socket
 
@@ -54,3 +55,6 @@ class Command(BaseCommand):
     	    recipient, 
     	    cc_rcpt
     	)
+
+        lds_exclusive = LabDevices.objects.filter(exclusive=1)
+        time_threshold = timezone.now() - relativedelta(years=2) 

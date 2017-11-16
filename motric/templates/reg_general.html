@@ -49,7 +49,7 @@
 </div>
 
 <div class="form-group">
-  <label class="control-label col-sm-1" for="location" style="text-align: left">Location:<span class="noticeable">*</label>
+  <label class="control-label col-sm-1" for="location" style="text-align: left">Location:<span class="noticeable">*</span></label>
   <div class="col-sm-5">
     <select class="form-control mtinput" placeholder="" name="location" required>
       <option value="">--Select lab locaiton--</option>
@@ -58,7 +58,7 @@
       <option value="TWD">TWD</option>
     </select>
   </div>
-  <label class="control-label col-sm-1" for="status" style="text-align: left">Status:<span class="noticeable">*</label>
+  <label class="control-label col-sm-1" for="status" style="text-align: left">Status:<span class="noticeable">*</span></label>
   <div class="col-sm-5">
     <select class="form-control mtinput" placeholder="" name="status" required>
       <!-- <option disabled selected value></option> -->
@@ -68,4 +68,8 @@
       <option value="BRO">Broken</option>
     </select>
   </div>
+</div>
+
+<div class="form-group">
+  <label class="control-label col-sm-12" for="exclusive" style="text-align: left">Is exclusive: <input type="checkbox" id="exclusive"> (If this is checked, the device will be prevented from allocating, and must be recycled after 2 years as from the day it is registered.)</label>
 </div>

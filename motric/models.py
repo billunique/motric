@@ -84,6 +84,7 @@ class LabDevice(DeviceStatus):
 	broken_date = models.DateTimeField(blank=True, null=True)
 	replaced_by = models.ManyToManyField('self', symmetrical=False, blank=True)
 	replaced = models.BooleanField(default=False)
+	exclusive = models.BooleanField(default=False)
 
 	def __unicode__(self):
 		return u'%s, %s, with os %s, for project %s' % (self.model, self.device_id, self.os, self.project)

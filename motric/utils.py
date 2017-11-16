@@ -679,7 +679,7 @@ def search(request):
 
         if lab_location:
             ftr = lab_location.split("|")
-            result_list = dresult_list.filter(lab_location__in=ftr)
+            result_list = result_list.filter(lab_location__in=ftr)
 
         if label:
             ftr = label.split("|")
@@ -835,7 +835,7 @@ def request_dashboard(request):
 
     data_table_r = gviz_api.DataTable(description_request)
     data_table_r.LoadData(data_request_withdev)
-    json_request = data_table_r.ToJSon(columns_order=("month", "request_times", "request_device_quantity"), order_by="month")
+    json_request = data_table_r.ToJSon(columns_order=("month", "request_times", "request_device_quantity"))
 
 
     ##### For the combo chart, "Response of requests break-down by month".
@@ -874,7 +874,7 @@ def request_dashboard(request):
 
     data_table_resolved_r =  gviz_api.DataTable(description_resolved_r)
     data_table_resolved_r.LoadData(data_request_com)
-    json_resolved_r = data_table_resolved_r.ToJSon(columns_order=("month", "request_amount", "resolved_request_amount", "month_res_average"), order_by="month")
+    json_resolved_r = data_table_resolved_r.ToJSon(columns_order=("month", "request_amount", "resolved_request_amount", "month_res_average"))
 
 
     ##### For the table chart "Response of requests break-down by month".
@@ -900,7 +900,7 @@ def request_dashboard(request):
     data_table_resolved_4tc = gviz_api.DataTable(description_resolved_4tc)
     data_table_resolved_4tc.LoadData(data_request_com_4tc)
     json_resolved_4tc = data_table_resolved_4tc.ToJSon(columns_order=("month", "request_amount", "resolved_request_amount", "month_res_average", 
-                                                                   "accum_rts", "accum_res", "resolve ratio"), order_by="month")
+                                                                   "accum_rts", "accum_res", "resolve ratio"),)
 
 
     #### For the pie charts "Requests breakdown by lab location"
@@ -947,12 +947,12 @@ def request_dashboard(request):
        i += 1
 
     description_loc_trends = [("month", "string", "Month"),
-                            ("count_mtv","number", "Located on MTV (" + str(cnt_labloc[('MTV',)]) + ")"), ("count_pek", "number", "Located on PEK (" + str(cnt_labloc[('PEK',)]) + ")"),
-                            ("pre_ct_dontcare", "number", "No Preferrence (" + str(cnt_preflab[('',)]) + ")"), ("pre_ct_mtv", "number", "Preferred on MTV (" + str(cnt_preflab[('MTV',)]) + ")"), ("pre_ct_pek","number", "Preferred on PEK (" + str(cnt_preflab[('PEK',)]) + ")"),        
+                            ("count_mtv","number", "Located on MTV (" + str(cnt_labloc[('MTV',)]) + ")"), ("count_pek", "number", "Located on PEK (" + str(cnt_labloc[('PEK',)]) + ")"), ("count_twd", "number", "Located on TWD (" + str(cnt_labloc[('TWD',)]) + ")"),
+                            ("pre_ct_dontcare", "number", "No Preferrence (" + str(cnt_preflab[('',)]) + ")"), ("pre_ct_mtv", "number", "Preferred on MTV (" + str(cnt_preflab[('MTV',)]) + ")"), ("pre_ct_pek","number", "Preferred on PEK (" + str(cnt_preflab[('PEK',)]) + ")"), ("pre_ct_twd","number", "Preferred on TWD (" + str(cnt_preflab[('TWD',)]) + ")")     
                             ]
     data_table_loc_trends_cc = gviz_api.DataTable(description_loc_trends)
     data_table_loc_trends_cc.LoadData(data_request_loc_cc)
-    json_loc_trends = data_table_loc_trends_cc.ToJSon(columns_order=("month", "count_mtv", "count_pek", "pre_ct_dontcare", "pre_ct_mtv", "pre_ct_pek"), order_by="month")
+    json_loc_trends = data_table_loc_trends_cc.ToJSon(columns_order=("month", "count_mtv", "count_pek", "count_twd", "pre_ct_dontcare", "pre_ct_mtv", "pre_ct_pek", "pre_ct_twd"),)
 
 
 
@@ -990,12 +990,12 @@ def request_dashboard(request):
 
     description_loc_device_trends = [("month", "string", "Month"),
                             ("count_mtv","number", "Located on MTV (" + str(data_device_loc.order_by('lab_location')[0][1]) + ")"), ("count_pek", "number", "Located on PEK (" + str(data_device_loc.order_by('lab_location')[1][1]) + ")"),
-                            ("pre_ct_dontcare", "number", "No Preferrence (" + str(data_device_pref_loc_set.order_by('requester__pref_location')[0][1]) + ")"), ("pre_ct_mtv", "number", "Preferred on MTV (" + str(data_device_pref_loc_set.order_by('requester__pref_location')[1][1]) + ")"), ("pre_ct_pek","number", "Preferred on PEK (" + str(data_device_pref_loc_set.order_by('requester__pref_location')[2][1]) + ")"),        
+                            ("pre_ct_dontcare", "number", "No Preferrence (" + str(data_device_pref_loc_set.order_by('requester__pref_location')[0][1]) + ")"), ("pre_ct_mtv", "number", "Preferred on MTV (" + str(data_device_pref_loc_set.order_by('requester__pref_location')[1][1]) + ")"), ("pre_ct_pek","number", "Preferred on PEK (" + str(data_device_pref_loc_set.order_by('requester__pref_location')[2][1]) + ")"), ("pre_ct_twd","number", "Preferred on TWD (" + str(data_device_pref_loc_set.order_by('requester__pref_location')[3][1]) + ")"), 
                             ]
 
     data_table_loc_device_trends_cc = gviz_api.DataTable(description_loc_device_trends)
     data_table_loc_device_trends_cc.LoadData(data_device_loc_cc)
-    json_loc_device_trends = data_table_loc_device_trends_cc.ToJSon(columns_order=("month", "count_mtv", "count_pek", "pre_ct_dontcare", "pre_ct_mtv", "pre_ct_pek"), order_by="month")
+    json_loc_device_trends = data_table_loc_device_trends_cc.ToJSon(columns_order=("month", "count_mtv", "count_pek", "pre_ct_dontcare", "pre_ct_mtv", "pre_ct_pek", "pre_ct_twd"),)
 
     return render(request, 'motric_request_statistics.html', 
         {'jscode':jscode_model, 'json_model':json_model, 
