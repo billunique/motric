@@ -2,8 +2,8 @@ from django.core.management.base import BaseCommand, CommandError
 from django.core.mail import send_mail, EmailMessage
 from django.utils import timezone
 from datetime import timedelta
-from dateutil.relativedelta import relativedelta
-from motric.models import RequestedDevice, LabDevices
+# from dateutil.relativedelta import relativedelta
+from motric.models import RequestedDevice, LabDevice
 from motric.utils import EmailThread, motric_send_mail
 import socket
 
@@ -56,5 +56,21 @@ class Command(BaseCommand):
     	    cc_rcpt
     	)
 
-        lds_exclusive = LabDevices.objects.filter(exclusive=1)
-        time_threshold = timezone.now() - relativedelta(years=2) 
+        lds_exclusive = LabDevice.objects.filter(exclusive=1)
+        time_threshold = timezone.now() - timedelta(days=730)
+        lds_exclusive_exceed = lds_exclusive.filter(register_date__lt=time_threshold)
+        if lds_exclusive_exceed:
+            subject = '[Motric]Devices that need to be recyled forcibly.'
+            content = ""
+            for e in lds_exclusive_exceed:
+                content += ('*' + str(e) + '<br/>')
+
+            message = 'Hi <b><span style="color:#4285F4">t</span><span style="color:#EA4335">e</span><span style="color:#FBBC05">a</span><span style="color:#34A853">m</span></b>,<br/><br/>Following devices are exceeding their recycle threshold for the confidential policy, please recycle them asap.<br/><br/>' + content + '<p></p>'
+
+            motric_send_mail(
+                subject,
+                message,
+                sender,
+                recipient, 
+                cc_rcpt
+            )
