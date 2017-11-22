@@ -942,7 +942,8 @@ def request_dashboard(request):
        ct_pref = Counter(e[1] for e in vl)
        # each_month = [data_month[i], dict(ct_lab), dict(ct_pref)] # use this can get the readable data for each location.
        # each_month = (data_month[i],) + (ct_lab.values(),) + (ct_pref.values(),)
-       each_month = (data_month[i],) + tuple(ct_lab.values()) + tuple(ct_pref.values())
+       # each_month = (data_month[i],) + tuple(ct_lab.values()) + tuple(ct_pref.values()) ## This is not controlable if the values are not fixed.
+       each_month = (data_month[i],) + (ct_lab['MTV'], ct_lab['PEK'], ct_lab['TWD']) + (ct_pref[''], ct_pref['MTV'], ct_pref['PEK'], ct_pref['TWD'])
        data_request_loc_cc.append(each_month)
        i += 1
 
@@ -952,7 +953,7 @@ def request_dashboard(request):
                             ]
     data_table_loc_trends_cc = gviz_api.DataTable(description_loc_trends)
     data_table_loc_trends_cc.LoadData(data_request_loc_cc)
-    json_loc_trends = data_table_loc_trends_cc.ToJSon(columns_order=("month", "count_mtv", "count_pek", "count_twd", "pre_ct_dontcare", "pre_ct_mtv", "pre_ct_pek", "pre_ct_twd"),)
+    json_loc_trends = data_table_loc_trends_cc.ToJSon(columns_order=("month", "count_mtv", "count_pek", "count_twd", "pre_ct_dontcare", "pre_ct_mtv", "pre_ct_pek", "pre_ct_twd"))
 
 
 
