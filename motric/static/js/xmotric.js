@@ -868,14 +868,16 @@ $(document).ready(function(){
 			switch (elem.val()){
 				case 'Nexus 5':
 				case 'nexus 5':
+					// alert("please expect long time for preparing!");
+					$('#notice1').removeClass("hidden");
+					break;
 				case 'Nexus 5x':
 				case 'nexus 5x':
 				case 'Nexus 5X':
 				case 'nexus 5X':
 				case 'Nexus 7':
 				case 'nexus 7':
-					// alert("please expect long time for preparing!");
-					$('#notice').removeClass("hidden");
+					$('#notice2').removeClass("hidden");
 			}
 		});
 	});
