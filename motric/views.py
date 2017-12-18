@@ -107,6 +107,7 @@ def request_history(request):
 	ao = q.get('ao')
 	if ao:
 		today = datetime.date.today()
+		this_year = today.year
 		this_month = today.month
 		last_month = 1
 		if this_month == 1:
@@ -115,14 +116,14 @@ def request_history(request):
 			last_month = this_month -1
 		if ao == 'tm':
 			# request_list = RequestedDevice.objects.filter(request_date__month=this_month, resolved=1).order_by('-id')
-			request_list = request_list.filter(request_date__month=this_month)
+			request_list = request_list.filter(request_date__year=this_year, request_date__month=this_month)
 		if ao == 'lm':
 			# request_list = RequestedDevice.objects.filter(request_date__month=last_month, resolved=1).order_by('-id')
-			request_list = request_list.filter(request_date__month=last_month)
+			request_list = request_list.filter(request_date__year=this_year, request_date__month=last_month)
 		if ao == 'more':
 			# request_list = RequestedDevice.objects.filter(request_date__date__lt=datetime.date(today.year, last_month, 1)).order_by('-id')
 			# request_list = RequestedDevice.objects.filter(resolved=1).exclude(request_date__month__in=[this_month, last_month]).order_by('-id')
-			request_list = request_list.exclude(request_date__month__in=[this_month, last_month])
+			request_list = request_list.exclude(request_date__year=this_year, request_date__month__in=[this_month, last_month])
 	if s:
 		if s == 'ass_uc':
 			request_list = request_list.filter(status='ASS', charged='0')

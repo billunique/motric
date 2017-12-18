@@ -856,7 +856,7 @@ def request_dashboard(request):
     data_request_com = []
     x = 0
     for m in mset_month:
-       rd_res = rds_valid.filter(resolved_date__month=m.month)  # DONOT set it to rds.
+       rd_res = rds_valid.filter(resolved_date__year=m.year, resolved_date__month=m.month)  # DONOT set it to rds.
        month_fdays = 0
        for e in rd_res:
          month_fdays += (e.resolved_date - e.request_date).days
@@ -936,7 +936,7 @@ def request_dashboard(request):
     data_month = [(str(e[0]) + "/" + str(e[1])) for e in rset_nodev]
     i = 0
     for m in mset_month:
-       rd_res = rds.filter(request_date__month=m.month)
+       rd_res = rds.filter(request_date__year=m.year, request_date__month=m.month)
        vl = rd_res.values_list('lab_location', 'requester__pref_location')
        ct_lab = Counter(e[0] for e in vl)
        ct_pref = Counter(e[1] for e in vl)
@@ -982,7 +982,7 @@ def request_dashboard(request):
     i = 0
     mset_month = rds.datetimes('request_date', 'month')
     for m in mset_month:
-        rd_res = rds.filter(request_date__month=m.month)
+        rd_res = rds.filter(request_date__year=m.year, request_date__month=m.month)
         labloc = rd_res.values_list('lab_location').annotate(device=Sum('quantity')).values_list('lab_location', 'device').order_by('lab_location')
         prefloc = rd_res.values_list('requester__pref_location').annotate(device=Sum('quantity')).values_list('requester__pref_location', 'device').order_by('requester__pref_location')
         each_month = (data_month[i],) + tuple([e[1] for e in labloc]) + tuple([e[1] for e in prefloc])
