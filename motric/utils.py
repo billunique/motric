@@ -985,13 +985,18 @@ def request_dashboard(request):
         rd_res = rds.filter(request_date__year=m.year, request_date__month=m.month)
         labloc = rd_res.values_list('lab_location').annotate(device=Sum('quantity')).values_list('lab_location', 'device').order_by('lab_location')
         prefloc = rd_res.values_list('requester__pref_location').annotate(device=Sum('quantity')).values_list('requester__pref_location', 'device').order_by('requester__pref_location')
-        each_month = (data_month[i],) + tuple([e[1] for e in labloc]) + tuple([e[1] for e in prefloc])
+        # each_month = (data_month[i],) + tuple([e[1] for e in labloc]) + tuple([e[1] for e in prefloc])
+        dict_labloc = dict(labloc)
+        dict_prefloc = dict(prefloc)
+        each_month = (data_month[i],) + (dict_labloc.get('MTV'), dict_labloc.get('PEK'), dict_labloc.get('TWD'),) + (dict_prefloc.get(''), dict_prefloc.get('MTV'), dict_prefloc.get('PEK'), dict_prefloc.get('TWD')) ### Like above, this seems clumsy but in fact more stable.
         data_device_loc_cc.append(each_month)
         i += 1
 
     description_loc_device_trends = [("month", "string", "Month"),
-                            ("count_mtv","number", "Located on MTV (" + str(data_device_loc.order_by('lab_location')[0][1]) + ")"), ("count_pek", "number", "Located on PEK (" + str(data_device_loc.order_by('lab_location')[1][1]) + ")"),
-                            ("pre_ct_dontcare", "number", "No Preferrence (" + str(data_device_pref_loc_set.order_by('requester__pref_location')[0][1]) + ")"), ("pre_ct_mtv", "number", "Preferred on MTV (" + str(data_device_pref_loc_set.order_by('requester__pref_location')[1][1]) + ")"), ("pre_ct_pek","number", "Preferred on PEK (" + str(data_device_pref_loc_set.order_by('requester__pref_location')[2][1]) + ")"), ("pre_ct_twd","number", "Preferred on TWD (" + str(data_device_pref_loc_set.order_by('requester__pref_location')[3][1]) + ")"), 
+                            # ("count_mtv","number", "Located on MTV (" + str(data_device_loc.order_by('lab_location')[0][1]) + ")"), ("count_pek", "number", "Located on PEK (" + str(data_device_loc.order_by('lab_location')[1][1]) + ")"),
+                            ("count_mtv","number", "Located on MTV (" + str(dict(data_device_loc)['MTV']) + ")"), ("count_pek", "number", "Located on PEK (" + str(dict(data_device_loc)['PEK']) + ")"), ("count_twd","number", "Located on TWD (" + str(dict(data_device_loc)['TWD']) + ")"),
+                            # ("pre_ct_dontcare", "number", "No Preferrence (" + str(data_device_pref_loc_set.order_by('requester__pref_location')[0][1]) + ")"), ("pre_ct_mtv", "number", "Preferred on MTV (" + str(data_device_pref_loc_set.order_by('requester__pref_location')[1][1]) + ")"), ("pre_ct_pek","number", "Preferred on PEK (" + str(data_device_pref_loc_set.order_by('requester__pref_location')[2][1]) + ")"), ("pre_ct_twd","number", "Preferred on TWD (" + str(data_device_pref_loc_set.order_by('requester__pref_location')[3][1]) + ")"), 
+                            ("pre_ct_dontcare", "number", "No Preferrence (" + str(dict(data_device_pref_loc_set)['']) + ")"), ("pre_ct_mtv", "number", "Preferred on MTV (" + str(dict(data_device_pref_loc_set)['MTV']) + ")"), ("pre_ct_pek","number", "Preferred on PEK (" + str(dict(data_device_pref_loc_set)['PEK']) + ")"), ("pre_ct_twd","number", "Preferred on TWD (" + str(dict(data_device_pref_loc_set)['TWD']) + ")"), 
                             ]
 
     data_table_loc_device_trends_cc = gviz_api.DataTable(description_loc_device_trends)
