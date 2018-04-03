@@ -860,7 +860,10 @@ def request_dashboard(request):
        month_fdays = 0
        for e in rd_res:
          month_fdays += (e.resolved_date - e.request_date).days
-       month_average = round(Decimal(month_fdays, 1)/rd_res.count(), 1)
+       if rd_res.count() == 0:
+        continue;
+       else:
+        month_average = round(Decimal(month_fdays, 1)/rd_res.count(), 1)
        # print m, month_fdays, rd_res.count(), month_average
        data_request_com.append(data_request_nodev[x] + (rd_res.count(), month_average))
        x += 1
