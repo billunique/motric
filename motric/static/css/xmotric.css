@@ -337,6 +337,6 @@ tr td:hover button{
     text-align: left
 }
 
-a.undertone:link {text-decoration: none; color:#ff0000;}
-a.undertone:visited {text-decoration: none; color:inherit;}
-a.undertone:hover {font-family:monospace; text-decoration: underline;}
+a.undertone:link {text-decoration: underline; color:#ff0000;}
+a.undertone:visited {text-decoration: none; /*color:inherit;*/}
+a.undertone:hover {font-family:Verdana; text-decoration: underline;}
