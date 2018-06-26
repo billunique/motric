@@ -336,3 +336,7 @@ tr td:hover button{
 .left-align {
     text-align: left
 }
+
+a.undertone:link {text-decoration: none; color:#ff0000;}
+a.undertone:visited {text-decoration: none; color:inherit;}
+a.undertone:hover {font-family:monospace; text-decoration: underline;}

@@ -27,10 +27,9 @@
 </div>
 
   <div class="container">
-    <h3 style="margin-bottom:20px; padding-left:10px">Request for dedicated devices in <b>Mobile Harness</b> <img src="/static/img/moha-48-mdpi.png" align="top"> Dedicated Lab</h3>
+    <h3 style="margin-bottom:20px; padding-left:10px">Request for devices in <b>Mobile Harness</b> <img src="/static/img/moha-48-mdpi.png" align="top"> Dedicated Lab</h3>
     {% include 'req_prologue.html' %}
-    <input type="checkbox" id="approval"><span style="color:red">  To help find the proper device lab solution for your use cases and make good use of device labs, please make sure to file go/mh-device-request ticket and get approval before submit this form. </span><p></p>
-    <form id="moha-device-request" role="form" method="post" action="/request/">
+    <input type="checkbox" id="approval"><span style="color:red"> I already read <a href='http://go/mh-dedicated-lab' target='_blank' class="undertone">go/mh-dedicated-lab</a> and get MH team's approval.</span><p></p>
       {% csrf_token %}
       {#% include 'motric_modal.html' %#}
       {% include 'req_generalInfo.html' %}
