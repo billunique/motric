@@ -27,6 +27,7 @@ class DeviceStatus(models.Model):
 		abstract = True
 
 class Requester(models.Model):
+	bug_id = models.CharField(max_length=100, blank=True, null=True)
 	ldap = models.CharField(max_length=100)
 	cost_center = models.CharField(max_length=50)
 	project = models.CharField(max_length=50)
@@ -53,7 +54,7 @@ class RequestedDevice(DeviceStatus):
 	receive_date = models.DateTimeField(blank=True, null=True)
 	resolved = models.BooleanField(default=False)
 	resolved_date = models.DateTimeField(blank=True, null=True)
-	comment = models.CharField(max_length=256, blank=True, null=True)
+	comment = models.CharField(max_length=1024, blank=True, null=True)
 	charged = models.BooleanField(default=False)
 	bug_id = models.CharField(max_length=100, blank=True, null=True)
 	eta_date = models.DateTimeField(blank=True, null=True)

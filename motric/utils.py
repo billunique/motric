@@ -76,6 +76,7 @@ def form_receiver(request):
     #form_dict = form_querydict.lists() # don't use like this, will get a 'list indices must be integers not str' error.
 
     try:
+        bug_id = form_dict.get('bug_id')
         ldap = form_dict.get('requester')
         cost_center = form_dict.get('costcenter')
         project = form_dict.get('project')
@@ -83,7 +84,7 @@ def form_receiver(request):
         device_label = form_dict.get('label')
         comment = form_dict.get('comment')
         pref_loc = form_dict.get('pref_loc')
-        usr = Requester(ldap=ldap, cost_center=cost_center, project=project, device_owner=device_owner, device_label=device_label, pref_location=pref_loc)
+        usr = Requester(bug_id=bug_id, ldap=ldap, cost_center=cost_center, project=project, device_owner=device_owner, device_label=device_label, pref_location=pref_loc)
         # usr = Requester(ldap=ldap, cost_center=cost_center, project=project, device_owner=device_owner, device_label=device_label)
         usr.save()
 
@@ -102,7 +103,7 @@ def form_receiver(request):
         #     recipient = ['xiawang@google.com']
 
         for i in range(len(model_type)):
-            rd = RequestedDevice(model_type=model_type[i], os_version=os_version[i], quantity=quantity[i], requester=usr, request_date=timezone.now(), comment=comment, status=status)
+            rd = RequestedDevice(model_type=model_type[i], os_version=os_version[i], quantity=quantity[i], requester=usr, request_date=timezone.now(), comment=comment, status=status, bug_id=bug_id)
             if usr.pref_location == 'MTV':
                 rd.lab_location = 'MTV'
                 rd.assignee = 'ffeng'
