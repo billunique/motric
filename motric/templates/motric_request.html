@@ -29,7 +29,8 @@
   <div class="container">
     <h3 style="margin-bottom:20px; padding-left:10px">Request for devices in <b>Mobile Harness</b> <img src="/static/img/moha-48-mdpi.png" align="top"> Dedicated Lab</h3>
     {% include 'req_prologue.html' %}
-    <input type="checkbox" id="approval"><span style="color:red"> I already read <a href='http://go/mh-dedicated-lab' target='_blank' class="undertone">go/mh-dedicated-lab</a>, filed <a href='go/mh-device-request' target='_blank' class='undertone'>go/mh-device-request</a> bug and got MH team's approval.</span><p></p>
+    <form id="moha-device-request" role="form" method="post" action="/request/">
+    <input type="checkbox" id="approval"><span style="color:red"> I already read <a href='http://go/mh-dedicated-lab' target='_blank' class="undertone">go/mh-dedicated-lab</a>, filed <a href='http://go/mh-device-request' target='_blank' class='undertone'>go/mh-device-request</a> bug and got MH team's approval.</span><p></p>
       {% csrf_token %}
       {#% include 'motric_modal.html' %#}
       {% include 'req_generalInfo.html' %}
