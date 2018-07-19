@@ -20,7 +20,7 @@ recipient = []
 cc_rcpt = ['mobileharness-ops@google.com', 'mobileharness-ops-mtv@google.com']
 # cc_rcpt = ['magicpig@google.com', 'xmhu@google.com', 'dschlaak@google.com', 'ansalgado@google.com', 'ffeng@google.com']
 
-if 'motric' not in socket.gethostname():
+if 'mhl040' not in socket.gethostname(): # clumsy change: motric->mhl040, due to reimaging mhl040 to serve as motric server.
     motric_host = "xiawang.bej:8080"
     recipient = ['xiawang@google.com']
     cc_rcpt = ['yanyanl@google.com', 'xiawang@google.com']
