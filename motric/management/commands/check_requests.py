@@ -25,7 +25,7 @@ class Command(BaseCommand):
         recipient = ['mobileharness-ops@google.com', 'mobileharness-ops-mtv@google.com']
         cc_rcpt = []
 
-        if 'motric' not in socket.gethostname():
+        if 'mhl040' not in socket.gethostname(): # clumsy change: motric->mhl040, due to reimaging mhl040 to serve as motric server.
             motric_host = "xiawang.bej:8080"
             recipient = ['xiawang@google.com']
 
