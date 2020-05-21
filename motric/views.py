@@ -152,6 +152,10 @@ def device_register(request):
 	return render(request, 'motric_register.html')
 
 
+def device_quota(request):
+	return render(request, 'moha_device_quota.html')
+
+
 # def faq(request):
 # 	return render(request, 'motric_faq.html')
 

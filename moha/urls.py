@@ -29,6 +29,7 @@ urlpatterns = [
     url(r'^request_disposal/', views.request_disposal, name='req_disposal'),
     url(r'^request_history/*', views.request_history, name='req_history'),
     url(r'^device_register/', views.device_register, name='dev_register'),
+    url(r'^device_quota/', views.device_quota, name='device_quota'),
 
     # url(r'^faq/', views.faq, name='faq'),
     # url(r'^about/', views.about, name='about'),
@@ -45,6 +46,7 @@ urlpatterns = [
     url(r'^mal_record/', utils.malfunction_record, name='mal_record'),
     url(r'^mal_statistics/', utils.malfunction_statistics, name='mal_statistics'),
     url(r'^request_dashboard/', utils.request_dashboard, name='req_dashboard'),
+    url(r'^quota_collect/', utils.quota_collect, name='quo_collect'),
 
     url(r'^who/', utils.who_are_you, name='who'),
     url(r'^sync_info/', utils.syncer, name='sync_info'),

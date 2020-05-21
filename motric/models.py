@@ -64,6 +64,20 @@ class RequestedDevice(DeviceStatus):
 		return u'%s, %s, requested by %s, from %s, at %s, for %s project' % (self.model_type, self.quantity, self.requester.ldap, self.requester.cost_center, self.request_date, self.requester.project)
 		# return self.model_type
 
+class QuotaDevice(DeviceStatus):
+	ldap = models.CharField(max_length=100)
+	mdb = models.CharField(max_length=100)
+	pe = models.CharField(max_length=300)
+	pe_poc = models.CharField(max_length=100)
+	model_type = models.CharField(max_length=30)
+	os_version = models.CharField(max_length=50, blank=True, null=True)
+	quantity = models.IntegerField(default=1)
+	comment = models.CharField(max_length=1024, blank=True, null=True)
+	request_date = models.DateTimeField(auto_now_add=True)
+
+	def __unicode__(self):
+		return u'%s, %s, requested by %s, from %s, at %s, for %s' % (self.model_type, self.quantity, self.ldap, self.mdb, self.request_date, self.pe)
+
 class LabDevice(DeviceStatus):
 	# model = models.OneToOneField(RequestedDevice)  # OneToOne is smilar to ForeignKey but unique=true, this is not the case.
 	# model = models.ForeignKey(RequestedDevice)

@@ -1,0 +1,18 @@
+{% extends 'motric_moresrc.html' %}
+{% block title %}User Device Quota{% endblock %}
+{% block body %}
+
+  <div class="container">
+    <h3 style="margin-bottom:20px; padding-left:10px">User device quota in <b>Mobile Harness</b> <img src="/static/img/moha-48-mdpi.png" align="top"> Dedicated Lab</h3>
+    <form id="moha-device-quota" role="form" method="post" action="/quota_collect/">
+      {% csrf_token %}
+      {#% include 'motric_modal.html' %#}
+      {% include 'quo_generalInfo.html' %}
+      {% include 'quo_deviceList.html' %}
+      {% if "xiawang" in request.get_host %}<input type="hidden" name="svr" value="t">{% endif %}
+      <button id ="quota_submit" type="submit" class="btn btn-success" style="float:left">Submit</button> 
+    </form>
+    <button class="btn btn-primary" style="float:right" onclick="addDevice()">Add row</button>
+  </div>
+
+{% endblock %}

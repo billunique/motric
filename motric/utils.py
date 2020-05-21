@@ -144,6 +144,56 @@ def form_receiver(request):
     # return HttpResponse("Thanks for using Mobile Harness! We've received your request, if it's approved, we'll start purchasing shortly. Please stay tuned.")
     return render(request, 'motric_thanks.html')
 
+def quota_collect(request):
+
+    form_dict = request.POST.copy()
+
+    try:
+        ldap = form_dict.get('quota_requester')
+        mdb = form_dict.get('mdbgroup')
+        pe = form_dict.get('pes')
+        pe_poc = form_dict.get('pe_poc')
+        comment = form_dict.get('comment')
+        request_date=timezone.now()
+        model_type = form_dict.pop('device') # list
+        os_version = form_dict.pop('os') # list
+        quantity = form_dict.pop('quantity') # list
+        combo = '<table cellpadding="3" border="1" style="border:2px solid gray; border-collapse:collapse">'
+        subject = '[Motric]New quota device request received!'
+        global motric_host, recipient, cc_rcpt  # mysteriuos, no need to global copy the variable sender, guess it's defined by the settings.py and be used globally
+
+        for i in range(len(model_type)):
+            qd = QuotaDevice(ldap=ldap, mdb=mdb, pe=pe, pe_poc=pe_poc, comment=comment, model_type=model_type[i], os_version=os_version[i], quantity=quantity[i], request_date=request_date)
+            qd.save()
+            combo += '<tr><td>' + model_type[i] + ' * ' + quantity[i] + ' for ' + pe + ', ' + comment + '</td></tr>'
+        
+        combo += '</table>'
+
+    except KeyError:
+        return HttpResponse("No corresponding key found!")
+    except IndexError:
+        return HttpResponse("You might input something which causes the list index out of range, please check and try again.")
+    except ValueError: # invalid literal for int() with base 10: '' if only one line of device request submitted.
+        pass
+    # except:
+    #     return HttpResponse(expection_carrier())
+
+    recipient = [ldap + '@google.com']
+
+    message = 'Dear ' + fancy_name(ldap) + ',<br/><br/>We have received your device quota request for:<br/><br/>' + combo 
+
+    message += '<br/><p>Best regards,<br/>Mobile Harness team</p>'
+
+    motric_send_mail(
+        subject,
+        message,
+        sender,
+        recipient, 
+        cc_rcpt
+    )
+
+    return render(request, 'motric_thanks.html')
+
 
 def log_generator(timestamp, operation, operator):
     evt_content = {'timestamp':timestamp, 'operation':operation, 'operator':operator}
