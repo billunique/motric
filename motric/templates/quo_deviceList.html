@@ -1,7 +1,28 @@
 <p></p>
 <div class="form-group">
 
-  <label for="devicelist">Device List:<span class="noticeable">*</span></label>
+  <div class="form-group">
+    <label for="shared_device">Choose Device<span style="font-size: 12"> (hold ctrl to select more than one model, customize in below fields if all of this don't fit your requirment):</span></label>
+    <select multiple class="form-control mtinput" name="shared_device" size="15">
+      <option value="marlin25">Pixel XL(API 25)</option>
+      <option value="taimen27">Pixel 2 XL(API 27)</option>
+      <option value="taimen28">Pixel 2 XL(API 28)</option>
+      <option value="blueline28">Pixel 3(API 28)</option>
+      <option value="blueline29">Pixel 3(API 29)</option>
+      <option value="crosshatch29">Pixel 3 XL(API 29)</option>
+      <option value="flame29">Pixel 4(API29)</option>
+      <option value="starqlteue">Galaxy S9</option>
+      <option value="G8142">Xperia XZ Premium</option>
+      <option value="iphone8">iPhone 8</option>
+      <option value="iphonexr">iPhone Xr</option>
+      <option value="flo">Nexus 7 (2013)</option>
+      <option value="bullhead">Nexus 5X</option>
+      <option value="FRT">Nokia 1 -Android GO</option>
+      <option value="k61v1_basic_ref">Tecno-Android GO</option>
+    </select>
+  </div>
+
+  <label for="devicelist">Customized Device:</label>
   <table id="device_table" class="table table-bordered table-hover">
 	<tr style="background-color:lightblue">
 		<th style="width:40%" class="btn-info">Model</th>
@@ -10,9 +31,10 @@
 		<!-- <th style="width:12%" class="btn-danger">Must rooted?</th> -->
     </tr>
     <tr>
-		<td><input class="mtinput form-control" type="text" id="device1" placeholder="e.g. Pixel 3XL, iPad pro 12 inch" name="device" required></td>
+		<td><input class="mtinput form-control" type="text" id="device1" placeholder="e.g. Pixel 3XL, iPad pro 12 inch" name="device"></td>
 		<td><input class="mtinput form-control" type="text" id="os1" placeholder="e.g. Android 9 or API30, leave empty if no matter." name="os"></td>
-		<td><input class="mtinput form-control" type="number" id="quantity1" value="1" min="1" name="quantity"></td>
+    <!-- <td><input class="mtinput form-control" type="number" id="quantity1" value="1" min="1" name="quantity"></td> -->
+		<td><input class="mtinput form-control" type="number" id="quantity1" min="1" name="quantity"></td> <!-- donot include value=1, otherwise will submit as a valid item. -->
 		<!-- <td><input class="checkbox" type="checkbox" name="rooted1"></td> -->
     </tr>
     <tr>
