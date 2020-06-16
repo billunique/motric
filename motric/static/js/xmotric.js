@@ -40,6 +40,46 @@ function addDevice() {
 // mo_request.controller('requestCtrl', function($scope) {
 // });
 
+function addQuotaDevice() {
+
+	addDevice()
+	$('input[name="device"]').on('focus', function(event) {
+ 		var opt = $(this).val();
+		console.log("Lets call selection!");
+		$(this).parent().empty().append('\
+			<select class="form-control mtinput" name="device" required>\
+	          <option value="" hidden>--Select device--</option>\
+	          <option value="marlin25">Pixel XL(API 25)</option>\
+	          <option value="taimen27">Pixel 2 XL(API 27)</option>\
+	          <option value="taimen28">Pixel 2 XL(API 28)</option>\
+	          <option value="blueline28">Pixel 3(API 28)</option>\
+	          <option value="blueline29">Pixel 3(API 29)</option>\
+	          <option value="crosshatch29">Pixel 3 XL(API 29)</option>\
+	          <option value="flame29">Pixel 4(API 29)</option>\
+	          <option value="starqlteue">Galaxy S9(API 26)</option>\
+	          <option value="G8142">Xperia XZ Premium(API 25)</option>\
+	          <option value="iphone8">iPhone 8(OS 12.4)</option>\
+	          <option value="iphonexr">iPhone Xr(OS 12.4)</option>\
+	          <option value="flo">Nexus 7 2013(API 18)</option>\
+	          <option value="bullhead">Nexus 5X(API 25)</option>\
+	          <option value="FRT">Nokia 1-Android GO(API 27)</option>\
+	          <option value="k61v1_basic_ref">Tecno-Android GO(API 29)</option>\
+	          <option value="">Manually input</option>\
+	        </select>\
+	        ')
+			$('select[name="device"]').on('change', function(event) {
+		 		var opt = $(this).val();
+				console.log("Selected device is: " + opt);
+				if ($(this).children('option:last-child').is(':selected')) {
+				  console.log("Manually input!!!");
+				  $(this).parent().empty().append('<input class="mtinput form-control" type="text" id="device1" name="device">')
+				}
+			});
+
+	});
+}
+
+
 
 function getFormData() {
 	try {
@@ -1032,6 +1072,52 @@ $(document).ready(function(){
         // 	alert("Error! You might input something illegal.")
         // })
         event.preventDefault();
+
+	});
+
+
+	$('select[name="device"]').on('change', function(event) {
+ 		var opt = $(this).val();
+		console.log("Selected device is: " + opt);
+		if ($(this).children('option:last-child').is(':selected')) {
+		  console.log("Manually input!!!");
+		  $(this).parent().empty().append('<input class="mtinput form-control" type="text" id="device1" placeholder="e.g. Pixel 3A, iPhone SE" name="device">')
+		}
+	});
+
+
+	$('input[id="device2q"]').on('focus', function(event) {
+ 		var opt = $(this).val();
+		console.log("Lets call selection!");
+		$(this).parent().empty().append('\
+			<select class="form-control mtinput" name="device" required>\
+	          <option value="" hidden>--Select device--</option>\
+	          <option value="marlin25">Pixel XL(API 25)</option>\
+	          <option value="taimen27">Pixel 2 XL(API 27)</option>\
+	          <option value="taimen28">Pixel 2 XL(API 28)</option>\
+	          <option value="blueline28">Pixel 3(API 28)</option>\
+	          <option value="blueline29">Pixel 3(API 29)</option>\
+	          <option value="crosshatch29">Pixel 3 XL(API 29)</option>\
+	          <option value="flame29">Pixel 4(API 29)</option>\
+	          <option value="starqlteue">Galaxy S9(API 26)</option>\
+	          <option value="G8142">Xperia XZ Premium(API 25)</option>\
+	          <option value="iphone8">iPhone 8(OS 12.4)</option>\
+	          <option value="iphonexr">iPhone Xr(OS 12.4)</option>\
+	          <option value="flo">Nexus 7 2013(API 18)</option>\
+	          <option value="bullhead">Nexus 5X(API 25)</option>\
+	          <option value="FRT">Nokia 1-Android GO(API 27)</option>\
+	          <option value="k61v1_basic_ref">Tecno-Android GO(API 29)</option>\
+	          <option value="">Manually input</option>\
+	        </select>\
+	        ')
+			$('select[name="device"]').on('change', function(event) {
+		 		var opt = $(this).val();
+				console.log("Selected device is: " + opt);
+				if ($(this).children('option:last-child').is(':selected')) {
+				  console.log("Manually input!!!");
+				  $(this).parent().empty().append('<input class="mtinput form-control" type="text" id="device1" name="device">')
+				}
+			});
 
 	});
 
