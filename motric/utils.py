@@ -158,8 +158,8 @@ def quota_collect(request):
         comment = form_dict.get('comment')
         request_date=timezone.now()
         shared_device = form_dict.getlist('shared_device')
-        model_type = form_dict.pop('device') # list
-        os_version = form_dict.pop('os') # list
+        model_type = form_dict.pop('deviceq') # list
+        # os_version = form_dict.pop('os') # list
         quantity = form_dict.pop('quantity') # list
 
         global motric_host, recipient, cc_rcpt  # mysteriuos, no need to global copy the variable sender, guess it's defined by the settings.py and be used globally
@@ -173,7 +173,8 @@ def quota_collect(request):
 
         if model_type: # list is not empty
             for i in range(len(model_type)):
-                qd = QuotaDevice(ldap=ldap, mdb=mdb, pe=pe, comment=comment, model_type=model_type[i], os_version=os_version[i], quantity=quantity[i], request_date=request_date)
+                # qd = QuotaDevice(ldap=ldap, mdb=mdb, pe=pe, comment=comment, model_type=model_type[i], os_version=os_version[i], quantity=quantity[i], request_date=request_date)
+                qd = QuotaDevice(ldap=ldap, mdb=mdb, pe=pe, comment=comment, model_type=model_type[i], quantity=quantity[i], request_date=request_date)
                 qd.save()
                 combo += '<tr><td>' + model_type[i] + ' * ' + quantity[i] + ' for ' + pe + ', ' + comment + '</td></tr>'
 
