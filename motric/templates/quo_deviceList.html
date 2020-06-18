@@ -23,18 +23,20 @@
   </div> -->
 
 
-  <label for="devicelist">Quota Device:</label>
+  <label for="devicelist">Quota Device:<span class="noticeable">*</span></label>
   <table id="deviceq_table" class="table table-bordered table-hover">
 	<tr style="background-color:lightblue">
-		<th style="width:75%" class="btn-info">Model and OS/API level</th>
+		<th style="width:35%" class="btn-info">Model and OS/API level</th>
 		<!-- <th style="width:40%" class="btn-warning">Expected OS/API level</th> -->
-		<th style="width:15%" class="btn-warning">Quantity</th>
+		<th style="width:5%" class="btn-warning">Quantity</th>
 		<!-- <th style="width:12%" class="btn-danger">Must rooted?</th> -->
+    <th style="width:30%" class="btn-danger">Use Case</th>
+    <th style="width:30%" class="btn-success">Floating Flexibility Level</th>
     </tr>
     <tr>
 		<td>
         <!-- <input class="mtinput form-control" type="text" id="device1" placeholder="e.g. Pixel 3XL, iPad pro 12 inch" name="deviceq"> -->
-        <select class="form-control mtinput" name="deviceq" id="device1" required>
+        <select class="form-control mtinput" id="device1" name="deviceq" title="Select from the dropdown or manually input the device you want." required>
           <option value="" hidden>--Select recommended device--</option> 
           <option value="marlin25">Pixel XL(API 25)</option>
           <option value="taimen27">Pixel 2 XL(API 27)</option>
@@ -56,14 +58,28 @@
     </td>
 		<!-- <td><input class="mtinput form-control" type="text" id="os1" placeholder="e.g. Android 9 or API30, leave empty if no matter." name="os"></td> -->
     <!-- <td><input class="mtinput form-control" type="number" id="quantity1" value="1" min="1" name="quantity"></td> -->
-		<td><input class="mtinput form-control" type="number" id="quantity1" min="1" name="quantity"></td> <!-- donot include value=1, otherwise will submit as a valid item. -->
-		<!-- <td><input class="checkbox" type="checkbox" name="rooted1"></td> -->
+		<td><input class="mtinput form-control" type="number" id="quantity1" min="1" name="quantity" title="Input the number of the certain device you request.
+" required></td> <!-- donot include value=1, otherwise will submit as a valid item. -->
+    <td><textarea class="mtinput form-control" type="text" id="usecase1" min="1" name="usecase" title="Describe why you request this specific device model and API level and describe your use cases to help us better understand your needs." required></textarea></td>
+    <td>
+        <select class="form-control mtinput" id="floating1" name="floating" title="Can you accept device floating? For example, if you request iPhone 8(iOS 13) but your tests don't really care whether it's iPhone 8 or iPhone 9 and only care about the iOS version, this means that you can accept device floating. Please indicate whether you accept device floating or to what dimension you would accept floating.
+" required>
+          <option value="" hidden>--Select from the dropdown--</option> 
+          <option value="model">Care about model only, OS/API level could accept floating</option>
+          <option value="api">Care about OS/API level only, model could accept floating</option>
+          <option value="specific">I need specific model and OS/API level</option>
+          <!-- <option value="">Manually input</option> -->
+        </select>
+    </td>
+
     </tr>
     <tr>
 		<td><input class="mtinput form-control device_extraline" type="text" id="device2" name="deviceq"></td>
 		<!-- <td><input class="mtinput form-control" type="text" id="os2" name="os"></td> -->
 		<td><input class="mtinput form-control" type="number" id="quantity2" min="1" name="quantity"></td>
-		<!-- <td><input class="checkbox" type="checkbox" name="rooted2"></td> -->
+    <td><textarea class="mtinput form-control" type="text" id="usecase2" name="usecase"></textarea></td>
+    <td><input class="mtinput form-control" type="text" id="floating2" name="floating"></textarea></td>
+
     </tr>
   </table>
 </div>

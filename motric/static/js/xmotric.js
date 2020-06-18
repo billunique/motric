@@ -63,6 +63,15 @@ RECOMMANDED_DEVICE_LIST = '\
 	        </select>\
 	        '
 
+FLOATING_OPTION = '\
+	        <select class="form-control mtinput" name="floating">\
+	          <option value="" hidden>--Select from the dropdown--</option>\
+	          <option value="model">Care about model only, OS/API level could accept floating</option>\
+	          <option value="api">Care about OS/API level only, model could accept floating</option>\
+	          <option value="specific">I need specific model and OS/API level</option>\
+	        </select>\
+	        '
+
 function addQuotaDevice() {
 
 	var tb = document.getElementById("deviceq_table");
@@ -70,6 +79,8 @@ function addQuotaDevice() {
 	var row = tb.insertRow(-1);
 	var model = row.insertCell(0);
 	var quan = row.insertCell(1);
+	var usecase = row.insertCell(2);
+	var floating = row.insertCell(3);
 	// var abrow = row.rowIndex;
 
 	var imodel = document.createElement("INPUT");
@@ -85,6 +96,18 @@ function addQuotaDevice() {
 	inum.setAttribute("name", "quantity");
 	quan.appendChild(inum);
 
+	var iuc = document.createElement("TEXTAREA");
+	iuc.setAttribute("type", "text");
+	iuc.setAttribute("class", "mtinput form-control");
+	iuc.setAttribute("name", "usecase");
+	usecase.appendChild(iuc);
+
+	var iff = document.createElement("INPUT");
+	iff.setAttribute("type", "text");
+	iff.setAttribute("class", "mtinput form-control");
+	iff.setAttribute("name", "floating");
+	floating.appendChild(iff);
+
 	window.scrollTo(0,document.body.scrollHeight)  // Scroll automatically to the bottom of the page.
 
 	$('input[name="deviceq"]').on('focus', function(event) {
@@ -95,6 +118,10 @@ function addQuotaDevice() {
 				}
 			});
 			// on_select_change()
+	});
+
+	$('input[name="floating"]').on('focus', function(event) {
+		$(this).parent().empty().append(FLOATING_OPTION)
 	});
 }
 
@@ -223,6 +250,12 @@ $(document).ready(function(){
 	// toastr.success('Saved successfully!', 'IAmTitle', {timeOut: 1000}); // Must override the title before the timeOut override takes effect.
 
 	// $('body').css('zoom','80%');
+
+	$(document).tooltip({
+		show: { effect: "blind", duration: 200 },
+		// position: { my: "left top+15", at: "left top-200"},
+		// position: { collision: "fit flip"},
+	});
 
 	$(".navul a").on("click", function(){
 	   $(".navul").find(".active").removeClass("active");
@@ -1095,10 +1128,11 @@ $(document).ready(function(){
 	});
 
 	function on_select_change(){
-		$('select[name="deviceq"]').on('change', function(event) {
+		$('select[name="deviceq"]').on('click', function(event) {
+			// $(document).tooltip("close");
 			if ($(this).children('option:last-child').is(':selected')) {
 			  console.log("Manually input!!!");
-			  $(this).parent().empty().append('<input class="mtinput form-control" type="text" placeholder="e.g. Pixel 3A, API 27 -- leave OS/API level empty if doesn\'t matter." name="deviceq">')
+			  $(this).parent().empty().append('<input class="mtinput form-control" type="text" placeholder="e.g. Pixel 3XL(API 29)" name="deviceq">')
 			}
 			else {
 		 		var opt = $(this).val();
@@ -1125,6 +1159,10 @@ $(document).ready(function(){
 				}
 			});
 			// on_select_change()
+	});
+
+	$('input[name="floating"]').on('focus', function(event) {
+		$(this).parent().empty().append(FLOATING_OPTION)
 	});
 
 	$(window).on('load', function() {
