@@ -146,7 +146,7 @@ def form_receiver(request):
 
 def quota_collect(request):
 
-    subject = '[Motric]New quota device request received!'
+    subject = '[Motric]New device quota request received!'
     combo = '<table cellpadding="3" border="1" style="border:2px solid gray; border-collapse:collapse">'
 
     form_dict = request.POST.copy()
