@@ -64,7 +64,7 @@ RECOMMANDED_DEVICE_LIST = '\
 	        '
 
 FLOATING_OPTION = '\
-	        <select class="form-control mtinput" name="floating">\
+	        <select class="form-control mtinput" name="floating" required>\
 	          <option value="" hidden>--Select from the dropdown--</option>\
 	          <option value="model">Care about model only, OS/API level could accept floating</option>\
 	          <option value="api">Care about OS/API level only, model could accept floating</option>\
@@ -88,6 +88,7 @@ function addQuotaDevice() {
 	imodel.setAttribute("type", "text");
 	imodel.setAttribute("class", "mtinput form-control device_extraline");
 	imodel.setAttribute("name", "deviceq");
+	imodel.setAttribute("required", "");
 	model.appendChild(imodel);
 
 	var inum = document.createElement("INPUT");
@@ -95,18 +96,21 @@ function addQuotaDevice() {
 	inum.setAttribute("class", "mtinput form-control");
 	inum.setAttribute("min", "1");
 	inum.setAttribute("name", "quantity");
+	inum.setAttribute("required", "");
 	quan.appendChild(inum);
 
 	var iuc = document.createElement("TEXTAREA");
 	iuc.setAttribute("type", "text");
 	iuc.setAttribute("class", "mtinput form-control");
 	iuc.setAttribute("name", "usecase");
+	iuc.setAttribute("required", "");
 	usecase.appendChild(iuc);
 
 	var iff = document.createElement("INPUT");
 	iff.setAttribute("type", "text");
 	iff.setAttribute("class", "mtinput form-control");
 	iff.setAttribute("name", "floating");
+	iff.setAttribute("required", "");
 	floating.appendChild(iff);
 
 	window.scrollTo(0,document.body.scrollHeight)  // Scroll automatically to the bottom of the page.
@@ -115,17 +119,16 @@ function addQuotaDevice() {
 		$(this).parent().empty().append(RECOMMANDED_DEVICE_LIST)
 			$('select[name="deviceq"]').on('change', function(event) {
 				if ($(this).children('option:last-child').is(':selected')) {
-				  $(this).parent().empty().append('<input class="mtinput form-control" type="text" name="deviceq">')
+				  $(this).parent().empty().append('<input class="mtinput form-control" type="text" name="deviceq" required>')
 				}
 			});
-			// on_select_change()
 	});
 
 	$('input[name="floating"]').on('focus', function(event) {
 		$(this).parent().empty().append(FLOATING_OPTION)
 			$('select[name="floating"]').on('change', function(event) {
 				if ($(this).children('option:last-child').is(':selected')) {
-				  $(this).parent().empty().append('<input class="mtinput form-control" type="text" name="floating">')
+				  $(this).parent().empty().append('<input class="mtinput form-control" type="text" name="floating" required>')
 				}
 			});
 	});
@@ -1139,7 +1142,7 @@ $(document).ready(function(){
 			// $(document).tooltip("close");
 			if ($(this).children('option:last-child').is(':selected')) {
 			  console.log("Manually input device!");
-			  $(this).parent().empty().append('<input class="mtinput form-control" type="text" placeholder="e.g. Pixel 3XL(API 29)" name="deviceq">')
+			  $(this).parent().empty().append('<input class="mtinput form-control" type="text" placeholder="e.g. Pixel 3XL(API 29)" name="deviceq" required>')
 			}
 			else {
 		 		var opt = $(this).val();
@@ -1154,14 +1157,14 @@ $(document).ready(function(){
 			// $(document).tooltip("close");
 			if ($(this).children('option:last-child').is(':selected')) {
 			  console.log("Manually input flexibility will!");
-			  $(this).parent().empty().append('<input class="mtinput form-control" type="text" name="floating">')
+			  $(this).parent().empty().append('<input class="mtinput form-control" type="text" name="floating" required>')
 			}
 		});
 	};
 
 	on_select_change()
 
-
+	//Below two listener are not in use, just put here for memo.
 	$('input[name="deviceq"]').on('focus', function(event) {
  		var opt = $(this).val();
 		console.log("Lets call selection!");
