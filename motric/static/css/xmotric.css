@@ -267,6 +267,11 @@ tr td:hover button{
     color:#34A853;
 }
 
+.col_n {
+  color:#FF5733;
+  font-weight: bold;
+}
+
 .centered_logo {
   position: absolute;
   top: 22%;

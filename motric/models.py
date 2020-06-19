@@ -74,6 +74,8 @@ class QuotaDevice(DeviceStatus):
 	os_version = models.CharField(max_length=50, blank=True, null=True)
 	quantity = models.IntegerField(default=1)
 	comment = models.CharField(max_length=1024, blank=True, null=True)
+	usecase = models.CharField(max_length=1024, blank=True, null=True)
+	floating = models.CharField(max_length=256, blank=True, null=True)
 	request_date = models.DateTimeField(auto_now_add=True)
 
 	def __unicode__(self):

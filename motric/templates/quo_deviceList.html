@@ -23,7 +23,16 @@
   </div> -->
 
 
-  <label for="devicelist">Quota Device:<span class="noticeable">*</span></label>
+  <label for="devicelist">Device Quota:<span class="noticeable">*</span></label>
+  <div class="jumbotron" id="quota-tips">
+    <ul>
+      <li><span class="col_n">Model and OS/API level:</span>Select from the dropdown or manually input the device you want, e.g. Pixel 3 XL(API 29).</li>
+      <li><span class="col_n">Quantity:</span>Input the number of the certain device you request.</li>
+      <li><span class="col_n">Use Case:</span>Describe why you request this specific device model and API level and describe your use cases to help us better understand your needs.</li>
+      <li><span class="col_n">Floating Flexibility Level:</span>Can you accept device floating? For example, if you request iPhone 8(iOS 13) but your tests don't really care whether it's iPhone 8 or iPhone 9 and only care about the iOS version, this means that you can accept device floating. Please indicate whether you accept device floating or to what dimension you would accept floating.</li>
+    </ul>
+  </div>
+
   <table id="deviceq_table" class="table table-bordered table-hover">
 	<tr style="background-color:lightblue">
 		<th style="width:35%" class="btn-info">Model and OS/API level</th>
@@ -38,21 +47,21 @@
         <!-- <input class="mtinput form-control" type="text" id="device1" placeholder="e.g. Pixel 3XL, iPad pro 12 inch" name="deviceq"> -->
         <select class="form-control mtinput" id="device1" name="deviceq" title="Select from the dropdown or manually input the device you want." required>
           <option value="" hidden>--Select recommended device--</option> 
-          <option value="marlin25">Pixel XL(API 25)</option>
-          <option value="taimen27">Pixel 2 XL(API 27)</option>
-          <option value="taimen28">Pixel 2 XL(API 28)</option>
-          <option value="blueline28">Pixel 3(API 28)</option>
-          <option value="blueline29">Pixel 3(API 29)</option>
-          <option value="crosshatch29">Pixel 3 XL(API 29)</option>
-          <option value="flame29">Pixel 4(API 29)</option>
-          <option value="starqlteue">Galaxy S9(API 26)</option>
-          <option value="G8142">Xperia XZ Premium(API 25)</option>
-          <option value="iphone8">iPhone 8(OS 12.4)</option>
-          <option value="iphonexr">iPhone Xr(OS 12.4)</option>
-          <option value="flo">Nexus 7 2013(API 18)</option>
-          <option value="bullhead">Nexus 5X(API 25)</option>
-          <option value="FRT">Nokia 1-Android GO(API 27)</option>
-          <option value="k61v1_basic_ref">Tecno-Android GO(API 29)</option>
+          <option value="PixelXL_api25">Pixel XL(API 25)</option>
+          <option value="Pixel2XL_api27">Pixel 2 XL(API 27)</option>
+          <option value="Pixel2XL_api28">Pixel 2 XL(API 28)</option>
+          <option value="Pixel3_api28">Pixel 3(API 28)</option>
+          <option value="Pixel3_api29">Pixel 3(API 29)</option>
+          <option value="Pixel3XL_api29">Pixel 3 XL(API 29)</option>
+          <option value="Pixel4_api29">Pixel 4(API 29)</option>
+          <option value="GalaxyS9_api26">Galaxy S9(API 26)</option>
+          <option value="XperiaXZ_api25">Xperia XZ Premium(API 25)</option>
+          <option value="iPhone8_api12.4">iPhone 8(OS 12.4)</option>
+          <option value="iPhonexr_api12.4">iPhone Xr(OS 12.4)</option>
+          <option value="Nexus7-2013_api18">Nexus 7 2013(API 18)</option>
+          <option value="Nexus5X_api25">Nexus 5X(API 25)</option>
+          <option value="Nokia1_api27">Nokia 1-Android GO(API 27)</option>
+          <option value="Tecno_api29">Tecno-Android GO(API 29)</option>
           <option value="">Manually input</option>
         </select>
     </td>
@@ -68,7 +77,7 @@
           <option value="model">Care about model only, OS/API level could accept floating</option>
           <option value="api">Care about OS/API level only, model could accept floating</option>
           <option value="specific">I need specific model and OS/API level</option>
-          <!-- <option value="">Manually input</option> -->
+          <option value="">Manually input</option>
         </select>
     </td>
 

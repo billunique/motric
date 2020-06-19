@@ -43,24 +43,24 @@ function addDevice() {
 
 RECOMMANDED_DEVICE_LIST = '\
 			<select class="form-control mtinput" name="deviceq" required>\
-	          <option value="" hidden>--Select recommanded device--</option>\
-	          <option value="marlin25">Pixel XL(API 25)</option>\
-	          <option value="taimen27">Pixel 2 XL(API 27)</option>\
-	          <option value="taimen28">Pixel 2 XL(API 28)</option>\
-	          <option value="blueline28">Pixel 3(API 28)</option>\
-	          <option value="blueline29">Pixel 3(API 29)</option>\
-	          <option value="crosshatch29">Pixel 3 XL(API 29)</option>\
-	          <option value="flame29">Pixel 4(API 29)</option>\
-	          <option value="starqlteue">Galaxy S9(API 26)</option>\
-	          <option value="G8142">Xperia XZ Premium(API 25)</option>\
-	          <option value="iphone8">iPhone 8(OS 12.4)</option>\
-	          <option value="iphonexr">iPhone Xr(OS 12.4)</option>\
-	          <option value="flo">Nexus 7 2013(API 18)</option>\
-	          <option value="bullhead">Nexus 5X(API 25)</option>\
-	          <option value="FRT">Nokia 1-Android GO(API 27)</option>\
-	          <option value="k61v1_basic_ref">Tecno-Android GO(API 29)</option>\
-	          <option value="">Manually input</option>\
-	        </select>\
+				<option value="" hidden>--Select recommended device--</option>\
+				<option value="PixelXL_api25">Pixel XL(API 25)</option>\
+				<option value="Pixel2XL_api27">Pixel 2 XL(API 27)</option>\
+				<option value="Pixel2XL_api28">Pixel 2 XL(API 28)</option>\
+				<option value="Pixel3_api28">Pixel 3(API 28)</option>\
+				<option value="Pixel3_api29">Pixel 3(API 29)</option>\
+				<option value="Pixel3XL_api29">Pixel 3 XL(API 29)</option>\
+				<option value="Pixel4_api29">Pixel 4(API 29)</option>\
+				<option value="GalaxyS9_api26">Galaxy S9(API 26)</option>\
+				<option value="XperiaXZ_api25">Xperia XZ Premium(API 25)</option>\
+				<option value="iPhone8_api12.4">iPhone 8(OS 12.4)</option>\
+				<option value="iPhonexr_api12.4">iPhone Xr(OS 12.4)</option>\
+				<option value="Nexus7-2013_api18">Nexus 7 2013(API 18)</option>\
+				<option value="Nexus5X_api25">Nexus 5X(API 25)</option>\
+				<option value="Nokia1_api27">Nokia 1-Android GO(API 27)</option>\
+				<option value="Tecno_api29">Tecno-Android GO(API 29)</option>\
+				<option value="">Manually input</option>\
+		        </select>\
 	        '
 
 FLOATING_OPTION = '\
@@ -69,6 +69,7 @@ FLOATING_OPTION = '\
 	          <option value="model">Care about model only, OS/API level could accept floating</option>\
 	          <option value="api">Care about OS/API level only, model could accept floating</option>\
 	          <option value="specific">I need specific model and OS/API level</option>\
+	          <option value="">Manually input</option>\
 	        </select>\
 	        '
 
@@ -122,6 +123,11 @@ function addQuotaDevice() {
 
 	$('input[name="floating"]').on('focus', function(event) {
 		$(this).parent().empty().append(FLOATING_OPTION)
+			$('select[name="floating"]').on('change', function(event) {
+				if ($(this).children('option:last-child').is(':selected')) {
+				  $(this).parent().empty().append('<input class="mtinput form-control" type="text" name="floating">')
+				}
+			});
 	});
 }
 
@@ -251,11 +257,12 @@ $(document).ready(function(){
 
 	// $('body').css('zoom','80%');
 
-	$(document).tooltip({
-		show: { effect: "blind", duration: 200 },
-		// position: { my: "left top+15", at: "left top-200"},
-		// position: { collision: "fit flip"},
-	});
+
+	// $(document).tooltip({
+	// 	show: { effect: "blind", duration: 200 },
+	// 	// position: { my: "left top+15", at: "left top-200"},
+	// 	// position: { collision: "fit flip"},
+	// });
 
 	$(".navul a").on("click", function(){
 	   $(".navul").find(".active").removeClass("active");
@@ -1128,10 +1135,10 @@ $(document).ready(function(){
 	});
 
 	function on_select_change(){
-		$('select[name="deviceq"]').on('click', function(event) {
+		$('select[name="deviceq"]').on('change', function(event) {
 			// $(document).tooltip("close");
 			if ($(this).children('option:last-child').is(':selected')) {
-			  console.log("Manually input!!!");
+			  console.log("Manually input device!");
 			  $(this).parent().empty().append('<input class="mtinput form-control" type="text" placeholder="e.g. Pixel 3XL(API 29)" name="deviceq">')
 			}
 			else {
@@ -1143,7 +1150,14 @@ $(document).ready(function(){
 				// $(this).parent().next().text(api);
 			}
 		});
-	}
+		$('select[name="floating"]').on('change', function(event) {
+			// $(document).tooltip("close");
+			if ($(this).children('option:last-child').is(':selected')) {
+			  console.log("Manually input flexibility will!");
+			  $(this).parent().empty().append('<input class="mtinput form-control" type="text" name="floating">')
+			}
+		});
+	};
 
 	on_select_change()
 
@@ -1163,6 +1177,11 @@ $(document).ready(function(){
 
 	$('input[name="floating"]').on('focus', function(event) {
 		$(this).parent().empty().append(FLOATING_OPTION)
+			$('select[name="floating"]').on('change', function(event) {
+				if ($(this).children('option:last-child').is(':selected')) {
+				  $(this).parent().empty().append('<input class="mtinput form-control" type="text" name="floating">')
+				}
+			});
 	});
 
 	$(window).on('load', function() {

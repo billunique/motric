@@ -161,6 +161,8 @@ def quota_collect(request):
         model_type = form_dict.pop('deviceq') # list
         # os_version = form_dict.pop('os') # list
         quantity = form_dict.pop('quantity') # list
+        usecase = form_dict.getlist('usecase')
+        floating = form_dict.getlist('floating')
 
         global motric_host, recipient, cc_rcpt  # mysteriuos, no need to global copy the variable sender, guess it's defined by the settings.py and be used globally
 
@@ -174,9 +176,9 @@ def quota_collect(request):
         if model_type: # list is not empty
             for i in range(len(model_type)):
                 # qd = QuotaDevice(ldap=ldap, mdb=mdb, pe=pe, comment=comment, model_type=model_type[i], os_version=os_version[i], quantity=quantity[i], request_date=request_date)
-                qd = QuotaDevice(ldap=ldap, mdb=mdb, pe=pe, comment=comment, model_type=model_type[i], quantity=quantity[i], request_date=request_date)
+                qd = QuotaDevice(ldap=ldap, mdb=mdb, pe=pe, comment=comment, model_type=model_type[i], quantity=quantity[i], usecase=usecase[i], floating=floating[i], request_date=request_date)
                 qd.save()
-                combo += '<tr><td>' + model_type[i] + ' * ' + quantity[i] + ' for ' + pe + ', ' + comment + '</td></tr>'
+                combo += '<tr><td>' + model_type[i] + ' * ' + quantity[i] + ' for ' + pe + ', ' + usecase[i] + '</td></tr>'
 
     except KeyError:
         return HttpResponse("No corresponding key found!")
