@@ -272,6 +272,10 @@ tr td:hover button{
   font-weight: bold;
 }
 
+.container .jumbotron {
+padding:15px 6px;
+}
+
 .centered_logo {
   position: absolute;
   top: 22%;
