@@ -202,6 +202,20 @@ def quota_collect(request):
         cc_rcpt
     )
 
+    team_sbj = '[Device Quota]New device quota request received!'
+    team_msg = 'Hi team,<br/><br/>Here comes new user input for device quota:<br/><br/>' + combo + '<br/>Check https://motric.corp.google.com/quota_list/ for details.'
+    team_msg += '<br/><p>Best regards,<br/>Xia</p>'
+    team_rcpt = ['joyl@google.com', 'ruic@google.com', 'kebai@google.com']
+    team_cc = ['xiawang@google.com']
+
+    motric_send_mail(
+        team_sbj,
+        team_msg,
+        sender,
+        team_rcpt,
+        team_cc
+    )
+
     return HttpResponse(message)
     return render(request, 'motric_thanks.html')
 
