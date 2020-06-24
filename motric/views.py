@@ -155,6 +155,11 @@ def device_register(request):
 def device_quota(request):
 	return render(request, 'moha_device_quota.html')
 
+def device_quota_list(request):
+	quota_request_list = QuotaDevice.objects.all()
+	count = quota_request_list.count()
+	return render(request, 'quo_request_list.html', {'request_list':quota_request_list, 'count':count})
+
 
 # def faq(request):
 # 	return render(request, 'motric_faq.html')

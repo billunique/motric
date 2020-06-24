@@ -1,0 +1,38 @@
+{% extends 'motric_moresrc.html' %}
+
+{% block title %}Details of device quota request{% endblock %}
+
+{% block body %}
+{% include 'motric_modal.html' %}
+  <div style="padding: 20px 20px">
+	<h3>Device quota request list</h3>
+	<table class="table table-bordered font-compacted">
+	  	<tr class="btn-primary">
+	  	  <th class="btn-success">LDAP</th>
+	  	  <th class="btn-success">MDB</th>
+	  	  <th class="btn-success">PE</th>
+	  	  <th>Device Model</th>
+	  	  <th>Quantity</th>
+	  	  <th>Use Case</th>
+	  	  <th>Floating Flexibility</th>
+	  	  <th>Additional Comment</th>
+	  	  <th class="btn-warning">Request date</th>
+	  	</tr>
+	  	{% for qtd in request_list %}
+	  	<tr>
+	  	  <td>{{ qtd.ldap }}</td>
+	  	  <td>{{ qtd.mdb }}</td>
+	  	  <td>{{ qtd.pe }}</td>
+	  	  <td>{{ qtd.model_type }}</td>
+	  	  <td>{{ qtd.quantity }}</td>
+	  	  <td>{{ qtd.usecase }}</td>
+	  	  <td>{{ qtd.floating }}</td>
+	  	  <td>{{ qtd.comment }}</td>
+	  	  <td>{{ qtd.request_date }}</td>
+	  	</tr>
+	  	{% endfor %}
+	</table>
+
+  </div>
+
+{% endblock %}

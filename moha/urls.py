@@ -30,6 +30,7 @@ urlpatterns = [
     url(r'^request_history/*', views.request_history, name='req_history'),
     url(r'^device_register/', views.device_register, name='dev_register'),
     url(r'^device_quota/', views.device_quota, name='device_quota'),
+    url(r'^quota_list/', views.device_quota_list, name='quo_list'),
 
     # url(r'^faq/', views.faq, name='faq'),
     # url(r'^about/', views.about, name='about'),
