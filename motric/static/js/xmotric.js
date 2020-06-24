@@ -82,6 +82,7 @@ function addQuotaDevice() {
 	var quan = row.insertCell(1);
 	var usecase = row.insertCell(2);
 	var floating = row.insertCell(3);
+	var rmv = row.insertCell(4);
 	// var abrow = row.rowIndex;
 
 	var imodel = document.createElement("INPUT");
@@ -113,7 +114,18 @@ function addQuotaDevice() {
 	iff.setAttribute("required", "");
 	floating.appendChild(iff);
 
+	var irmv = document.createElement("INPUT");
+	irmv.setAttribute("type", "button");
+	irmv.setAttribute("class", "btn_info");
+	irmv.setAttribute("name", "btn_remove")
+	irmv.setAttribute("value", "x")
+	rmv.appendChild(irmv);
+
 	window.scrollTo(0,document.body.scrollHeight)  // Scroll automatically to the bottom of the page.
+	
+	$('input[name="btn_remove"]').on('click', function(event) {
+		$(this).closest('tr').remove();
+	});
 
 	$('input[name="deviceq"]').on('focus', function(event) {
 		$(this).parent().empty().append(RECOMMANDED_DEVICE_LIST)
