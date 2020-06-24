@@ -5,9 +5,10 @@
 {% block body %}
 {% include 'motric_modal.html' %}
   <div style="padding: 20px 20px">
-	<h3>Device quota request list</h3>
+	<h3>Device quota request list<span style="font-size: 16px">(totally <span class="noticeable">{{ count }}</span> items)</span></h3>
 	<table class="table table-bordered font-compacted">
 	  	<tr class="btn-primary">
+	  	  <th class="btn-success">#</th>
 	  	  <th class="btn-success">LDAP</th>
 	  	  <th class="btn-success">MDB</th>
 	  	  <th class="btn-success">PE</th>
@@ -20,6 +21,8 @@
 	  	</tr>
 	  	{% for qtd in request_list %}
 	  	<tr>
+	  	  <!-- <td>{{ qtd.id }}</td> -->
+	  	  <td>{{ forloop.counter }}</td>
 	  	  <td>{{ qtd.ldap }}</td>
 	  	  <td>{{ qtd.mdb }}</td>
 	  	  <td>{{ qtd.pe }}</td>
