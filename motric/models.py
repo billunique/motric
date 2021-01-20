@@ -39,7 +39,7 @@ class Requester(models.Model):
 		return u'%s, from project %s' % (self.ldap, self.project)
 
 class RequestedDevice(DeviceStatus):
-	model_type = models.CharField(max_length=30)
+	model_type = models.CharField(max_length=100)
 	quantity = models.IntegerField(default=1)
 	os_version = models.CharField(max_length=50, blank=True, null=True)
 	requester = models.ForeignKey(Requester, on_delete=models.CASCADE)
